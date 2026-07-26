@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "LeetCode Progress Sync",
+    "version": "1.0",
+    "description": "Keeps your LeetCode session synced with your progress tracker automatically.",
+    "permissions": ["cookies"],
+    "host_permissions": [
+      "https://leetcode.com/*",
+      "https://*.leetcode.com/*",
+      "http://localhost:5000/*"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    }
+  }
