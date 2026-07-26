@@ -199,14 +199,14 @@ def check_session():
     return {"signedIn": bool(status.get("isSignedIn")), "connected": True, "username": status.get("username")}
 
 
-def fetch_solved(limit=50):
+def _fetch_by_status(status, limit=50):
     all_questions = []
     skip = 0
     total = None
     while True:
         result = _post_graphql(
             QUERY,
-            {"filters": {"skip": skip, "limit": limit, "questionStatus": "SOLVED"}},
+            {"filters": {"skip": skip, "limit": limit, "questionStatus": status}},
             "userProgressQuestionList",
         )
         block = result["userProgressQuestionList"]
@@ -217,6 +217,15 @@ def fetch_solved(limit=50):
             break
         skip += limit
     return all_questions
+
+
+def fetch_solved(limit=50):
+    return _fetch_by_status("SOLVED", limit=limit)
+
+
+def fetch_attempted(limit=50):
+    # "ATTEMPTED" == tried but never solved -- confirmed against the live API.
+    return _fetch_by_status("ATTEMPTED", limit=limit)
 
 
 def load_neetcode_map():

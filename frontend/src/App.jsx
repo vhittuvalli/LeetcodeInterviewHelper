@@ -5,6 +5,7 @@ import "./App.css";
 import { buildLayoutedNodes } from "./topicGraph";
 import TopicNode from "./TopicNode";
 import SpacedRepetitionCard from "./SpacedRepetitionCard";
+import RecommendedProblems from "./RecommendedProblems";
 
 const API_BASE = "http://localhost:5000";
 const nodeTypes = { topic: TopicNode };
@@ -98,6 +99,8 @@ export default function App() {
         <button onClick={loadTopics}>Refresh</button>
         <SpacedRepetitionCard />
       </div>
+
+      <RecommendedProblems />
 
       <div className="tree-container">
         <ReactFlow

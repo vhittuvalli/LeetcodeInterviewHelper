@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 import leetcode_service
 import spaced_repetition
+import recommendations
 
 app = Flask(__name__)
 # Dev-mode CORS: allow your React dev server (e.g. Vite on :5173) AND the
@@ -94,6 +95,27 @@ def spaced_repetition_complete():
         return jsonify({"error": "bad_request", "message": "Expected JSON body with 'titleSlug'"}), 400
 
     return jsonify(spaced_repetition.mark_reviewed(slug))
+
+
+@app.route("/api/recommendations", methods=["GET"])
+def get_recommendations_route():
+    """Ranks topics by weakness (avg submissions-to-solve + missing harder
+    difficulties among what you've reached), then recommends unsolved,
+    non-NeetCode-150 problems from the weakest ones first."""
+    try:
+        limit = int(request.args.get("limit", 5))
+        return jsonify(recommendations.get_recommendations(limit=limit))
+    except leetcode_service.LeetCodeAuthError as e:
+        return _auth_error_response(e)
+    except leetcode_service.LeetCodeAPIError as e:
+        return jsonify({"error": "leetcode_api_error", "message": str(e)}), 502
+    except FileNotFoundError:
+        return jsonify({
+            "error": "missing_dataset",
+            "message": "backend/data/merged_problems.json not found -- copy it in from your uploads.",
+        }), 500
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
 
 
 if __name__ == "__main__":
