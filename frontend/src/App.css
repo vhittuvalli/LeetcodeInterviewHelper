@@ -1,42 +1,108 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, sans-serif;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.toolbar {
+  padding: 10px 16px;
+  border-bottom: 1px solid #ddd;
+}
+
+.tree-container {
+  flex: 1;
+  position: relative;
+}
+
+.status-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
   text-align: center;
+  padding: 24px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.status-screen ol {
+  text-align: left;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.topic-node {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #999;
+  min-width: 170px;
+  text-align: center;
+  cursor: pointer;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.topic-node--empty {
+  background: #e8e8e8;
+  color: #555;
 }
 
-.card {
-  padding: 2em;
+.topic-node--some {
+  background: #fdecc8;
+  color: #7a4e00;
 }
 
-.read-the-docs {
-  color: #888;
+.topic-node--active {
+  background: #cdeee0;
+  color: #0a5c3c;
+}
+
+.topic-node__label {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.topic-node__count {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.side-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 100%;
+  background: white;
+  border-left: 1px solid #ddd;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.side-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.difficulty {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.difficulty--easy {
+  background: #cdeee0;
+}
+
+.difficulty--medium {
+  background: #fdecc8;
+}
+
+.difficulty--hard {
+  background: #f6d0d0;
 }
