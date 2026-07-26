@@ -16,6 +16,38 @@ body {
 .toolbar {
   padding: 10px 16px;
   border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.daily-review {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.daily-review--muted {
+  color: #777;
+  font-size: 13px;
+}
+
+.daily-review__label {
+  font-weight: 600;
+}
+
+.daily-review__progress {
+  color: #777;
+  margin-left: 4px;
+}
+
+.badge--neetcode {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #cdeee0;
+  color: #0a5c3c;
 }
 
 .tree-container {

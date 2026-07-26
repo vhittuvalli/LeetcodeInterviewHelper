@@ -4,6 +4,7 @@ import "reactflow/dist/style.css";
 import "./App.css";
 import { buildLayoutedNodes } from "./topicGraph";
 import TopicNode from "./TopicNode";
+import SpacedRepetitionCard from "./SpacedRepetitionCard";
 
 const API_BASE = "http://localhost:5000";
 const nodeTypes = { topic: TopicNode };
@@ -95,6 +96,7 @@ export default function App() {
     <div className="app-shell">
       <div className="toolbar">
         <button onClick={loadTopics}>Refresh</button>
+        <SpacedRepetitionCard />
       </div>
 
       <div className="tree-container">
