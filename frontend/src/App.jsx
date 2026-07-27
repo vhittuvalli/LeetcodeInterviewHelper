@@ -6,6 +6,7 @@ import { buildLayoutedNodes } from "./topicGraph";
 import TopicNode from "./TopicNode";
 import SpacedRepetitionCard from "./SpacedRepetitionCard";
 import RecommendedProblems from "./RecommendedProblems";
+import DiagnosisPanel from "./DiagnosisPanel";
 
 const API_BASE = "http://localhost:5000";
 const nodeTypes = { topic: TopicNode };
@@ -101,6 +102,8 @@ export default function App() {
       </div>
 
       <RecommendedProblems />
+
+      <DiagnosisPanel />
 
       <div className="tree-container">
         <ReactFlow

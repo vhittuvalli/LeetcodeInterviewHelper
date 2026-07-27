@@ -1,5 +1,11 @@
+from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+
+# Loads backend/.env into the environment (DEEPSEEK_API_KEY, etc.) before
+# anything else runs -- must happen before llm_client is imported below so
+# its lazy client init sees the key when it's actually needed.
+load_dotenv()
 
 import leetcode_service
 import spaced_repetition

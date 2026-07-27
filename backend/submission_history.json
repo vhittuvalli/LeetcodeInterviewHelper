@@ -16,5 +16,32 @@
       "timestamp": 1779571893,
       "code": "class Solution:\n    def longestMountain(self, arr: List[int]) -> int:\n        longest = 0\n\n        for i in range(1, len(arr) - 1):\n            # i must be a peak\n            if arr[i-1] < arr[i] and arr[i] > arr[i+1]:\n                left = i\n                right = i\n\n                while left > 0 and arr[left-1] < arr[left]:\n                    left -= 1\n\n                while right < len(arr) - 1 and arr[right] > arr[right+1]:\n                    right += 1\n\n                longest = max(longest, right - left + 1)\n\n        return longest\n"
     }
+  ],
+  "longest-substring-without-repeating-characters": [
+    {
+      "id": 2013116479,
+      "status": "Accepted",
+      "lang": "python3",
+      "timestamp": 1779760855,
+      "code": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        charSet=set()\n        l=0\n        res=0\n        for r in range(len(s)):\n            while s[r] in charSet:\n                charSet.remove(s[l])\n                l+=1\n            charSet.add(s[r])\n            res=max(res,r-l+1)\n        return res"
+    }
+  ],
+  "contains-duplicate-ii": [
+    {
+      "id": 2014023643,
+      "status": "Accepted",
+      "lang": "python3",
+      "timestamp": 1779836140,
+      "code": "class Solution:\n    def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:\n        window=set()\n        for right in range(len(nums)):\n            if nums[right] in window:\n                return True\n            window.add(nums[right])\n            if len(window)>k:\n                window.remove(nums[right-k])\n        return False"
+    }
+  ],
+  "top-k-frequent-elements": [
+    {
+      "id": 2010068815,
+      "status": "Accepted",
+      "lang": "python3",
+      "timestamp": 1779466632,
+      "code": "class Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        my_dict={}\n        for i in nums:\n            if i not in my_dict:\n                my_dict[i]=1\n            else:\n                my_dict[i]+=1\n        final=sorted(my_dict.items(),key=lambda x: x[1])\n        final1=[]\n        for i in range(len(final)-1,-1,-1):\n            if k==0:\n                break\n            final1.append(final[i][0])\n            k-=1\n        return final1\n        \n"
+    }
   ]
 }

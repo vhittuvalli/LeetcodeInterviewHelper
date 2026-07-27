@@ -111,6 +111,98 @@ body {
   margin-top: 4px;
 }
 
+.badge--optimal {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #cdeee0;
+  color: #0a5c3c;
+}
+
+.badge--suboptimal {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #fdecc8;
+  color: #7a4e00;
+}
+
+.badge--wrong {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #f6d0d0;
+  color: #7a1f1f;
+}
+
+.badge--skipped {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #e8e8e8;
+  color: #555;
+}
+
+.diagnosis-panel {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.diagnosis-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.diagnosis-panel__title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.diagnosis-panel__hint {
+  font-size: 11px;
+  color: #777;
+  margin: 8px 0 0;
+}
+
+.diagnosis-panel__error {
+  font-size: 11px;
+  color: #b02a2a;
+  margin: 8px 0 0;
+}
+
+.diagnosis-panel__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.diagnosis-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: white;
+}
+
+.diagnosis-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.diagnosis-card__text {
+  font-size: 12px;
+  color: #444;
+  margin: 6px 0 0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
 .tree-container {
   flex: 1;
   position: relative;
