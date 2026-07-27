@@ -1,0 +1,3581 @@
+{
+    "patterns": [
+      {
+        "number": 1,
+        "name": "Converging",
+        "problems": [
+          {
+            "number": 11,
+            "title": "Container With Most Water"
+          },
+          {
+            "number": 15,
+            "title": "3Sum"
+          },
+          {
+            "number": 16,
+            "title": "3Sum Closest"
+          },
+          {
+            "number": 18,
+            "title": "4Sum"
+          },
+          {
+            "number": 167,
+            "title": "Two Sum II - Input Array Is Sorted"
+          },
+          {
+            "number": 349,
+            "title": "Intersection of Two Arrays"
+          },
+          {
+            "number": 881,
+            "title": "Boats to Save People"
+          },
+          {
+            "number": 977,
+            "title": "Squares of a Sorted Array"
+          },
+          {
+            "number": 259,
+            "title": "3Sum Smaller"
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Fast & Slow",
+        "problems": [
+          {
+            "number": 141,
+            "title": "Linked List Cycle"
+          },
+          {
+            "number": 202,
+            "title": "Happy Number"
+          },
+          {
+            "number": 287,
+            "title": "Find the Duplicate Number"
+          },
+          {
+            "number": 392,
+            "title": "Is Subsequence"
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Fixed Separation",
+        "problems": [
+          {
+            "number": 19,
+            "title": "Remove Nth Node From End of List"
+          },
+          {
+            "number": 876,
+            "title": "Middle of the Linked List"
+          },
+          {
+            "number": 2095,
+            "title": "Delete the Middle Node of a Linked List"
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "name": "In-place Array Modification",
+        "problems": [
+          {
+            "number": 26,
+            "title": "Remove Duplicates from Sorted Array"
+          },
+          {
+            "number": 27,
+            "title": "Remove Element"
+          },
+          {
+            "number": 75,
+            "title": "Sort Colors"
+          },
+          {
+            "number": 80,
+            "title": "Remove Duplicates from Sorted Array II"
+          },
+          {
+            "number": 283,
+            "title": "Move Zeroes"
+          },
+          {
+            "number": 443,
+            "title": "String Compression"
+          },
+          {
+            "number": 905,
+            "title": "Sort Array By Parity"
+          },
+          {
+            "number": 2337,
+            "title": "Move Pieces to Obtain a String"
+          },
+          {
+            "number": 2938,
+            "title": "Separate Black and White Balls"
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "name": "String Comparison with special characters",
+        "problems": [
+          {
+            "number": 844,
+            "title": "Backspace String Compare"
+          },
+          {
+            "number": 1598,
+            "title": "Crawler Log Folder"
+          },
+          {
+            "number": 2390,
+            "title": "Removing Stars From a String"
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "name": "Expanding From Center",
+        "problems": [
+          {
+            "number": 5,
+            "title": "Longest Palindromic Substring"
+          },
+          {
+            "number": 647,
+            "title": "Palindromic Substrings"
+          }
+        ]
+      },
+      {
+        "number": 7,
+        "name": "String Reversal",
+        "problems": [
+          {
+            "number": 151,
+            "title": "Reverse Words in a String"
+          },
+          {
+            "number": 344,
+            "title": "Reverse String"
+          },
+          {
+            "number": 345,
+            "title": "Reverse Vowels of a String"
+          },
+          {
+            "number": 541,
+            "title": "Reverse String II II. Sliding Window Patterns"
+          }
+        ]
+      },
+      {
+        "number": 8,
+        "name": "Fixed Size",
+        "problems": [
+          {
+            "number": 346,
+            "title": "Moving Average from Data Stream"
+          },
+          {
+            "number": 643,
+            "title": "Maximum Average Subarray I"
+          },
+          {
+            "number": 2985,
+            "title": "Calculate Compressed Mean"
+          },
+          {
+            "number": 3254,
+            "title": "Find the Power of K-Size Subarrays I"
+          },
+          {
+            "number": 3318,
+            "title": "Find X-Sum of All K-Long Subarrays I"
+          }
+        ]
+      },
+      {
+        "number": 9,
+        "name": "Variable Size",
+        "problems": [
+          {
+            "number": 3,
+            "title": "Longest Substring Without Repeating Characters"
+          },
+          {
+            "number": 76,
+            "title": "Minimum Window Substring"
+          },
+          {
+            "number": 209,
+            "title": "Minimum Size Subarray Sum"
+          },
+          {
+            "number": 219,
+            "title": "Contains Duplicate II"
+          },
+          {
+            "number": 424,
+            "title": "Longest Repeating Character Replacement"
+          },
+          {
+            "number": 713,
+            "title": "Subarray Product Less Than K"
+          },
+          {
+            "number": 904,
+            "title": "Fruit Into Baskets"
+          },
+          {
+            "number": 1004,
+            "title": "Max Consecutive Ones III"
+          },
+          {
+            "number": 1438,
+            "title": "Longest Continuous Subarray With Absolute Diff Less Than or Equal to Limit"
+          },
+          {
+            "number": 1493,
+            "title": "Longest Subarray of 1's After Deleting One Element"
+          },
+          {
+            "number": 1658,
+            "title": "Minimum Operations to Reduce X to Zero"
+          },
+          {
+            "number": 1838,
+            "title": "Frequency of the Most Frequent Element"
+          },
+          {
+            "number": 2461,
+            "title": "Maximum Sum of Distinct Subarrays With Length K"
+          },
+          {
+            "number": 2516,
+            "title": "Take K of Each Character From Left and Right"
+          },
+          {
+            "number": 2762,
+            "title": "Continuous Subarrays"
+          },
+          {
+            "number": 2779,
+            "title": "Maximum Beauty of an Array After Applying Operation"
+          },
+          {
+            "number": 2981,
+            "title": "Find Longest Special Substring That Occurs Thrice I"
+          },
+          {
+            "number": 3026,
+            "title": "Maximum Good Subarray Sum"
+          },
+          {
+            "number": 3346,
+            "title": "Maximum Frequency of an Element After Performing Operations I"
+          },
+          {
+            "number": 3347,
+            "title": "Maximum Frequency of an Element After Performing Operations II"
+          }
+        ]
+      },
+      {
+        "number": 10,
+        "name": "Monotonic Queue for Max/Min",
+        "problems": [
+          {
+            "number": 239,
+            "title": "Sliding Window Maximum"
+          },
+          {
+            "number": 862,
+            "title": "Shortest Subarray with Sum at Least K"
+          },
+          {
+            "number": 1696,
+            "title": "Jump Game VI"
+          }
+        ]
+      },
+      {
+        "number": 11,
+        "name": "Character Frequency Matching",
+        "problems": [
+          {
+            "number": 1,
+            "title": "TwoSum"
+          },
+          {
+            "number": 438,
+            "title": "Find All Anagrams in a String"
+          },
+          {
+            "number": 567,
+            "title": "Permutation in String III. Tree Traversal Patterns (DFS & BFS)"
+          }
+        ]
+      },
+      {
+        "number": 12,
+        "name": "Level Order Traversal",
+        "problems": [
+          {
+            "number": 102,
+            "title": "Binary Tree Level Order Traversal"
+          },
+          {
+            "number": 103,
+            "title": "Binary Tree Zigzag Level Order Traversal"
+          },
+          {
+            "number": 199,
+            "title": "Binary Tree Right Side View"
+          },
+          {
+            "number": 515,
+            "title": "Find Largest Value in Each Tree Row"
+          },
+          {
+            "number": 1161,
+            "title": "Maximum Level Sum of a Binary Tree"
+          }
+        ]
+      },
+      {
+        "number": 13,
+        "name": "Recursive Preorder Traversal",
+        "problems": [
+          {
+            "number": 100,
+            "title": "Same Tree"
+          },
+          {
+            "number": 101,
+            "title": "Symmetric Tree"
+          },
+          {
+            "number": 105,
+            "title": "Construct Binary Tree from Preorder and Inorder Traversal"
+          },
+          {
+            "number": 114,
+            "title": "Flatten Binary Tree to Linked List"
+          },
+          {
+            "number": 226,
+            "title": "Invert Binary Tree"
+          },
+          {
+            "number": 257,
+            "title": "Binary Tree Paths"
+          },
+          {
+            "number": 988,
+            "title": "Smallest String Starting From Leaf"
+          }
+        ]
+      },
+      {
+        "number": 14,
+        "name": "Recursive Inorder Traversal",
+        "problems": [
+          {
+            "number": 94,
+            "title": "Binary Tree Inorder Traversal"
+          },
+          {
+            "number": 98,
+            "title": "Validate Binary Search Tree"
+          },
+          {
+            "number": 173,
+            "title": "Binary Search Tree Iterator"
+          },
+          {
+            "number": 230,
+            "title": "Kth Smallest Element in a BST"
+          },
+          {
+            "number": 501,
+            "title": "Find Mode in Binary Search Tree"
+          },
+          {
+            "number": 530,
+            "title": "Minimum Absolute Difference in BST"
+          }
+        ]
+      },
+      {
+        "number": 15,
+        "name": "Recursive Postorder Traversal",
+        "problems": [
+          {
+            "number": 104,
+            "title": "Maximum Depth of Binary Tree"
+          },
+          {
+            "number": 110,
+            "title": "Balanced Binary Tree"
+          },
+          {
+            "number": 124,
+            "title": "Binary Tree Maximum Path Sum"
+          },
+          {
+            "number": 145,
+            "title": "Binary Tree Postorder Traversal"
+          },
+          {
+            "number": 337,
+            "title": "House Robber III"
+          },
+          {
+            "number": 366,
+            "title": "Find Leaves of Binary Tree"
+          },
+          {
+            "number": 543,
+            "title": "Diameter of Binary Tree"
+          },
+          {
+            "number": 863,
+            "title": "All Nodes Distance K in Binary Tree"
+          },
+          {
+            "number": 1110,
+            "title": "Delete Nodes And Return Forest"
+          },
+          {
+            "number": 2458,
+            "title": "Height of Binary Tree After Subtree Removal Queries"
+          }
+        ]
+      },
+      {
+        "number": 16,
+        "name": "Lowest Common Ancestor",
+        "problems": [
+          {
+            "number": 235,
+            "title": "Lowest Common Ancestor of a Binary Search Tree"
+          },
+          {
+            "number": 236,
+            "title": "Lowest Common Ancestor of a Binary Tree"
+          }
+        ]
+      },
+      {
+        "number": 17,
+        "name": "Serialization and Deserialization",
+        "problems": [
+          {
+            "number": 297,
+            "title": "Serialize and Deserialize Binary Tree"
+          },
+          {
+            "number": 572,
+            "title": "Subtree of Another Tree"
+          },
+          {
+            "number": 652,
+            "title": "Find Duplicate Subtrees IV. Graph Traversal Patterns (DFS & BFS)"
+          }
+        ]
+      },
+      {
+        "number": 18,
+        "name": "DFS - Connected Components / Island Counting",
+        "problems": [
+          {
+            "number": 130,
+            "title": "Surrounded Regions"
+          },
+          {
+            "number": 200,
+            "title": "Number of Islands"
+          },
+          {
+            "number": 417,
+            "title": "Pacific Atlantic Water Flow"
+          },
+          {
+            "number": 547,
+            "title": "Number of Provinces"
+          },
+          {
+            "number": 695,
+            "title": "Max Area of Island"
+          },
+          {
+            "number": 733,
+            "title": "Flood Fill"
+          },
+          {
+            "number": 841,
+            "title": "Keys and Rooms"
+          },
+          {
+            "number": 1020,
+            "title": "Number of Enclaves"
+          },
+          {
+            "number": 1254,
+            "title": "Number of Closed Islands"
+          },
+          {
+            "number": 1905,
+            "title": "Count Sub Islands"
+          },
+          {
+            "number": 2101,
+            "title": "Detonate the Maximum Bombs"
+          }
+        ]
+      },
+      {
+        "number": 19,
+        "name": "BFS - Connected Components / Island Counting",
+        "problems": [
+          {
+            "number": 542,
+            "title": "01 Matrix"
+          },
+          {
+            "number": 994,
+            "title": "Rotting Oranges"
+          },
+          {
+            "number": 1091,
+            "title": "Shortest Path in Binary Matrix"
+          }
+        ]
+      },
+      {
+        "number": 20,
+        "name": "DFS - Cycle Detection",
+        "problems": [
+          {
+            "number": 207,
+            "title": "Course Schedule"
+          },
+          {
+            "number": 210,
+            "title": "Course Schedule II"
+          },
+          {
+            "number": 802,
+            "title": "Find Eventual Safe States"
+          },
+          {
+            "number": 1059,
+            "title": "All Paths from Source Lead to Destination"
+          }
+        ]
+      },
+      {
+        "number": 21,
+        "name": "BFS - Topological Sort(Kahn's Algorithm)",
+        "problems": [
+          {
+            "number": 210,
+            "title": "Course Schedule II"
+          },
+          {
+            "number": 269,
+            "title": "Alien Dictionary"
+          },
+          {
+            "number": 310,
+            "title": "Minimum Height Trees"
+          },
+          {
+            "number": 444,
+            "title": "Sequence Reconstruction"
+          },
+          {
+            "number": 1136,
+            "title": "Parallel Courses"
+          },
+          {
+            "number": 1857,
+            "title": "Largest Color Value in a Directed Graph"
+          },
+          {
+            "number": 2050,
+            "title": "Parallel Courses III"
+          },
+          {
+            "number": 2115,
+            "title": "Find All Possible Recipes from Given Supplies"
+          },
+          {
+            "number": 2392,
+            "title": "Build a Matrix With Conditions"
+          }
+        ]
+      },
+      {
+        "number": 22,
+        "name": "Deep Copy / Cloning",
+        "problems": [
+          {
+            "number": 133,
+            "title": "Clone Graph"
+          },
+          {
+            "number": 1334,
+            "title": "Find the City With the Smallest Number of Neighbors at a Threshold Distance"
+          },
+          {
+            "number": 138,
+            "title": "Copy List with Random Pointer"
+          },
+          {
+            "number": 1490,
+            "title": "Clone N-ary Tree"
+          }
+        ]
+      },
+      {
+        "number": 23,
+        "name": "Shortest Path",
+        "problems": [
+          {
+            "number": 743,
+            "title": "Network Delay Time"
+          },
+          {
+            "number": 778,
+            "title": "Swim in Rising Water"
+          },
+          {
+            "number": 1514,
+            "title": "Path with Maximum Probability"
+          },
+          {
+            "number": 1631,
+            "title": "Path With Minimum Effort"
+          },
+          {
+            "number": 1976,
+            "title": "Number of Ways to Arrive at Destination"
+          },
+          {
+            "number": 2045,
+            "title": "Second Minimum Time to Reach Destination"
+          },
+          {
+            "number": 2203,
+            "title": "Minimum Weighted Subgraph With the Required Paths"
+          },
+          {
+            "number": 2290,
+            "title": "Minimum Obstacle Removal to Reach Corner"
+          },
+          {
+            "number": 2577,
+            "title": "Minimum Time to Visit a Cell In a Grid"
+          },
+          {
+            "number": 2812,
+            "title": "Find the Safest Path in a Grid"
+          }
+        ]
+      },
+      {
+        "number": 24,
+        "name": "Shortest Path (Bellman-Ford / BFS+K)",
+        "problems": [
+          {
+            "number": 787,
+            "title": "Cheapest Flights Within K Stops"
+          },
+          {
+            "number": 1129,
+            "title": "Shortest Path with Alternating Colors"
+          }
+        ]
+      },
+      {
+        "number": 25,
+        "name": "Union-Find",
+        "problems": [
+          {
+            "number": 200,
+            "title": "Number of Islands"
+          },
+          {
+            "number": 261,
+            "title": "Graph Valid Tree"
+          },
+          {
+            "number": 305,
+            "title": "Number of Islands II"
+          },
+          {
+            "number": 323,
+            "title": "Number of Connected Components in an Undirected Graph"
+          },
+          {
+            "number": 547,
+            "title": "Number of Provinces"
+          },
+          {
+            "number": 684,
+            "title": "Redundant Connection"
+          },
+          {
+            "number": 721,
+            "title": "Accounts Merge"
+          },
+          {
+            "number": 737,
+            "title": "Sentence Similarity II"
+          },
+          {
+            "number": 947,
+            "title": "Most Stones Removed with Same Row or Column"
+          },
+          {
+            "number": 952,
+            "title": "Largest Component Size by Common Factor"
+          },
+          {
+            "number": 959,
+            "title": "Regions Cut By Slashes"
+          },
+          {
+            "number": 1101,
+            "title": "The Earliest Moment When Everyone Become Friends"
+          }
+        ]
+      },
+      {
+        "number": 26,
+        "name": "Strongly Connected Components (Kosaraju / Tarjan)",
+        "problems": [
+          {
+            "number": 210,
+            "title": "Course Schedule II"
+          },
+          {
+            "number": 547,
+            "title": "Number of Provinces"
+          },
+          {
+            "number": 1192,
+            "title": "Critical Connections in a Network"
+          },
+          {
+            "number": 2127,
+            "title": "Maximum Employees to Be Invited to a Meeting"
+          }
+        ]
+      },
+      {
+        "number": 27,
+        "name": "Bridges & Articulation Points (Tarjan low-link)",
+        "problems": [
+          {
+            "number": 1192,
+            "title": "Critical Connections in a Network"
+          },
+          {
+            "number": 2360,
+            "title": "Longest Cycle in a Graph"
+          }
+        ]
+      },
+      {
+        "number": 28,
+        "name": "Minimum Spanning Tree (Kruskal / Prim / DSU + heap)",
+        "problems": [
+          {
+            "number": 1135,
+            "title": "Connecting Cities With Minimum Cost"
+          },
+          {
+            "number": 1584,
+            "title": "Min Cost to Connect All Points"
+          },
+          {
+            "number": 1168,
+            "title": "Optimize Water Distribution in a Village"
+          },
+          {
+            "number": 1489,
+            "title": "Find Critical and Pseudo-Critical Edges in Minimum Spanning Tree"
+          }
+        ]
+      },
+      {
+        "number": 29,
+        "name": "Bidirectional BFS",
+        "problems": [
+          {
+            "number": 127,
+            "title": "Word Ladder"
+          },
+          {
+            "number": 126,
+            "title": "Word Ladder II"
+          },
+          {
+            "number": 815,
+            "title": "Bus Routes V. Dynamic Programming (DP) Patterns"
+          }
+        ]
+      },
+      {
+        "number": 30,
+        "name": "Fibonacci Style",
+        "problems": [
+          {
+            "number": 70,
+            "title": "Climbing Stairs"
+          },
+          {
+            "number": 91,
+            "title": "Decode Ways"
+          },
+          {
+            "number": 198,
+            "title": "House Robber"
+          },
+          {
+            "number": 213,
+            "title": "House Robber II"
+          },
+          {
+            "number": 337,
+            "title": "House Robber III"
+          },
+          {
+            "number": 509,
+            "title": "Fibonacci Number"
+          },
+          {
+            "number": 740,
+            "title": "Delete and Earn"
+          },
+          {
+            "number": 746,
+            "title": "Min Cost Climbing Stairs"
+          }
+        ]
+      },
+      {
+        "number": 31,
+        "name": "Kadane's Algorithm for Max/Min Subarray",
+        "problems": [
+          {
+            "number": 53,
+            "title": "Maximum Subarray"
+          },
+          {
+            "number": 918,
+            "title": "Maximum Sum Circular Subarray"
+          },
+          {
+            "number": 2321,
+            "title": "Maximum Score Of Spliced Array"
+          },
+          {
+            "number": 1749,
+            "title": "Maximum Absolute Sum of Any Subarray"
+          },
+          {
+            "number": 152,
+            "title": "Maximum Product Subarray"
+          }
+        ]
+      },
+      {
+        "number": 32,
+        "name": "Coin Change / Unbounded Knapsack Style",
+        "problems": [
+          {
+            "number": 322,
+            "title": "Coin Change"
+          },
+          {
+            "number": 377,
+            "title": "Combination Sum IV"
+          },
+          {
+            "number": 518,
+            "title": "Coin Change II"
+          }
+        ]
+      },
+      {
+        "number": 33,
+        "name": "0/1 Knapsack, Subset Sum Style",
+        "problems": [
+          {
+            "number": 416,
+            "title": "Partition Equal Subset Sum"
+          },
+          {
+            "number": 494,
+            "title": "Target Sum"
+          }
+        ]
+      },
+      {
+        "number": 34,
+        "name": "Word Break Style",
+        "problems": [
+          {
+            "number": 139,
+            "title": "Word Break"
+          },
+          {
+            "number": 140,
+            "title": "Word Break II"
+          }
+        ]
+      },
+      {
+        "number": 35,
+        "name": "Longest Common Subsequence - LCS",
+        "problems": [
+          {
+            "number": 1143,
+            "title": "Longest Common Subsequence"
+          },
+          {
+            "number": 1092,
+            "title": "Shortest Common Supersequence"
+          },
+          {
+            "number": 1312,
+            "title": "Minimum Insertion Steps to Make a String Palindrome"
+          }
+        ]
+      },
+      {
+        "number": 36,
+        "name": "Edit Distance / Levenshtein Distance",
+        "problems": [
+          {
+            "number": 72,
+            "title": "Edit Distance"
+          },
+          {
+            "number": 583,
+            "title": "Delete Operation for Two Strings"
+          },
+          {
+            "number": 712,
+            "title": "Minimum ASCII Delete Sum for Two Strings"
+          }
+        ]
+      },
+      {
+        "number": 37,
+        "name": "Unique Paths on Grid",
+        "problems": [
+          {
+            "number": 62,
+            "title": "Unique Paths"
+          },
+          {
+            "number": 63,
+            "title": "Unique Paths II"
+          },
+          {
+            "number": 64,
+            "title": "Minimum Path Sum"
+          },
+          {
+            "number": 120,
+            "title": "Triangle"
+          },
+          {
+            "number": 221,
+            "title": "Maximal Square"
+          },
+          {
+            "number": 931,
+            "title": "Minimum Falling Path Sum"
+          },
+          {
+            "number": 1277,
+            "title": "Count Square Submatrices with All Ones"
+          }
+        ]
+      },
+      {
+        "number": 38,
+        "name": "Interval DP",
+        "problems": [
+          {
+            "number": 312,
+            "title": "Burst Balloons"
+          },
+          {
+            "number": 546,
+            "title": "Remove Boxes"
+          }
+        ]
+      },
+      {
+        "number": 39,
+        "name": "Catalan Numbers",
+        "problems": [
+          {
+            "number": 95,
+            "title": "Unique Binary Search Trees II"
+          },
+          {
+            "number": 96,
+            "title": "Unique Binary Search Trees"
+          },
+          {
+            "number": 241,
+            "title": "Different Ways to Add Parentheses"
+          }
+        ]
+      },
+      {
+        "number": 40,
+        "name": "Longest Increasing Subsequence",
+        "problems": [
+          {
+            "number": 300,
+            "title": "Longest Increasing Subsequence"
+          },
+          {
+            "number": 354,
+            "title": "Russian Doll Envelopes"
+          },
+          {
+            "number": 1671,
+            "title": "Minimum Number of Removals to Make Mountain Array"
+          },
+          {
+            "number": 2407,
+            "title": "Longest Increasing Subsequence II"
+          }
+        ]
+      },
+      {
+        "number": 41,
+        "name": "Stock problems",
+        "problems": [
+          {
+            "number": 121,
+            "title": "Best Time to Buy and Sell Stock"
+          },
+          {
+            "number": 122,
+            "title": "Best Time to Buy and Sell Stock II"
+          },
+          {
+            "number": 123,
+            "title": "Best Time to Buy and Sell Stock III"
+          },
+          {
+            "number": 188,
+            "title": "Best Time to Buy and Sell Stock IV"
+          },
+          {
+            "number": 309,
+            "title": "Best Time to Buy and Sell Stock with Cooldown VI. Heap (Priority Queue) Patterns"
+          }
+        ]
+      },
+      {
+        "number": 42,
+        "name": "Top K Elements",
+        "problems": [
+          {
+            "number": 215,
+            "title": "Kth Largest Element in an Array"
+          },
+          {
+            "number": 347,
+            "title": "Top K Frequent Elements"
+          },
+          {
+            "number": 451,
+            "title": "Sort Characters By Frequency"
+          },
+          {
+            "number": 506,
+            "title": "Relative Ranks"
+          },
+          {
+            "number": 703,
+            "title": "Kth Largest Element in a Stream"
+          },
+          {
+            "number": 973,
+            "title": "K Closest Points to Origin"
+          },
+          {
+            "number": 1046,
+            "title": "Last Stone Weight"
+          },
+          {
+            "number": 2558,
+            "title": "Take Gifts From the Richest Pile"
+          }
+        ]
+      },
+      {
+        "number": 43,
+        "name": "Two Heaps for Median Finding",
+        "problems": [
+          {
+            "number": 295,
+            "title": "Find Median from Data Stream"
+          },
+          {
+            "number": 1825,
+            "title": "Finding MK Average"
+          }
+        ]
+      },
+      {
+        "number": 44,
+        "name": "K-way Merge",
+        "problems": [
+          {
+            "number": 23,
+            "title": "Merge k Sorted Lists"
+          },
+          {
+            "number": 373,
+            "title": "Find K Pairs with Smallest Sums"
+          },
+          {
+            "number": 378,
+            "title": "Kth Smallest Element in a Sorted Matrix"
+          },
+          {
+            "number": 632,
+            "title": "Smallest Range Covering Elements from K Lists"
+          }
+        ]
+      },
+      {
+        "number": 45,
+        "name": "Scheduling / Minimum Cost",
+        "problems": [
+          {
+            "number": 253,
+            "title": "Meeting Rooms II"
+          },
+          {
+            "number": 767,
+            "title": "Reorganize String"
+          },
+          {
+            "number": 857,
+            "title": "Minimum Cost to Hire K Workers"
+          },
+          {
+            "number": 1642,
+            "title": "Furthest Building You Can Reach"
+          },
+          {
+            "number": 1792,
+            "title": "Maximum Average Pass Ratio"
+          },
+          {
+            "number": 1834,
+            "title": "Single-Threaded CPU"
+          },
+          {
+            "number": 1942,
+            "title": "The Number of the Smallest Unoccupied Chair"
+          },
+          {
+            "number": 2402,
+            "title": "Meeting Rooms III VII. Backtracking Patterns"
+          }
+        ]
+      },
+      {
+        "number": 46,
+        "name": "Subsets (Include/Exclude)",
+        "problems": [
+          {
+            "number": 17,
+            "title": "Letter Combinations of a Phone Number"
+          },
+          {
+            "number": 77,
+            "title": "Combinations"
+          },
+          {
+            "number": 78,
+            "title": "Subsets"
+          },
+          {
+            "number": 90,
+            "title": "Subsets II"
+          }
+        ]
+      },
+      {
+        "number": 47,
+        "name": "Permutations",
+        "problems": [
+          {
+            "number": 31,
+            "title": "Next Permutation"
+          },
+          {
+            "number": 46,
+            "title": "Permutations"
+          },
+          {
+            "number": 60,
+            "title": "Permutation Sequence"
+          }
+        ]
+      },
+      {
+        "number": 48,
+        "name": "Combination Sum",
+        "problems": [
+          {
+            "number": 39,
+            "title": "Combination Sum"
+          },
+          {
+            "number": 40,
+            "title": "Combination Sum II"
+          }
+        ]
+      },
+      {
+        "number": 49,
+        "name": "Parentheses Generation",
+        "problems": [
+          {
+            "number": 22,
+            "title": "Generate Parentheses"
+          },
+          {
+            "number": 301,
+            "title": "Remove Invalid Parentheses"
+          }
+        ]
+      },
+      {
+        "number": 50,
+        "name": "Word Search / Path Finding in Grid",
+        "problems": [
+          {
+            "number": 79,
+            "title": "Word Search"
+          },
+          {
+            "number": 212,
+            "title": "Word Search II"
+          },
+          {
+            "number": 2018,
+            "title": "Check if Word Can Be Placed In Crossword"
+          }
+        ]
+      },
+      {
+        "number": 51,
+        "name": "N-Queens / Constraint Satisfaction",
+        "problems": [
+          {
+            "number": 37,
+            "title": "Sudoku Solver"
+          },
+          {
+            "number": 51,
+            "title": "N-Queens"
+          }
+        ]
+      },
+      {
+        "number": 52,
+        "name": "Palindrome Partitioning",
+        "problems": [
+          {
+            "number": 131,
+            "title": "Palindrome Partitioning"
+          },
+          {
+            "number": 132,
+            "title": "Palindrome Partitioning II"
+          },
+          {
+            "number": 1457,
+            "title": "Pseudo-Palindromic Paths in a Binary Tree VIII. Greedy Patterns"
+          }
+        ]
+      },
+      {
+        "number": 53,
+        "name": "Interval Merging/Scheduling",
+        "problems": [
+          {
+            "number": 56,
+            "title": "Merge Intervals"
+          },
+          {
+            "number": 57,
+            "title": "Insert Interval"
+          },
+          {
+            "number": 759,
+            "title": "Employee Free Time"
+          },
+          {
+            "number": 986,
+            "title": "Interval List Intersections"
+          },
+          {
+            "number": 2406,
+            "title": "Divide Intervals Into Minimum Number of Groups"
+          }
+        ]
+      },
+      {
+        "number": 54,
+        "name": "Jump Game Reachability/Minimization",
+        "problems": [
+          {
+            "number": 45,
+            "title": "Jump Game II"
+          },
+          {
+            "number": 55,
+            "title": "Jump Game"
+          }
+        ]
+      },
+      {
+        "number": 55,
+        "name": "Buy/Sell Stock",
+        "problems": [
+          {
+            "number": 121,
+            "title": "Best Time to Buy and Sell Stock"
+          },
+          {
+            "number": 122,
+            "title": "Best Time to Buy and Sell Stock II"
+          }
+        ]
+      },
+      {
+        "number": 56,
+        "name": "Gas Station Circuit",
+        "problems": [
+          {
+            "number": 134,
+            "title": "Gas Station"
+          },
+          {
+            "number": 2202,
+            "title": "Maximize the Topmost Element After K Moves"
+          }
+        ]
+      },
+      {
+        "number": 57,
+        "name": "Task Scheduling",
+        "problems": [
+          {
+            "number": 621,
+            "title": "Task Scheduler"
+          },
+          {
+            "number": 767,
+            "title": "Reorganize String"
+          },
+          {
+            "number": 1054,
+            "title": "Distant Barcodes"
+          }
+        ]
+      },
+      {
+        "number": 58,
+        "name": "Sorting Based",
+        "problems": [
+          {
+            "number": 455,
+            "title": "Assign Cookies"
+          },
+          {
+            "number": 135,
+            "title": "Candy"
+          },
+          {
+            "number": 406,
+            "title": "Queue Reconstruction by Height"
+          },
+          {
+            "number": 1029,
+            "title": "Two City Scheduling IX. Binary Search Patterns"
+          }
+        ]
+      },
+      {
+        "number": 59,
+        "name": "On Sorted Array/List",
+        "problems": [
+          {
+            "number": 35,
+            "title": "Search Insert Position"
+          },
+          {
+            "number": 69,
+            "title": "Sqrt(x)"
+          },
+          {
+            "number": 74,
+            "title": "Search a 2D Matrix"
+          },
+          {
+            "number": 278,
+            "title": "First Bad Version"
+          },
+          {
+            "number": 374,
+            "title": "Guess Number Higher or Lower"
+          },
+          {
+            "number": 540,
+            "title": "Single Element in a Sorted Array"
+          },
+          {
+            "number": 704,
+            "title": "Binary Search"
+          },
+          {
+            "number": 1539,
+            "title": "Kth Missing Positive Number"
+          }
+        ]
+      },
+      {
+        "number": 60,
+        "name": "Find Min/Max in Rotated Sorted Array",
+        "problems": [
+          {
+            "number": 33,
+            "title": "Search in Rotated Sorted Array"
+          },
+          {
+            "number": 81,
+            "title": "Search in Rotated Sorted Array II"
+          },
+          {
+            "number": 153,
+            "title": "Find Minimum in Rotated Sorted Array"
+          },
+          {
+            "number": 162,
+            "title": "Find Peak Element"
+          },
+          {
+            "number": 852,
+            "title": "Peak Index in a Mountain Array"
+          },
+          {
+            "number": 1095,
+            "title": "Find in Mountain Array"
+          }
+        ]
+      },
+      {
+        "number": 61,
+        "name": "On Answer / Condition Function",
+        "problems": [
+          {
+            "number": 410,
+            "title": "Split Array Largest Sum"
+          },
+          {
+            "number": 774,
+            "title": "Minimize Max Distance to Gas Station"
+          },
+          {
+            "number": 875,
+            "title": "Koko Eating Bananas"
+          },
+          {
+            "number": 1011,
+            "title": "Capacity To Ship Packages 6 Within D Days"
+          },
+          {
+            "number": 1482,
+            "title": "Minimum Number of Days to Make m Bouquets"
+          },
+          {
+            "number": 1760,
+            "title": "Minimum Limit of Balls in a Bag"
+          },
+          {
+            "number": 2064,
+            "title": "Minimized Maximum of Products Distributed to Any Store"
+          },
+          {
+            "number": 2226,
+            "title": "Maximum Candies Allocated to K Children"
+          }
+        ]
+      },
+      {
+        "number": 62,
+        "name": "Find First/Last Occurrence",
+        "problems": [
+          {
+            "number": 34,
+            "title": "Find First and Last Position of Element in Sorted Array"
+          },
+          {
+            "number": 658,
+            "title": "Find K Closest Elements"
+          }
+        ]
+      },
+      {
+        "number": 63,
+        "name": "Median / Kth across Two Sorted Arrays",
+        "problems": [
+          {
+            "number": 4,
+            "title": "Median of Two Sorted Arrays"
+          },
+          {
+            "number": 719,
+            "title": "Find K-th Smallest Pair Distance"
+          },
+          {
+            "number": 378,
+            "title": "Kth Smallest Element in a Sorted Matrix"
+          }
+        ]
+      },
+      {
+        "number": 64,
+        "name": "Valid Parentheses Matching",
+        "problems": [
+          {
+            "number": 20,
+            "title": "Valid Parentheses"
+          },
+          {
+            "number": 32,
+            "title": "Longest Valid Parentheses"
+          },
+          {
+            "number": 921,
+            "title": "Minimum Add to Make Parentheses Valid"
+          },
+          {
+            "number": 1249,
+            "title": "Minimum Remove to Make Valid Parentheses"
+          },
+          {
+            "number": 1963,
+            "title": "Minimum Number of Swaps to Make the String Balanced"
+          }
+        ]
+      },
+      {
+        "number": 65,
+        "name": "Monotonic Stack",
+        "problems": [
+          {
+            "number": 402,
+            "title": "Remove K Digits"
+          },
+          {
+            "number": 496,
+            "title": "Next Greater Element I"
+          },
+          {
+            "number": 503,
+            "title": "Next Greater Element II"
+          },
+          {
+            "number": 739,
+            "title": "Daily Temperatures"
+          },
+          {
+            "number": 901,
+            "title": "Online Stock Span"
+          },
+          {
+            "number": 907,
+            "title": "Sum of Subarray Minimums"
+          },
+          {
+            "number": 962,
+            "title": "Maximum Width Ramp"
+          },
+          {
+            "number": 1475,
+            "title": "Final Prices With a Special Discount in a Shop"
+          },
+          {
+            "number": 1673,
+            "title": "Find the Most Competitive Subsequence"
+          }
+        ]
+      },
+      {
+        "number": 66,
+        "name": "Expression Evaluation",
+        "problems": [
+          {
+            "number": 150,
+            "title": "Evaluate Reverse Polish Notation"
+          },
+          {
+            "number": 224,
+            "title": "Basic Calculator"
+          },
+          {
+            "number": 227,
+            "title": "Basic Calculator II"
+          },
+          {
+            "number": 772,
+            "title": "Basic Calculator III"
+          }
+        ]
+      },
+      {
+        "number": 67,
+        "name": "Simulation / Backtracking Helper",
+        "problems": [
+          {
+            "number": 71,
+            "title": "Simplify Path"
+          },
+          {
+            "number": 394,
+            "title": "Decode String"
+          },
+          {
+            "number": 735,
+            "title": "Asteroid Collision"
+          }
+        ]
+      },
+      {
+        "number": 68,
+        "name": "Min Stack Design",
+        "problems": [
+          {
+            "number": 155,
+            "title": "Min Stack"
+          },
+          {
+            "number": 895,
+            "title": "Maximum Frequency Stack"
+          },
+          {
+            "number": 901,
+            "title": "Online Stock Span"
+          }
+        ]
+      },
+      {
+        "number": 69,
+        "name": "Largest Rectangle in Histogram",
+        "problems": [
+          {
+            "number": 84,
+            "title": "Largest Rectangle in Histogram"
+          },
+          {
+            "number": 85,
+            "title": "Maximal Rectangle XI. Bit Manipulation Patterns"
+          }
+        ]
+      },
+      {
+        "number": 70,
+        "name": "Bitwise XOR - Finding Single/Missing Number",
+        "problems": [
+          {
+            "number": 136,
+            "title": "Single Number"
+          },
+          {
+            "number": 137,
+            "title": "Single Number II"
+          },
+          {
+            "number": 268,
+            "title": "Missing Number"
+          },
+          {
+            "number": 389,
+            "title": "Find the Difference"
+          }
+        ]
+      },
+      {
+        "number": 71,
+        "name": "Bitwise AND - Counting Set Bits (Hamming Weight)",
+        "problems": [
+          {
+            "number": 191,
+            "title": "Number of 1 Bits"
+          },
+          {
+            "number": 231,
+            "title": "Power of Two"
+          },
+          {
+            "number": 477,
+            "title": "Total Hamming Distance"
+          }
+        ]
+      },
+      {
+        "number": 72,
+        "name": "Bitwise DP - Counting Bits Optimization",
+        "problems": [
+          {
+            "number": 338,
+            "title": "Counting Bits"
+          },
+          {
+            "number": 1494,
+            "title": "Parallel Courses II"
+          },
+          {
+            "number": 1442,
+            "title": "Count Triplets That Can Form Two Arrays of Equal XOR"
+          }
+        ]
+      },
+      {
+        "number": 73,
+        "name": "Bitwise Operations - Power of Two/Four Check",
+        "problems": [
+          {
+            "number": 231,
+            "title": "Power of Two"
+          },
+          {
+            "number": 342,
+            "title": "Power of Four XII. Linked List Manipulation Patterns"
+          }
+        ]
+      },
+      {
+        "number": 74,
+        "name": "In-place Reversal",
+        "problems": [
+          {
+            "number": 83,
+            "title": "Remove Duplicates from Sorted List"
+          },
+          {
+            "number": 92,
+            "title": "Reverse Linked List II"
+          },
+          {
+            "number": 206,
+            "title": "Reverse Linked List"
+          },
+          {
+            "number": 25,
+            "title": "Reverse Nodes in k-Group"
+          },
+          {
+            "number": 234,
+            "title": "Palindrome Linked List"
+          },
+          {
+            "number": 82,
+            "title": "Remove Duplicates from Sorted List II"
+          }
+        ]
+      },
+      {
+        "number": 75,
+        "name": "Merging Two Sorted Lists",
+        "problems": [
+          {
+            "number": 21,
+            "title": "Merge Two Sorted Lists"
+          }
+        ]
+      },
+      {
+        "number": 76,
+        "name": "Addition of Numbers",
+        "problems": [
+          {
+            "number": 2,
+            "title": "Add Two Numbers"
+          },
+          {
+            "number": 369,
+            "title": "Plus One Linked List"
+          }
+        ]
+      },
+      {
+        "number": 77,
+        "name": "Intersection Detection",
+        "problems": [
+          {
+            "number": 160,
+            "title": "Intersection of Two Linked Lists"
+          },
+          {
+            "number": 599,
+            "title": "Minimum Index Sum of Two Lists"
+          }
+        ]
+      },
+      {
+        "number": 78,
+        "name": "Reordering / Partitioning",
+        "problems": [
+          {
+            "number": 24,
+            "title": "Swap Nodes in Pairs"
+          },
+          {
+            "number": 61,
+            "title": "Rotate List"
+          },
+          {
+            "number": 86,
+            "title": "Partition List"
+          },
+          {
+            "number": 143,
+            "title": "Reorder List"
+          },
+          {
+            "number": 328,
+            "title": "Odd Even Linked List XIII. Array/Matrix Manipulation Patterns"
+          }
+        ]
+      },
+      {
+        "number": 79,
+        "name": "In-place Rotation",
+        "problems": [
+          {
+            "number": 48,
+            "title": "Rotate Image"
+          },
+          {
+            "number": 189,
+            "title": "Rotate Array"
+          },
+          {
+            "number": 867,
+            "title": "Transpose Matrix"
+          }
+        ]
+      },
+      {
+        "number": 80,
+        "name": "Spiral Traversal",
+        "problems": [
+          {
+            "number": 54,
+            "title": "Spiral Matrix"
+          },
+          {
+            "number": 59,
+            "title": "Spiral Matrix II"
+          },
+          {
+            "number": 885,
+            "title": "Spiral Matrix III"
+          },
+          {
+            "number": 2326,
+            "title": "Spiral Matrix IV"
+          }
+        ]
+      },
+      {
+        "number": 81,
+        "name": "In-place Marking",
+        "problems": [
+          {
+            "number": 73,
+            "title": "Set Matrix Zeroes"
+          },
+          {
+            "number": 289,
+            "title": "Game of Life"
+          },
+          {
+            "number": 498,
+            "title": "Diagonal Traverse"
+          }
+        ]
+      },
+      {
+        "number": 82,
+        "name": "Prefix/Suffix Products",
+        "problems": [
+          {
+            "number": 238,
+            "title": "Product of Array Except Self"
+          },
+          {
+            "number": 845,
+            "title": "Longest Mountain in Array"
+          },
+          {
+            "number": 2483,
+            "title": "Minimum Penalty for a Shop"
+          }
+        ]
+      },
+      {
+        "number": 83,
+        "name": "Plus One",
+        "problems": [
+          {
+            "number": 66,
+            "title": "Plus One"
+          },
+          {
+            "number": 43,
+            "title": "Multiply Strings"
+          },
+          {
+            "number": 989,
+            "title": "Add to Array-Form of Integer"
+          },
+          {
+            "number": 67,
+            "title": "Add Binary"
+          }
+        ]
+      },
+      {
+        "number": 84,
+        "name": "In-place from End",
+        "problems": [
+          {
+            "number": 88,
+            "title": "Merge Sorted Array"
+          },
+          {
+            "number": 977,
+            "title": "Squares of a Sorted Array"
+          }
+        ]
+      },
+      {
+        "number": 85,
+        "name": "Cyclic Sort",
+        "problems": [
+          {
+            "number": 41,
+            "title": "First Missing Positive"
+          },
+          {
+            "number": 268,
+            "title": "Missing Number"
+          },
+          {
+            "number": 287,
+            "title": "Find the Duplicate Number"
+          },
+          {
+            "number": 442,
+            "title": "Find All Duplicates in an Array"
+          },
+          {
+            "number": 448,
+            "title": "Find All Numbers Disappeared in an Array XIV. String Manipulation Patterns"
+          }
+        ]
+      },
+      {
+        "number": 86,
+        "name": "Palindrome Check",
+        "problems": [
+          {
+            "number": 9,
+            "title": "Palindrome Number"
+          },
+          {
+            "number": 125,
+            "title": "Valid Palindrome"
+          },
+          {
+            "number": 680,
+            "title": "Valid Palindrome II"
+          }
+        ]
+      },
+      {
+        "number": 87,
+        "name": "Anagram Check",
+        "problems": [
+          {
+            "number": 49,
+            "title": "Group Anagrams"
+          },
+          {
+            "number": 242,
+            "title": "Valid Anagram"
+          }
+        ]
+      },
+      {
+        "number": 88,
+        "name": "Roman to Integer Conversion",
+        "problems": [
+          {
+            "number": 13,
+            "title": "Roman to Integer"
+          },
+          {
+            "number": 12,
+            "title": "Integer to Roman"
+          }
+        ]
+      },
+      {
+        "number": 89,
+        "name": "String to Integer (atoi)",
+        "problems": [
+          {
+            "number": 8,
+            "title": "String to Integer (atoi)"
+          },
+          {
+            "number": 65,
+            "title": "Valid Number"
+          }
+        ]
+      },
+      {
+        "number": 90,
+        "name": "Manual Simulation",
+        "problems": [
+          {
+            "number": 43,
+            "title": "Multiply Strings"
+          },
+          {
+            "number": 415,
+            "title": "Add Strings"
+          },
+          {
+            "number": 67,
+            "title": "Add Binary"
+          }
+        ]
+      },
+      {
+        "number": 91,
+        "name": "String Matching - Naive / KMP / Rabin-Karp",
+        "problems": [
+          {
+            "number": 28,
+            "title": "Find the Index of the First Occurrence in a String"
+          },
+          {
+            "number": 214,
+            "title": "Shortest Palindrome"
+          },
+          {
+            "number": 686,
+            "title": "Repeated String Match"
+          },
+          {
+            "number": 796,
+            "title": "Rotate String"
+          },
+          {
+            "number": 3008,
+            "title": "Find Beautiful Indices in the Given Array II"
+          }
+        ]
+      },
+      {
+        "number": 92,
+        "name": "Repeated Substring Pattern Detection",
+        "problems": [
+          {
+            "number": 459,
+            "title": "Repeated Substring Pattern"
+          },
+          {
+            "number": 28,
+            "title": "Find the Index of the First Occurrence in a String"
+          },
+          {
+            "number": 686,
+            "title": "Repeated String Match XV. Design Patterns"
+          }
+        ]
+      },
+      {
+        "number": 93,
+        "name": "Design (General/Specific)",
+        "problems": [
+          {
+            "number": 146,
+            "title": "LRU Cache"
+          },
+          {
+            "number": 155,
+            "title": "Min Stack"
+          },
+          {
+            "number": 225,
+            "title": "Implement Stack using Queues"
+          },
+          {
+            "number": 232,
+            "title": "Implement Queue using Stacks"
+          },
+          {
+            "number": 251,
+            "title": "Flatten 2D Vector"
+          },
+          {
+            "number": 271,
+            "title": "Encode and Decode Strings"
+          },
+          {
+            "number": 295,
+            "title": "Find Median from Data Stream"
+          },
+          {
+            "number": 341,
+            "title": "Flatten Nested List Iterator"
+          },
+          {
+            "number": 346,
+            "title": "Moving Average from Data Stream"
+          },
+          {
+            "number": 353,
+            "title": "Design Snake Game"
+          },
+          {
+            "number": 359,
+            "title": "Logger Rate Limiter"
+          },
+          {
+            "number": 362,
+            "title": "Design Hit Counter"
+          },
+          {
+            "number": 379,
+            "title": "Design Phone Directory"
+          },
+          {
+            "number": 380,
+            "title": "Insert Delete GetRandom O(1)"
+          },
+          {
+            "number": 432,
+            "title": "All O`one Data Structure"
+          },
+          {
+            "number": 460,
+            "title": "LFU Cache"
+          },
+          {
+            "number": 604,
+            "title": "Design Compressed String Iterator"
+          },
+          {
+            "number": 622,
+            "title": "Design Circular Queue"
+          },
+          {
+            "number": 641,
+            "title": "Design Circular Deque"
+          },
+          {
+            "number": 642,
+            "title": "Design Search Autocomplete System"
+          },
+          {
+            "number": 706,
+            "title": "Design HashMap"
+          },
+          {
+            "number": 715,
+            "title": "Range Module"
+          },
+          {
+            "number": 900,
+            "title": "RLE Iterator"
+          },
+          {
+            "number": 981,
+            "title": "Time Based Key-Value Store"
+          },
+          {
+            "number": 1146,
+            "title": "Snapshot Array"
+          },
+          {
+            "number": 1348,
+            "title": "Tweet Counts Per Frequency"
+          },
+          {
+            "number": 1352,
+            "title": "Product of the Last K Numbers"
+          },
+          {
+            "number": 1381,
+            "title": "Design a Stack With Increment Operation"
+          },
+          {
+            "number": 1756,
+            "title": "Design Most Recently Used Queue"
+          },
+          {
+            "number": 2013,
+            "title": "Detect Squares"
+          },
+          {
+            "number": 2034,
+            "title": "Stock Price Fluctuation"
+          },
+          {
+            "number": 2296,
+            "title": "Design a Text Editor"
+          },
+          {
+            "number": 2336,
+            "title": "Smallest Number in Infinite Set"
+          }
+        ]
+      },
+      {
+        "number": 94,
+        "name": "Tries",
+        "problems": [
+          {
+            "number": 208,
+            "title": "Implement Trie (Prefix Tree)"
+          },
+          {
+            "number": 211,
+            "title": "Design Add and Search Words Data Structure"
+          },
+          {
+            "number": 720,
+            "title": "Longest Word in Dictionary"
+          },
+          {
+            "number": 648,
+            "title": "Replace Words"
+          },
+          {
+            "number": 425,
+            "title": "Word Squares"
+          },
+          {
+            "number": 642,
+            "title": "Design Search Autocomplete System"
+          },
+          {
+            "number": 745,
+            "title": "Prefix and Suffix Search"
+          }
+        ]
+      }
+    ],
+    "problem_to_patterns": {
+      "11": [
+        "Converging"
+      ],
+      "15": [
+        "Converging"
+      ],
+      "16": [
+        "Converging"
+      ],
+      "18": [
+        "Converging"
+      ],
+      "167": [
+        "Converging"
+      ],
+      "349": [
+        "Converging"
+      ],
+      "881": [
+        "Converging"
+      ],
+      "977": [
+        "Converging",
+        "In-place from End"
+      ],
+      "259": [
+        "Converging"
+      ],
+      "141": [
+        "Fast & Slow"
+      ],
+      "202": [
+        "Fast & Slow"
+      ],
+      "287": [
+        "Fast & Slow",
+        "Cyclic Sort"
+      ],
+      "392": [
+        "Fast & Slow"
+      ],
+      "19": [
+        "Fixed Separation"
+      ],
+      "876": [
+        "Fixed Separation"
+      ],
+      "2095": [
+        "Fixed Separation"
+      ],
+      "26": [
+        "In-place Array Modification"
+      ],
+      "27": [
+        "In-place Array Modification"
+      ],
+      "75": [
+        "In-place Array Modification"
+      ],
+      "80": [
+        "In-place Array Modification"
+      ],
+      "283": [
+        "In-place Array Modification"
+      ],
+      "443": [
+        "In-place Array Modification"
+      ],
+      "905": [
+        "In-place Array Modification"
+      ],
+      "2337": [
+        "In-place Array Modification"
+      ],
+      "2938": [
+        "In-place Array Modification"
+      ],
+      "844": [
+        "String Comparison with special characters"
+      ],
+      "1598": [
+        "String Comparison with special characters"
+      ],
+      "2390": [
+        "String Comparison with special characters"
+      ],
+      "5": [
+        "Expanding From Center"
+      ],
+      "647": [
+        "Expanding From Center"
+      ],
+      "151": [
+        "String Reversal"
+      ],
+      "344": [
+        "String Reversal"
+      ],
+      "345": [
+        "String Reversal"
+      ],
+      "541": [
+        "String Reversal"
+      ],
+      "346": [
+        "Fixed Size",
+        "Design (General/Specific)"
+      ],
+      "643": [
+        "Fixed Size"
+      ],
+      "2985": [
+        "Fixed Size"
+      ],
+      "3254": [
+        "Fixed Size"
+      ],
+      "3318": [
+        "Fixed Size"
+      ],
+      "3": [
+        "Variable Size"
+      ],
+      "76": [
+        "Variable Size"
+      ],
+      "209": [
+        "Variable Size"
+      ],
+      "219": [
+        "Variable Size"
+      ],
+      "424": [
+        "Variable Size"
+      ],
+      "713": [
+        "Variable Size"
+      ],
+      "904": [
+        "Variable Size"
+      ],
+      "1004": [
+        "Variable Size"
+      ],
+      "1438": [
+        "Variable Size"
+      ],
+      "1493": [
+        "Variable Size"
+      ],
+      "1658": [
+        "Variable Size"
+      ],
+      "1838": [
+        "Variable Size"
+      ],
+      "2461": [
+        "Variable Size"
+      ],
+      "2516": [
+        "Variable Size"
+      ],
+      "2762": [
+        "Variable Size"
+      ],
+      "2779": [
+        "Variable Size"
+      ],
+      "2981": [
+        "Variable Size"
+      ],
+      "3026": [
+        "Variable Size"
+      ],
+      "3346": [
+        "Variable Size"
+      ],
+      "3347": [
+        "Variable Size"
+      ],
+      "239": [
+        "Monotonic Queue for Max/Min"
+      ],
+      "862": [
+        "Monotonic Queue for Max/Min"
+      ],
+      "1696": [
+        "Monotonic Queue for Max/Min"
+      ],
+      "1": [
+        "Character Frequency Matching"
+      ],
+      "438": [
+        "Character Frequency Matching"
+      ],
+      "567": [
+        "Character Frequency Matching"
+      ],
+      "102": [
+        "Level Order Traversal"
+      ],
+      "103": [
+        "Level Order Traversal"
+      ],
+      "199": [
+        "Level Order Traversal"
+      ],
+      "515": [
+        "Level Order Traversal"
+      ],
+      "1161": [
+        "Level Order Traversal"
+      ],
+      "100": [
+        "Recursive Preorder Traversal"
+      ],
+      "101": [
+        "Recursive Preorder Traversal"
+      ],
+      "105": [
+        "Recursive Preorder Traversal"
+      ],
+      "114": [
+        "Recursive Preorder Traversal"
+      ],
+      "226": [
+        "Recursive Preorder Traversal"
+      ],
+      "257": [
+        "Recursive Preorder Traversal"
+      ],
+      "988": [
+        "Recursive Preorder Traversal"
+      ],
+      "94": [
+        "Recursive Inorder Traversal"
+      ],
+      "98": [
+        "Recursive Inorder Traversal"
+      ],
+      "173": [
+        "Recursive Inorder Traversal"
+      ],
+      "230": [
+        "Recursive Inorder Traversal"
+      ],
+      "501": [
+        "Recursive Inorder Traversal"
+      ],
+      "530": [
+        "Recursive Inorder Traversal"
+      ],
+      "104": [
+        "Recursive Postorder Traversal"
+      ],
+      "110": [
+        "Recursive Postorder Traversal"
+      ],
+      "124": [
+        "Recursive Postorder Traversal"
+      ],
+      "145": [
+        "Recursive Postorder Traversal"
+      ],
+      "337": [
+        "Recursive Postorder Traversal",
+        "Fibonacci Style"
+      ],
+      "366": [
+        "Recursive Postorder Traversal"
+      ],
+      "543": [
+        "Recursive Postorder Traversal"
+      ],
+      "863": [
+        "Recursive Postorder Traversal"
+      ],
+      "1110": [
+        "Recursive Postorder Traversal"
+      ],
+      "2458": [
+        "Recursive Postorder Traversal"
+      ],
+      "235": [
+        "Lowest Common Ancestor"
+      ],
+      "236": [
+        "Lowest Common Ancestor"
+      ],
+      "297": [
+        "Serialization and Deserialization"
+      ],
+      "572": [
+        "Serialization and Deserialization"
+      ],
+      "652": [
+        "Serialization and Deserialization"
+      ],
+      "130": [
+        "DFS - Connected Components / Island Counting"
+      ],
+      "200": [
+        "DFS - Connected Components / Island Counting",
+        "Union-Find"
+      ],
+      "417": [
+        "DFS - Connected Components / Island Counting"
+      ],
+      "547": [
+        "DFS - Connected Components / Island Counting",
+        "Union-Find",
+        "Strongly Connected Components (Kosaraju / Tarjan)"
+      ],
+      "695": [
+        "DFS - Connected Components / Island Counting"
+      ],
+      "733": [
+        "DFS - Connected Components / Island Counting"
+      ],
+      "841": [
+        "DFS - Connected Components / Island Counting"
+      ],
+      "1020": [
+        "DFS - Connected Components / Island Counting"
+      ],
+      "1254": [
+        "DFS - Connected Components / Island Counting"
+      ],
+      "1905": [
+        "DFS - Connected Components / Island Counting"
+      ],
+      "2101": [
+        "DFS - Connected Components / Island Counting"
+      ],
+      "542": [
+        "BFS - Connected Components / Island Counting"
+      ],
+      "994": [
+        "BFS - Connected Components / Island Counting"
+      ],
+      "1091": [
+        "BFS - Connected Components / Island Counting"
+      ],
+      "207": [
+        "DFS - Cycle Detection"
+      ],
+      "210": [
+        "DFS - Cycle Detection",
+        "BFS - Topological Sort(Kahn's Algorithm)",
+        "Strongly Connected Components (Kosaraju / Tarjan)"
+      ],
+      "802": [
+        "DFS - Cycle Detection"
+      ],
+      "1059": [
+        "DFS - Cycle Detection"
+      ],
+      "269": [
+        "BFS - Topological Sort(Kahn's Algorithm)"
+      ],
+      "310": [
+        "BFS - Topological Sort(Kahn's Algorithm)"
+      ],
+      "444": [
+        "BFS - Topological Sort(Kahn's Algorithm)"
+      ],
+      "1136": [
+        "BFS - Topological Sort(Kahn's Algorithm)"
+      ],
+      "1857": [
+        "BFS - Topological Sort(Kahn's Algorithm)"
+      ],
+      "2050": [
+        "BFS - Topological Sort(Kahn's Algorithm)"
+      ],
+      "2115": [
+        "BFS - Topological Sort(Kahn's Algorithm)"
+      ],
+      "2392": [
+        "BFS - Topological Sort(Kahn's Algorithm)"
+      ],
+      "133": [
+        "Deep Copy / Cloning"
+      ],
+      "1334": [
+        "Deep Copy / Cloning"
+      ],
+      "138": [
+        "Deep Copy / Cloning"
+      ],
+      "1490": [
+        "Deep Copy / Cloning"
+      ],
+      "743": [
+        "Shortest Path"
+      ],
+      "778": [
+        "Shortest Path"
+      ],
+      "1514": [
+        "Shortest Path"
+      ],
+      "1631": [
+        "Shortest Path"
+      ],
+      "1976": [
+        "Shortest Path"
+      ],
+      "2045": [
+        "Shortest Path"
+      ],
+      "2203": [
+        "Shortest Path"
+      ],
+      "2290": [
+        "Shortest Path"
+      ],
+      "2577": [
+        "Shortest Path"
+      ],
+      "2812": [
+        "Shortest Path"
+      ],
+      "787": [
+        "Shortest Path (Bellman-Ford / BFS+K)"
+      ],
+      "1129": [
+        "Shortest Path (Bellman-Ford / BFS+K)"
+      ],
+      "261": [
+        "Union-Find"
+      ],
+      "305": [
+        "Union-Find"
+      ],
+      "323": [
+        "Union-Find"
+      ],
+      "684": [
+        "Union-Find"
+      ],
+      "721": [
+        "Union-Find"
+      ],
+      "737": [
+        "Union-Find"
+      ],
+      "947": [
+        "Union-Find"
+      ],
+      "952": [
+        "Union-Find"
+      ],
+      "959": [
+        "Union-Find"
+      ],
+      "1101": [
+        "Union-Find"
+      ],
+      "1192": [
+        "Strongly Connected Components (Kosaraju / Tarjan)",
+        "Bridges & Articulation Points (Tarjan low-link)"
+      ],
+      "2127": [
+        "Strongly Connected Components (Kosaraju / Tarjan)"
+      ],
+      "2360": [
+        "Bridges & Articulation Points (Tarjan low-link)"
+      ],
+      "1135": [
+        "Minimum Spanning Tree (Kruskal / Prim / DSU + heap)"
+      ],
+      "1584": [
+        "Minimum Spanning Tree (Kruskal / Prim / DSU + heap)"
+      ],
+      "1168": [
+        "Minimum Spanning Tree (Kruskal / Prim / DSU + heap)"
+      ],
+      "1489": [
+        "Minimum Spanning Tree (Kruskal / Prim / DSU + heap)"
+      ],
+      "127": [
+        "Bidirectional BFS"
+      ],
+      "126": [
+        "Bidirectional BFS"
+      ],
+      "815": [
+        "Bidirectional BFS"
+      ],
+      "70": [
+        "Fibonacci Style"
+      ],
+      "91": [
+        "Fibonacci Style"
+      ],
+      "198": [
+        "Fibonacci Style"
+      ],
+      "213": [
+        "Fibonacci Style"
+      ],
+      "509": [
+        "Fibonacci Style"
+      ],
+      "740": [
+        "Fibonacci Style"
+      ],
+      "746": [
+        "Fibonacci Style"
+      ],
+      "53": [
+        "Kadane's Algorithm for Max/Min Subarray"
+      ],
+      "918": [
+        "Kadane's Algorithm for Max/Min Subarray"
+      ],
+      "2321": [
+        "Kadane's Algorithm for Max/Min Subarray"
+      ],
+      "1749": [
+        "Kadane's Algorithm for Max/Min Subarray"
+      ],
+      "152": [
+        "Kadane's Algorithm for Max/Min Subarray"
+      ],
+      "322": [
+        "Coin Change / Unbounded Knapsack Style"
+      ],
+      "377": [
+        "Coin Change / Unbounded Knapsack Style"
+      ],
+      "518": [
+        "Coin Change / Unbounded Knapsack Style"
+      ],
+      "416": [
+        "0/1 Knapsack, Subset Sum Style"
+      ],
+      "494": [
+        "0/1 Knapsack, Subset Sum Style"
+      ],
+      "139": [
+        "Word Break Style"
+      ],
+      "140": [
+        "Word Break Style"
+      ],
+      "1143": [
+        "Longest Common Subsequence - LCS"
+      ],
+      "1092": [
+        "Longest Common Subsequence - LCS"
+      ],
+      "1312": [
+        "Longest Common Subsequence - LCS"
+      ],
+      "72": [
+        "Edit Distance / Levenshtein Distance"
+      ],
+      "583": [
+        "Edit Distance / Levenshtein Distance"
+      ],
+      "712": [
+        "Edit Distance / Levenshtein Distance"
+      ],
+      "62": [
+        "Unique Paths on Grid"
+      ],
+      "63": [
+        "Unique Paths on Grid"
+      ],
+      "64": [
+        "Unique Paths on Grid"
+      ],
+      "120": [
+        "Unique Paths on Grid"
+      ],
+      "221": [
+        "Unique Paths on Grid"
+      ],
+      "931": [
+        "Unique Paths on Grid"
+      ],
+      "1277": [
+        "Unique Paths on Grid"
+      ],
+      "312": [
+        "Interval DP"
+      ],
+      "546": [
+        "Interval DP"
+      ],
+      "95": [
+        "Catalan Numbers"
+      ],
+      "96": [
+        "Catalan Numbers"
+      ],
+      "241": [
+        "Catalan Numbers"
+      ],
+      "300": [
+        "Longest Increasing Subsequence"
+      ],
+      "354": [
+        "Longest Increasing Subsequence"
+      ],
+      "1671": [
+        "Longest Increasing Subsequence"
+      ],
+      "2407": [
+        "Longest Increasing Subsequence"
+      ],
+      "121": [
+        "Stock problems",
+        "Buy/Sell Stock"
+      ],
+      "122": [
+        "Stock problems",
+        "Buy/Sell Stock"
+      ],
+      "123": [
+        "Stock problems"
+      ],
+      "188": [
+        "Stock problems"
+      ],
+      "309": [
+        "Stock problems"
+      ],
+      "215": [
+        "Top K Elements"
+      ],
+      "347": [
+        "Top K Elements"
+      ],
+      "451": [
+        "Top K Elements"
+      ],
+      "506": [
+        "Top K Elements"
+      ],
+      "703": [
+        "Top K Elements"
+      ],
+      "973": [
+        "Top K Elements"
+      ],
+      "1046": [
+        "Top K Elements"
+      ],
+      "2558": [
+        "Top K Elements"
+      ],
+      "295": [
+        "Two Heaps for Median Finding",
+        "Design (General/Specific)"
+      ],
+      "1825": [
+        "Two Heaps for Median Finding"
+      ],
+      "23": [
+        "K-way Merge"
+      ],
+      "373": [
+        "K-way Merge"
+      ],
+      "378": [
+        "K-way Merge",
+        "Median / Kth across Two Sorted Arrays"
+      ],
+      "632": [
+        "K-way Merge"
+      ],
+      "253": [
+        "Scheduling / Minimum Cost"
+      ],
+      "767": [
+        "Scheduling / Minimum Cost",
+        "Task Scheduling"
+      ],
+      "857": [
+        "Scheduling / Minimum Cost"
+      ],
+      "1642": [
+        "Scheduling / Minimum Cost"
+      ],
+      "1792": [
+        "Scheduling / Minimum Cost"
+      ],
+      "1834": [
+        "Scheduling / Minimum Cost"
+      ],
+      "1942": [
+        "Scheduling / Minimum Cost"
+      ],
+      "2402": [
+        "Scheduling / Minimum Cost"
+      ],
+      "17": [
+        "Subsets (Include/Exclude)"
+      ],
+      "77": [
+        "Subsets (Include/Exclude)"
+      ],
+      "78": [
+        "Subsets (Include/Exclude)"
+      ],
+      "90": [
+        "Subsets (Include/Exclude)"
+      ],
+      "31": [
+        "Permutations"
+      ],
+      "46": [
+        "Permutations"
+      ],
+      "60": [
+        "Permutations"
+      ],
+      "39": [
+        "Combination Sum"
+      ],
+      "40": [
+        "Combination Sum"
+      ],
+      "22": [
+        "Parentheses Generation"
+      ],
+      "301": [
+        "Parentheses Generation"
+      ],
+      "79": [
+        "Word Search / Path Finding in Grid"
+      ],
+      "212": [
+        "Word Search / Path Finding in Grid"
+      ],
+      "2018": [
+        "Word Search / Path Finding in Grid"
+      ],
+      "37": [
+        "N-Queens / Constraint Satisfaction"
+      ],
+      "51": [
+        "N-Queens / Constraint Satisfaction"
+      ],
+      "131": [
+        "Palindrome Partitioning"
+      ],
+      "132": [
+        "Palindrome Partitioning"
+      ],
+      "1457": [
+        "Palindrome Partitioning"
+      ],
+      "56": [
+        "Interval Merging/Scheduling"
+      ],
+      "57": [
+        "Interval Merging/Scheduling"
+      ],
+      "759": [
+        "Interval Merging/Scheduling"
+      ],
+      "986": [
+        "Interval Merging/Scheduling"
+      ],
+      "2406": [
+        "Interval Merging/Scheduling"
+      ],
+      "45": [
+        "Jump Game Reachability/Minimization"
+      ],
+      "55": [
+        "Jump Game Reachability/Minimization"
+      ],
+      "134": [
+        "Gas Station Circuit"
+      ],
+      "2202": [
+        "Gas Station Circuit"
+      ],
+      "621": [
+        "Task Scheduling"
+      ],
+      "1054": [
+        "Task Scheduling"
+      ],
+      "455": [
+        "Sorting Based"
+      ],
+      "135": [
+        "Sorting Based"
+      ],
+      "406": [
+        "Sorting Based"
+      ],
+      "1029": [
+        "Sorting Based"
+      ],
+      "35": [
+        "On Sorted Array/List"
+      ],
+      "69": [
+        "On Sorted Array/List"
+      ],
+      "74": [
+        "On Sorted Array/List"
+      ],
+      "278": [
+        "On Sorted Array/List"
+      ],
+      "374": [
+        "On Sorted Array/List"
+      ],
+      "540": [
+        "On Sorted Array/List"
+      ],
+      "704": [
+        "On Sorted Array/List"
+      ],
+      "1539": [
+        "On Sorted Array/List"
+      ],
+      "33": [
+        "Find Min/Max in Rotated Sorted Array"
+      ],
+      "81": [
+        "Find Min/Max in Rotated Sorted Array"
+      ],
+      "153": [
+        "Find Min/Max in Rotated Sorted Array"
+      ],
+      "162": [
+        "Find Min/Max in Rotated Sorted Array"
+      ],
+      "852": [
+        "Find Min/Max in Rotated Sorted Array"
+      ],
+      "1095": [
+        "Find Min/Max in Rotated Sorted Array"
+      ],
+      "410": [
+        "On Answer / Condition Function"
+      ],
+      "774": [
+        "On Answer / Condition Function"
+      ],
+      "875": [
+        "On Answer / Condition Function"
+      ],
+      "1011": [
+        "On Answer / Condition Function"
+      ],
+      "1482": [
+        "On Answer / Condition Function"
+      ],
+      "1760": [
+        "On Answer / Condition Function"
+      ],
+      "2064": [
+        "On Answer / Condition Function"
+      ],
+      "2226": [
+        "On Answer / Condition Function"
+      ],
+      "34": [
+        "Find First/Last Occurrence"
+      ],
+      "658": [
+        "Find First/Last Occurrence"
+      ],
+      "4": [
+        "Median / Kth across Two Sorted Arrays"
+      ],
+      "719": [
+        "Median / Kth across Two Sorted Arrays"
+      ],
+      "20": [
+        "Valid Parentheses Matching"
+      ],
+      "32": [
+        "Valid Parentheses Matching"
+      ],
+      "921": [
+        "Valid Parentheses Matching"
+      ],
+      "1249": [
+        "Valid Parentheses Matching"
+      ],
+      "1963": [
+        "Valid Parentheses Matching"
+      ],
+      "402": [
+        "Monotonic Stack"
+      ],
+      "496": [
+        "Monotonic Stack"
+      ],
+      "503": [
+        "Monotonic Stack"
+      ],
+      "739": [
+        "Monotonic Stack"
+      ],
+      "901": [
+        "Monotonic Stack",
+        "Min Stack Design"
+      ],
+      "907": [
+        "Monotonic Stack"
+      ],
+      "962": [
+        "Monotonic Stack"
+      ],
+      "1475": [
+        "Monotonic Stack"
+      ],
+      "1673": [
+        "Monotonic Stack"
+      ],
+      "150": [
+        "Expression Evaluation"
+      ],
+      "224": [
+        "Expression Evaluation"
+      ],
+      "227": [
+        "Expression Evaluation"
+      ],
+      "772": [
+        "Expression Evaluation"
+      ],
+      "71": [
+        "Simulation / Backtracking Helper"
+      ],
+      "394": [
+        "Simulation / Backtracking Helper"
+      ],
+      "735": [
+        "Simulation / Backtracking Helper"
+      ],
+      "155": [
+        "Min Stack Design",
+        "Design (General/Specific)"
+      ],
+      "895": [
+        "Min Stack Design"
+      ],
+      "84": [
+        "Largest Rectangle in Histogram"
+      ],
+      "85": [
+        "Largest Rectangle in Histogram"
+      ],
+      "136": [
+        "Bitwise XOR - Finding Single/Missing Number"
+      ],
+      "137": [
+        "Bitwise XOR - Finding Single/Missing Number"
+      ],
+      "268": [
+        "Bitwise XOR - Finding Single/Missing Number",
+        "Cyclic Sort"
+      ],
+      "389": [
+        "Bitwise XOR - Finding Single/Missing Number"
+      ],
+      "191": [
+        "Bitwise AND - Counting Set Bits (Hamming Weight)"
+      ],
+      "231": [
+        "Bitwise AND - Counting Set Bits (Hamming Weight)",
+        "Bitwise Operations - Power of Two/Four Check"
+      ],
+      "477": [
+        "Bitwise AND - Counting Set Bits (Hamming Weight)"
+      ],
+      "338": [
+        "Bitwise DP - Counting Bits Optimization"
+      ],
+      "1494": [
+        "Bitwise DP - Counting Bits Optimization"
+      ],
+      "1442": [
+        "Bitwise DP - Counting Bits Optimization"
+      ],
+      "342": [
+        "Bitwise Operations - Power of Two/Four Check"
+      ],
+      "83": [
+        "In-place Reversal"
+      ],
+      "92": [
+        "In-place Reversal"
+      ],
+      "206": [
+        "In-place Reversal"
+      ],
+      "25": [
+        "In-place Reversal"
+      ],
+      "234": [
+        "In-place Reversal"
+      ],
+      "82": [
+        "In-place Reversal"
+      ],
+      "21": [
+        "Merging Two Sorted Lists"
+      ],
+      "2": [
+        "Addition of Numbers"
+      ],
+      "369": [
+        "Addition of Numbers"
+      ],
+      "160": [
+        "Intersection Detection"
+      ],
+      "599": [
+        "Intersection Detection"
+      ],
+      "24": [
+        "Reordering / Partitioning"
+      ],
+      "61": [
+        "Reordering / Partitioning"
+      ],
+      "86": [
+        "Reordering / Partitioning"
+      ],
+      "143": [
+        "Reordering / Partitioning"
+      ],
+      "328": [
+        "Reordering / Partitioning"
+      ],
+      "48": [
+        "In-place Rotation"
+      ],
+      "189": [
+        "In-place Rotation"
+      ],
+      "867": [
+        "In-place Rotation"
+      ],
+      "54": [
+        "Spiral Traversal"
+      ],
+      "59": [
+        "Spiral Traversal"
+      ],
+      "885": [
+        "Spiral Traversal"
+      ],
+      "2326": [
+        "Spiral Traversal"
+      ],
+      "73": [
+        "In-place Marking"
+      ],
+      "289": [
+        "In-place Marking"
+      ],
+      "498": [
+        "In-place Marking"
+      ],
+      "238": [
+        "Prefix/Suffix Products"
+      ],
+      "845": [
+        "Prefix/Suffix Products"
+      ],
+      "2483": [
+        "Prefix/Suffix Products"
+      ],
+      "66": [
+        "Plus One"
+      ],
+      "43": [
+        "Plus One",
+        "Manual Simulation"
+      ],
+      "989": [
+        "Plus One"
+      ],
+      "67": [
+        "Plus One",
+        "Manual Simulation"
+      ],
+      "88": [
+        "In-place from End"
+      ],
+      "41": [
+        "Cyclic Sort"
+      ],
+      "442": [
+        "Cyclic Sort"
+      ],
+      "448": [
+        "Cyclic Sort"
+      ],
+      "9": [
+        "Palindrome Check"
+      ],
+      "125": [
+        "Palindrome Check"
+      ],
+      "680": [
+        "Palindrome Check"
+      ],
+      "49": [
+        "Anagram Check"
+      ],
+      "242": [
+        "Anagram Check"
+      ],
+      "13": [
+        "Roman to Integer Conversion"
+      ],
+      "12": [
+        "Roman to Integer Conversion"
+      ],
+      "8": [
+        "String to Integer (atoi)"
+      ],
+      "65": [
+        "String to Integer (atoi)"
+      ],
+      "415": [
+        "Manual Simulation"
+      ],
+      "28": [
+        "String Matching - Naive / KMP / Rabin-Karp",
+        "Repeated Substring Pattern Detection"
+      ],
+      "214": [
+        "String Matching - Naive / KMP / Rabin-Karp"
+      ],
+      "686": [
+        "String Matching - Naive / KMP / Rabin-Karp",
+        "Repeated Substring Pattern Detection"
+      ],
+      "796": [
+        "String Matching - Naive / KMP / Rabin-Karp"
+      ],
+      "3008": [
+        "String Matching - Naive / KMP / Rabin-Karp"
+      ],
+      "459": [
+        "Repeated Substring Pattern Detection"
+      ],
+      "146": [
+        "Design (General/Specific)"
+      ],
+      "225": [
+        "Design (General/Specific)"
+      ],
+      "232": [
+        "Design (General/Specific)"
+      ],
+      "251": [
+        "Design (General/Specific)"
+      ],
+      "271": [
+        "Design (General/Specific)"
+      ],
+      "341": [
+        "Design (General/Specific)"
+      ],
+      "353": [
+        "Design (General/Specific)"
+      ],
+      "359": [
+        "Design (General/Specific)"
+      ],
+      "362": [
+        "Design (General/Specific)"
+      ],
+      "379": [
+        "Design (General/Specific)"
+      ],
+      "380": [
+        "Design (General/Specific)"
+      ],
+      "432": [
+        "Design (General/Specific)"
+      ],
+      "460": [
+        "Design (General/Specific)"
+      ],
+      "604": [
+        "Design (General/Specific)"
+      ],
+      "622": [
+        "Design (General/Specific)"
+      ],
+      "641": [
+        "Design (General/Specific)"
+      ],
+      "642": [
+        "Design (General/Specific)",
+        "Tries"
+      ],
+      "706": [
+        "Design (General/Specific)"
+      ],
+      "715": [
+        "Design (General/Specific)"
+      ],
+      "900": [
+        "Design (General/Specific)"
+      ],
+      "981": [
+        "Design (General/Specific)"
+      ],
+      "1146": [
+        "Design (General/Specific)"
+      ],
+      "1348": [
+        "Design (General/Specific)"
+      ],
+      "1352": [
+        "Design (General/Specific)"
+      ],
+      "1381": [
+        "Design (General/Specific)"
+      ],
+      "1756": [
+        "Design (General/Specific)"
+      ],
+      "2013": [
+        "Design (General/Specific)"
+      ],
+      "2034": [
+        "Design (General/Specific)"
+      ],
+      "2296": [
+        "Design (General/Specific)"
+      ],
+      "2336": [
+        "Design (General/Specific)"
+      ],
+      "208": [
+        "Tries"
+      ],
+      "211": [
+        "Tries"
+      ],
+      "720": [
+        "Tries"
+      ],
+      "648": [
+        "Tries"
+      ],
+      "425": [
+        "Tries"
+      ],
+      "745": [
+        "Tries"
+      ]
+    }
+  }

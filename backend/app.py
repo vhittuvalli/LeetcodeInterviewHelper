@@ -6,6 +6,7 @@ import spaced_repetition
 import recommendations
 import diagnosis
 import submission_history
+import llm_diagnosis
 
 app = Flask(__name__)
 # Dev-mode CORS: allow your React dev server (e.g. Vite on :5173) AND the
@@ -148,6 +149,23 @@ def submission_history_route(title_slug):
         force_refresh = request.args.get("refresh") == "true"
         history = submission_history.get_submission_history(title_slug, force_refresh=force_refresh)
         return jsonify(history)
+    except leetcode_service.LeetCodeAuthError as e:
+        return _auth_error_response(e)
+    except leetcode_service.LeetCodeAPIError as e:
+        return jsonify({"error": "leetcode_api_error", "message": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
+
+
+@app.route("/api/diagnosis/prompt-preview", methods=["GET"])
+def diagnosis_prompt_preview():
+    """Same auto-selection + auto-fetched code as /api/diagnosis/pending,
+    but also runs create_prompt() so you can see the actual text that would
+    be sent to an LLM. No LLM call yet -- just the prompt-building step."""
+    try:
+        limit = int(request.args.get("limit", diagnosis.BATCH_SIZE))
+        batch = diagnosis.get_diagnosis_batch(limit=limit)
+        return jsonify(llm_diagnosis.build_prompts(batch))
     except leetcode_service.LeetCodeAuthError as e:
         return _auth_error_response(e)
     except leetcode_service.LeetCodeAPIError as e:
