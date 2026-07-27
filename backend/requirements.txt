@@ -97,6 +97,7 @@ google-pasta==0.2.0
 google-resumable-media==2.7.1
 googleapis-common-protos==1.63.2
 googletrans==4.0.0rc1
+greenlet==3.2.5
 grpcio==1.64.1
 grpcio-status==1.62.2
 gunicorn==21.2.0
@@ -278,6 +279,7 @@ soupsieve @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_
 spacy==3.8.3
 spacy-legacy==3.0.12
 spacy-loggers==1.0.5
+SQLAlchemy==2.0.51
 sqlparse==0.4.4
 srsly==2.5.1
 stack-data @ file:///opt/conda/conda-bld/stack_data_1646927590127/work

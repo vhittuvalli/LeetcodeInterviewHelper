@@ -1,7 +1,8 @@
-import os
 import time
 
 import requests
+
+import db
 
 # LeetCode's GraphQL endpoint is unofficial -- there's no published rate
 # limit, but hammering it with a burst of requests (which the diagnosis
@@ -33,15 +34,6 @@ class LeetCodeAPIError(Exception):
     unrelated to auth)."""
     pass
 
-# In-memory credential store. Starts from environment variables (handy for
-# local dev: `export LEETCODE_COOKIE=...`), but can also be updated at
-# runtime via set_credentials() -- that's what the Chrome extension's
-# POST /api/credentials call ends up triggering. NOTE: this is intentionally
-# a placeholder -- it resets on server restart and only supports one user.
-# Swap this for a real per-user table once the database exists.
-_COOKIE = os.environ.get("LEETCODE_COOKIE", "")
-_CSRF = os.environ.get("LEETCODE_CSRF", "")
-
 # Step-by-step instructions surfaced to the frontend whenever a request fails
 # because no credentials have ever been provided -- keeps the "how do I fix
 # this" copy in one place instead of duplicated in frontend code.
@@ -58,28 +50,32 @@ CONNECT_INSTRUCTIONS = [
 def set_credentials(cookie, csrf):
     """Called by POST /api/credentials whenever the extension sends a fresh
     cookie -- either because the user just connected, or because their
-    session was silently renewed while browsing LeetCode."""
-    global _COOKIE, _CSRF
-    _COOKIE = cookie or ""
-    _CSRF = csrf or ""
+    session was silently renewed while browsing LeetCode. Writes straight
+    to the leetcode_credentials table now instead of a module global --
+    survives server restarts, and is the piece Phase 2's multi-user support
+    builds on (this already writes per-user, just always the same one
+    default user for now)."""
+    db.upsert_credentials(db.get_default_user_id(), cookie or "", csrf or "")
 
 
 def has_credentials():
-    return bool(_COOKIE and _CSRF)
+    cookie, csrf = db.get_credentials(db.get_default_user_id())
+    return bool(cookie and csrf)
 
 
 def _build_headers():
-    # Built per-request (not once at import time) so credential updates from
-    # set_credentials() take effect on the very next call, not just after a
-    # server restart.
+    # Read from the DB per-request (not cached) so a credential update from
+    # set_credentials() takes effect on the very next call, not just after a
+    # server restart -- same reasoning as the old in-memory version had.
+    cookie, csrf = db.get_credentials(db.get_default_user_id())
     return {
         "Accept": "*/*",
         "Content-Type": "application/json",
         "Origin": "https://leetcode.com",
         "Referer": "https://leetcode.com/progress/?page=1&status=SOLVED",
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
-        "Cookie": _COOKIE,
-        "x-csrftoken": _CSRF,
+        "Cookie": cookie or "",
+        "x-csrftoken": csrf or "",
     }
 
 SESSION_CHECK_QUERY = """

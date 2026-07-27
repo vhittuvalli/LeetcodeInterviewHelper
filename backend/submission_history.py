@@ -1,21 +1,5 @@
-import json
-import os
-
+import db
 import leetcode_service
-
-STATE_FILE = os.path.join(os.path.dirname(__file__), "submission_history.json")
-
-
-def _load_state():
-    if not os.path.exists(STATE_FILE):
-        return {}
-    with open(STATE_FILE, "r") as f:
-        return json.load(f)
-
-
-def _save_state(state):
-    with open(STATE_FILE, "w") as f:
-        json.dump(state, f, indent=2)
 
 
 def get_submission_history(title_slug, force_refresh=False):
@@ -26,28 +10,32 @@ def get_submission_history(title_slug, force_refresh=False):
     and a smaller prompt means fewer LLM tokens per diagnosis.
 
     Still returns a list (of 0 or 1 items) to keep the shape the rest of
-    the pipeline (diagnosis.py, llm_diagnosis.py) already expects.
-    Cached to disk so repeat calls don't re-hit LeetCode."""
-    state = _load_state()
+    the pipeline (diagnosis.py, llm_diagnosis.py) already expects. Cached
+    in submission_cache so repeat calls don't re-hit LeetCode -- note this
+    means "no submission found last time" isn't itself cached (unlike the
+    old JSON version), so a problem that had nothing on record will retry
+    LeetCode on every call until it actually finds something. That's a
+    minor tradeoff worth knowing about, not a bug: it's cheap (one list
+    call) and self-correcting once a submission actually exists."""
+    user_id = db.get_default_user_id()
 
-    if not force_refresh and title_slug in state:
-        return state[title_slug]
+    if not force_refresh:
+        cached = db.get_cached_submission(user_id, title_slug)
+        if cached is not None:
+            return [cached]
 
     latest = leetcode_service.fetch_latest_submission(title_slug)
     if latest is None:
-        state[title_slug] = []
-        _save_state(state)
         return []
 
     detail = leetcode_service.fetch_submission_code(latest["id"])
-    history = [{
+    submission = {
         "id": latest["id"],
         "status": latest["statusDisplay"],
         "lang": latest["lang"],
         "timestamp": latest["timestamp"],
         "code": detail.get("code", ""),
-    }]
+    }
 
-    state[title_slug] = history
-    _save_state(state)
-    return history
+    db.upsert_cached_submission(user_id, title_slug, submission)
+    return [submission]

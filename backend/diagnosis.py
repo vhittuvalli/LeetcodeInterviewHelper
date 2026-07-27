@@ -1,12 +1,9 @@
-import json
-import os
 from collections import defaultdict
 
+import db
 import leetcode_service
 import recommendations
 import submission_history
-
-STATE_FILE = os.path.join(os.path.dirname(__file__), "diagnosis_state.json")
 
 BATCH_SIZE = 5
 
@@ -14,24 +11,6 @@ BATCH_SIZE = 5
 # single very-weak topic (e.g. Stack) could fill the entire batch, and
 # you'd never see a diagnosis from anywhere else.
 MAX_PER_TOPIC = 2
-
-
-def _load_state():
-    if not os.path.exists(STATE_FILE):
-        return {"diagnosed": [], "history": [], "pending": {}}
-    with open(STATE_FILE, "r") as f:
-        state = json.load(f)
-    # "pending" was added after some people may already have a state file
-    # on disk -- default it in rather than crash on an old file.
-    state.setdefault("diagnosed", [])
-    state.setdefault("history", [])
-    state.setdefault("pending", {})
-    return state
-
-
-def _save_state(state):
-    with open(STATE_FILE, "w") as f:
-        json.dump(state, f, indent=2)
 
 
 def _pick_score(problem, weak_topics, neetcode_map):
@@ -53,8 +32,7 @@ def select_problems_to_diagnose(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
     dominated by whichever topic happens to be weakest. No date/schedule
     logic: this is a backlog, not a daily cache -- call it whenever, it
     just returns what's new."""
-    state = _load_state()
-    diagnosed_slugs = set(state["diagnosed"])
+    diagnosed_slugs = db.get_diagnosed_slugs(db.get_default_user_id())
 
     solved_problems = leetcode_service.fetch_solved()
     attempted_problems = leetcode_service.fetch_attempted()
@@ -122,19 +100,7 @@ def record_diagnosis(titleSlug, submission_id, verdict, result=None):
     already_diagnosed_this_submission() can tell "still the same code,
     skip re-diagnosing it" apart from "they resubmitted, diagnose it
     again" without spending another LLM call to find out."""
-    state = _load_state()
-
-    if verdict == "OPTIMAL":
-        if titleSlug not in state["diagnosed"]:
-            state["diagnosed"].append(titleSlug)
-        state["pending"].pop(titleSlug, None)
-    else:
-        state["pending"][titleSlug] = {"submissionId": submission_id, "verdict": verdict}
-
-    if result is not None:
-        state["history"].append({"titleSlug": titleSlug, "verdict": verdict, "result": result})
-
-    _save_state(state)
+    db.record_diagnosis(db.get_default_user_id(), titleSlug, submission_id, verdict, result=result)
 
 
 def already_diagnosed_this_submission(titleSlug, submission_id):
@@ -143,6 +109,5 @@ def already_diagnosed_this_submission(titleSlug, submission_id):
     in "diagnosed" and wouldn't be selected again at all). Callers use this
     to skip the LLM call entirely when nothing has changed since last time
     -- there's nothing new to say about identical code, so don't pay for it."""
-    state = _load_state()
-    pending = state["pending"].get(titleSlug)
+    pending = db.get_pending_diagnosis(db.get_default_user_id(), titleSlug)
     return pending is not None and pending.get("submissionId") == submission_id

@@ -1,25 +1,7 @@
-import json
-import os
 import random
 from datetime import date
 
-# Simple local-file persistence -- same "placeholder until there's a real
-# database" tradeoff as the in-memory credential store: fine for one user,
-# survives server restarts (unlike the in-memory credentials), but won't
-# scale to multiple users without being swapped out later.
-STATE_FILE = os.path.join(os.path.dirname(__file__), "spaced_repetition_state.json")
-
-
-def _load_state():
-    if not os.path.exists(STATE_FILE):
-        return {"reviewed": [], "current": None}
-    with open(STATE_FILE, "r") as f:
-        return json.load(f)
-
-
-def _save_state(state):
-    with open(STATE_FILE, "w") as f:
-        json.dump(state, f, indent=2)
+import db
 
 
 def _pick_problem(candidates, neetcode_slugs):
@@ -32,58 +14,58 @@ def _pick_problem(candidates, neetcode_slugs):
 
 
 def get_todays_problem(solved_problems, neetcode_slugs):
-    state = _load_state()
-    today = date.today().isoformat()
+    user_id = db.get_default_user_id()
+    today = date.today()
 
     # Already picked something for today and it hasn't been marked done yet --
     # keep returning the same one instead of re-rolling on every page refresh.
-    if state["current"] and state["current"]["date"] == today:
-        slug = state["current"]["slug"]
+    current = db.get_current_pick(user_id, today)
+    if current:
+        slug = current["titleSlug"]
         match = next((p for p in solved_problems if p["titleSlug"] == slug), None)
         if match:
+            reviewed = db.get_reviewed_slugs(user_id)
             return {
                 "problem": match,
                 "isNeetcode150": slug in neetcode_slugs,
-                "reviewedCount": len(state["reviewed"]),
+                "reviewedCount": len(reviewed),
                 "totalSolved": len(solved_problems),
             }
         # If that problem vanished from the solved list somehow, fall
-        # through and pick a fresh one instead of erroring.
+        # through and pick a fresh one instead of erroring. The stale
+        # today-row stays in the table (harmless, still unreviewed) but a
+        # newer row inserted below takes over as "current" since
+        # get_current_pick() always returns the most recent one.
 
-    reviewed = set(state["reviewed"])
+    reviewed = db.get_reviewed_slugs(user_id)
     candidates = [p for p in solved_problems if p["titleSlug"] not in reviewed]
 
     if not candidates and solved_problems:
-        # Everything's been reviewed at least once -- start a new cycle
-        # rather than returning nothing forever.
-        reviewed = set()
+        # Everything's been reviewed at least once. The old JSON version
+        # wiped review history back to zero here to start a "new cycle" --
+        # the DB keeps full history instead (that's the point of making
+        # this table append-only), so this just means every solved problem
+        # is eligible again, and reviewedCount below still honestly shows
+        # everything you've actually reviewed rather than resetting to 0.
         candidates = solved_problems
 
     if not candidates:
         return None  # nothing solved yet at all
 
     chosen = _pick_problem(candidates, neetcode_slugs)
-
-    state["reviewed"] = list(reviewed)
-    state["current"] = {"date": today, "slug": chosen["titleSlug"]}
-    _save_state(state)
+    db.assign_problem(user_id, chosen["titleSlug"], today)
 
     return {
         "problem": chosen,
         "isNeetcode150": chosen["titleSlug"] in neetcode_slugs,
-        "reviewedCount": len(state["reviewed"]),
+        "reviewedCount": len(reviewed),
         "totalSolved": len(solved_problems),
     }
 
 
 def mark_reviewed(slug):
-    state = _load_state()
-    reviewed = set(state["reviewed"])
-    reviewed.add(slug)
-    state["reviewed"] = list(reviewed)
-    # Clear "current" so the next request picks something fresh instead of
-    # waiting until tomorrow -- lets someone review more than one a day if
-    # they want to.
-    state["current"] = None
-    _save_state(state)
-    return {"reviewedCount": len(state["reviewed"])}
+    user_id = db.get_default_user_id()
+    today = date.today()
+    db.mark_reviewed(user_id, slug, today)
+    reviewed = db.get_reviewed_slugs(user_id)
+    return {"reviewedCount": len(reviewed)}
