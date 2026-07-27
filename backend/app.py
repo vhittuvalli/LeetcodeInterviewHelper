@@ -7,6 +7,7 @@ import recommendations
 import diagnosis
 import submission_history
 import llm_diagnosis
+import llm_client
 
 app = Flask(__name__)
 # Dev-mode CORS: allow your React dev server (e.g. Vite on :5173) AND the
@@ -125,7 +126,7 @@ def get_recommendations_route():
 def diagnosis_pending():
     """The full pipeline: auto-picks which solved problems are worth
     diagnosing (weak-topic-weighted, capped per topic) AND auto-fetches each
-    one's important submission code -- nothing to type in, everything is
+    one's most recent submission code -- nothing to type in, everything is
     driven from your solved-problems list. No LLM call yet, this just
     assembles what would be sent to it."""
     try:
@@ -142,9 +143,8 @@ def diagnosis_pending():
 
 @app.route("/api/submission-history/<title_slug>", methods=["GET"])
 def submission_history_route(title_slug):
-    """The important submissions (first attempt, last failure before it
-    passed, final accepted) for one problem, with code -- cached after the
-    first call. Pass ?refresh=true to bypass the cache."""
+    """The most recent submission for one problem, with code -- cached
+    after the first call. Pass ?refresh=true to bypass the cache."""
     try:
         force_refresh = request.args.get("refresh") == "true"
         history = submission_history.get_submission_history(title_slug, force_refresh=force_refresh)
@@ -166,6 +166,30 @@ def diagnosis_prompt_preview():
         limit = int(request.args.get("limit", diagnosis.BATCH_SIZE))
         batch = diagnosis.get_diagnosis_batch(limit=limit)
         return jsonify(llm_diagnosis.build_prompts(batch))
+    except leetcode_service.LeetCodeAuthError as e:
+        return _auth_error_response(e)
+    except leetcode_service.LeetCodeAPIError as e:
+        return jsonify({"error": "leetcode_api_error", "message": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
+
+
+@app.route("/api/diagnosis/run", methods=["POST"])
+def diagnosis_run():
+    """Actually runs the LLM diagnosis pipeline: auto-selects weak problems,
+    fetches their code, builds prompts, and calls DeepSeek. Only a verdict
+    of OPTIMAL marks a problem permanently done -- WRONG/SUBOPTIMAL leave
+    it in the backlog for next time, and unchanged submissions since the
+    last diagnosis get skipped (no LLM call, no charge) instead of
+    re-diagnosing identical code. Costs real API credits for the calls
+    that do happen -- POST on purpose so it can't fire from just visiting
+    a URL."""
+    try:
+        limit = int(request.args.get("limit", diagnosis.BATCH_SIZE))
+        results = llm_client.diagnose_batch(limit=limit)
+        return jsonify(results)
+    except RuntimeError as e:
+        return jsonify({"error": "missing_api_key", "message": str(e)}), 500
     except leetcode_service.LeetCodeAuthError as e:
         return _auth_error_response(e)
     except leetcode_service.LeetCodeAPIError as e:

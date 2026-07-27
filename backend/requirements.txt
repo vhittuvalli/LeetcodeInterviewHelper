@@ -20,6 +20,7 @@ backports.weakref==1.0.post1
 bcrypt==4.3.0
 beautifulsoup4 @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_bczxn9gqkq/croot/beautifulsoup4-split_1681493044307/work
 bleach @ file:///opt/conda/conda-bld/bleach_1641577558959/work
+blessed==1.47.0
 blinker==1.6.3
 blis==1.2.0
 boltons @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_afe23cncsc/croot/boltons_1677628707735/work
@@ -46,6 +47,7 @@ conda-verify==3.4.2
 conda_index @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_d5xt5mbvpq/croot/conda-index_1695310372575/work
 conda_package_streaming @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_d5wg6eonuu/croot/conda-package-streaming_1690987980119/work
 confection==0.1.5
+contexttimer==0.3.3
 contourpy==1.1.1
 cryptography @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_19sc_35nzq/croot/cryptography_1694211574676/work
 cx-Freeze==6.15.9
@@ -79,6 +81,8 @@ fonttools==4.43.1
 fsspec==2023.10.0
 future @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_27i98bxita/croot/future_1677599886956/work
 gast==0.6.0
+gitdb==4.0.12
+GitPython==3.1.57
 google-api-core==2.19.1
 google-api-python-client==2.135.0
 google-auth==2.30.0
@@ -96,15 +100,16 @@ googletrans==4.0.0rc1
 grpcio==1.64.1
 grpcio-status==1.62.2
 gunicorn==21.2.0
-h11==0.9.0
+h11==0.16.0
 h2==2.6.2
 h5py==3.12.1
 hpack==3.0.0
 hstspreload==2024.6.1
-httpcore==0.9.1
+httpcore==1.0.9
 httplib2==0.22.0
-httpx==0.13.3
+httpx==0.28.1
 huggingface-hub==0.23.4
+humanfriendly==10.0
 hyper==0.7.0
 hyperframe==3.2.0
 idna==2.10
@@ -118,6 +123,8 @@ ipywidgets @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs
 itsdangerous==2.1.2
 jedi @ file:///opt/concourse/worker/volumes/live/89be3eb0-a85c-453b-67dd-f706f2fa4c43/volume/jedi_1644315269953/work
 Jinja2 @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_6adj7x0ejx/croot/jinja2_1666908137966/work
+jinxed==2.1.0
+jiter==0.16.0
 joblib==1.3.2
 json5 @ file:///tmp/build/80754af9/json5_1624432770122/work
 jsonpatch @ file:///tmp/build/80754af9/jsonpatch_1615747632069/work
@@ -176,8 +183,9 @@ notebook @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_e
 notebook_shim @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_e9s6zsmlb7/croot/notebook-shim_1668160584892/work
 numba==0.59.0
 numpy @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_b1_7dulbi4/croot/numpy_and_numpy_base_1695830449184/work/dist/numpy-1.26.0-cp39-cp39-macosx_10_9_x86_64.whl#sha256=88df94efc35c11b3f60ded5c38ef9bc9bfba1d440f7cca1b79f36f5a920a47a7
+nvm==1.0.21
 oauthlib==3.2.2
-openai==1.35.7
+openai==2.48.0
 openai-whisper==20231117
 opt_einsum==3.4.0
 optree==0.14.0
@@ -263,6 +271,7 @@ shellingham==1.5.4
 sip @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_88z1zrsfrf/croots/recipe/sip_1659012373083/work
 six @ file:///tmp/build/80754af9/six_1644875935023/work
 smart-open==7.1.0
+smmap==5.0.3
 sniffio==1.3.1
 sortedcontainers==2.4.0
 soupsieve @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_9cjy8iflks/croot/soupsieve_1696347576367/work
@@ -300,12 +309,13 @@ transformers==4.44.2
 trio==0.25.1
 trio-websocket==0.11.1
 typer==0.15.1
-typing_extensions==4.12.2
+typing_extensions==4.16.0
 tzdata==2023.3
+tzlocal==5.3.1
 uritemplate==4.1.1
 urllib3==2.2.2
 wasabi==1.1.3
-wcwidth @ file:///Users/ktietz/demo/mc3/conda-bld/wcwidth_1629357192024/work
+wcwidth==0.8.2
 weasel==0.4.1
 webencodings==0.5.1
 websocket-client==1.8.0

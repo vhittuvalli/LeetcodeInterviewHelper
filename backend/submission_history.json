@@ -1,117 +1,20 @@
 {
   "two-sum": [
     {
-      "id": 550071825,
-      "status": "Runtime Error",
-      "lang": "python3",
-      "timestamp": 1630880782,
-      "code": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        for i in range(nums):\n            for j in range(i):\n                print(nums[j:i])"
-    },
-    {
-      "id": 550082788,
-      "status": "Wrong Answer",
-      "lang": "python3",
-      "timestamp": 1630882868,
-      "code": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        for i in range(len(nums)):\n            for j in range(i-1,i):\n                if sum(nums[j:i+1])==target:\n                    return [j,i]"
-    },
-    {
-      "id": 550518297,
+      "id": 553878854,
       "status": "Accepted",
       "lang": "python3",
-      "timestamp": 1630953758,
-      "code": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        for i in range(len(nums)):\n            for j in range(i):\n                if nums[j]+nums[i]==target:\n                    return [j,i]"
+      "timestamp": 1631485636,
+      "code": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        j=dict()\n        for k in range(len(nums)):\n            j[nums[k]]=k\n        for i in range(len(nums)):\n            if target-nums[i] in j and j[target-nums[i]]!=i:\n                return [j[target-nums[i]],i]"
     }
   ],
   "longest-mountain-in-array": [
     {
-      "id": 2011159976,
-      "status": "Runtime Error",
-      "lang": "python3",
-      "timestamp": 1779570072,
-      "code": "class Solution:\n    def longestMountain(self, arr: List[int]) -> int:\n        longest=0\n        for i in range(1,len(arr)-1):\n            j=i\n            z=i\n            left_steps=0\n            right_steps=0\n            while arr[j+1]<arr[j] or arr[z-1]<arr[z]:\n                if z<0 or j>len(arr)-1:\n                    break\n                if arr[j+1]<arr[j]:\n                    j+=1\n                    right_steps+=1\n                if arr[z-1]<arr[z]:\n                    z-=1\n                    left_steps+=1\n            if right_steps>0 and left_steps>0:\n                if (right_steps+left_steps+1)>longest:\n                    longest=right_steps+left_steps+1\n        return longest\n"
-    },
-    {
-      "id": 2011166854,
-      "status": "Time Limit Exceeded",
-      "lang": "python3",
-      "timestamp": 1779571235,
-      "code": "class Solution:\n    def longestMountain(self, arr: List[int]) -> int:\n        longest=0\n        arr.insert(0,arr[0]+1)\n        arr.append(arr[-1]+1)\n        for i in range(1,len(arr)-1):\n            j=i\n            z=i\n            while arr[j+1] < arr[j] or arr[z-1] < arr[z]:\n                if arr[j+1]<arr[j]:\n                    j+=1\n                if arr[z-1]<arr[z]:\n                    z-=1\n            if j-i>0 and i-z>0:\n                if (j-z+1)>longest:\n                    longest=j-z+1\n        return longest\n"
-    },
-    {
-      "id": 2011167114,
+      "id": 2011170468,
       "status": "Accepted",
       "lang": "python3",
-      "timestamp": 1779571279,
-      "code": "class Solution:\n    def longestMountain(self, arr: List[int]) -> int:\n        longest = 0\n\n        for i in range(1, len(arr) - 1):\n            # i must be a peak\n            if arr[i-1] < arr[i] and arr[i] > arr[i+1]:\n                left = i\n                right = i\n\n                while left > 0 and arr[left-1] < arr[left]:\n                    left -= 1\n\n                while right < len(arr) - 1 and arr[right] > arr[right+1]:\n                    right += 1\n\n                longest = max(longest, right - left + 1)\n\n        return longest"
-    }
-  ],
-  "longest-substring-without-repeating-characters": [
-    {
-      "id": 550602037,
-      "status": "Runtime Error",
-      "lang": "python3",
-      "timestamp": 1630964011,
-      "code": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        a=[]\n        for i in range(len(s)):\n            for j in range(i):\n                if len(set(s[j:i]))==len(list(s[j:i])):\n                    a.append(s[j:i])\n        for j in range(1,len(a)):\n            if len(a[j-1])>len(a[j]):\n                a[j-1],a[j]=a[j],a[j-1]\n        return len(a[-1])"
-    },
-    {
-      "id": 550618371,
-      "status": "Time Limit Exceeded",
-      "lang": "python3",
-      "timestamp": 1630966266,
-      "code": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        a=[]\n        for i in range(len(s)+1):\n            for j in range(i):\n                if len(set(s[j:i]))==len(list(s[j:i])):\n                    a.append(s[j:i])\n        if len(a)==1:\n            return len(a[0])\n        if len(a)==0:\n            return 0\n        else:\n            return(len(sorted(a,key=len)[-1]))"
-    },
-    {
-      "id": 2013116479,
-      "status": "Accepted",
-      "lang": "python3",
-      "timestamp": 1779760855,
-      "code": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        charSet=set()\n        l=0\n        res=0\n        for r in range(len(s)):\n            while s[r] in charSet:\n                charSet.remove(s[l])\n                l+=1\n            charSet.add(s[r])\n            res=max(res,r-l+1)\n        return res"
-    }
-  ],
-  "contains-duplicate-ii": [
-    {
-      "id": 2014018073,
-      "status": "Runtime Error",
-      "lang": "python3",
-      "timestamp": 1779834766,
-      "code": "class Solution:\n    def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:\n        if len(nums)<2:\n            return False\n        else:\n            i=0\n            j=1\n            while j<len(nums):\n                while (j-i)<=k:\n                    if nums[j]==nums[i]:\n                        return True\n                    else:\n                        j+=1\n                i+=1\n            return False\n"
-    },
-    {
-      "id": 2014021318,
-      "status": "Time Limit Exceeded",
-      "lang": "python3",
-      "timestamp": 1779835550,
-      "code": "class Solution:\n    def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:\n        i=0\n        while i<len(nums)-1:\n            j=i+1\n            while (j-i)<=k:\n                if j==len(nums):\n                    break\n                if nums[j]==nums[i]:\n                    return True\n                else:\n                    j+=1\n            i+=1\n        return False\n"
-    },
-    {
-      "id": 2014023643,
-      "status": "Accepted",
-      "lang": "python3",
-      "timestamp": 1779836140,
-      "code": "class Solution:\n    def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:\n        window=set()\n        for right in range(len(nums)):\n            if nums[right] in window:\n                return True\n            window.add(nums[right])\n            if len(window)>k:\n                window.remove(nums[right-k])\n        return False"
-    }
-  ],
-  "top-k-frequent-elements": [
-    {
-      "id": 2009425177,
-      "status": "Wrong Answer",
-      "lang": "python3",
-      "timestamp": 1779405186,
-      "code": "from collections import defaultdict\nclass Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        my_dict={}\n        for i in nums:\n            if i not in my_dict:\n                my_dict[i]=1\n            else:\n                my_dict[i]+=1\n        return sorted(my_dict)[:k]\n"
-    },
-    {
-      "id": 2009425443,
-      "status": "Wrong Answer",
-      "lang": "python3",
-      "timestamp": 1779405259,
-      "code": "class Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        my_dict={}\n        for i in nums:\n            if str(i) not in my_dict:\n                my_dict[str(i)]=1\n            else:\n                my_dict[str(i)]+=1\n        return list(map(int,sorted(my_dict)[:k]))\n"
-    },
-    {
-      "id": 2009427785,
-      "status": "Accepted",
-      "lang": "python3",
-      "timestamp": 1779405868,
-      "code": "class Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        my_dict={}\n        for i in nums:\n            if i not in my_dict:\n                my_dict[i]=1\n            else:\n                my_dict[i]+=1\n        final=sorted(my_dict.items(),key=lambda x: x[1])\n        final1=[]\n        for i in range(len(final)-1,-1,-1):\n            if k==0:\n                break\n            final1.append(final[i][0])\n            k-=1\n        return final1\n        \n"
+      "timestamp": 1779571893,
+      "code": "class Solution:\n    def longestMountain(self, arr: List[int]) -> int:\n        longest = 0\n\n        for i in range(1, len(arr) - 1):\n            # i must be a peak\n            if arr[i-1] < arr[i] and arr[i] > arr[i+1]:\n                left = i\n                right = i\n\n                while left > 0 and arr[left-1] < arr[left]:\n                    left -= 1\n\n                while right < len(arr) - 1 and arr[right] > arr[right+1]:\n                    right += 1\n\n                longest = max(longest, right - left + 1)\n\n        return longest\n"
     }
   ]
 }

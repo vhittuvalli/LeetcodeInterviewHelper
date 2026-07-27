@@ -1,5 +1,14 @@
 import os
+import time
+
 import requests
+
+# LeetCode's GraphQL endpoint is unofficial -- there's no published rate
+# limit, but hammering it with a burst of requests (which the diagnosis
+# pipeline now does: submission list + code pulls across several problems)
+# risks getting flagged as bot traffic. A small delay before every request
+# spaces things out without being noticeable on single-call endpoints.
+_REQUEST_DELAY_SECONDS = 0.3
 
 
 class LeetCodeAuthError(Exception):
@@ -189,6 +198,8 @@ def _post_graphql(query, variables, operation_name):
 
     payload = {"query": query, "variables": variables, "operationName": operation_name}
 
+    time.sleep(_REQUEST_DELAY_SECONDS)
+
     try:
         r = requests.post("https://leetcode.com/graphql/", headers=_build_headers(), json=payload, timeout=20)
     except requests.exceptions.RequestException as e:
@@ -287,6 +298,25 @@ def fetch_submission_list(title_slug, limit=20):
             break
         offset += limit
     return all_submissions
+
+
+def fetch_latest_submission(title_slug):
+    """The single most recent submission for one problem, picked by
+    comparing timestamps -- NOT by trusting offset=0 to be "the newest."
+    (It was assumed newest-first based on how the reference JS client uses
+    it, but that assumption was never verified against live data and
+    turned out to be wrong: it was returning the *first-ever* attempt,
+    which for a solved problem is often a failed one. Two Sum showing as
+    "wrong" despite being solved was exactly this bug.)
+
+    fetch_submission_list() already paginates through everything LeetCode
+    has on record for this problem, so this just takes the max-timestamp
+    entry out of that -- correct regardless of what order the API actually
+    returns them in. Returns None if there's no submission on record at all."""
+    all_submissions = fetch_submission_list(title_slug)
+    if not all_submissions:
+        return None
+    return max(all_submissions, key=lambda s: s["timestamp"])
 
 
 def fetch_submission_code(submission_id):

@@ -1,7 +1,10 @@
 import json
 import os
+import re
 
 import recommendations
+
+_VERDICT_RE = re.compile(r"^\s*VERDICT:\s*(OPTIMAL|SUBOPTIMAL|WRONG)\s*\n?", re.IGNORECASE)
 
 SUBPATTERNS_FILE = os.path.join(os.path.dirname(__file__), "data", "subpatterns.json")
 
@@ -51,10 +54,58 @@ def _format_submissions(submissions):
     if not submissions:
         return "(no submission code available for this problem)"
 
+    # Just the most recent submission now (a single-item list), but keep
+    # this loop-shaped in case that ever changes back.
     parts = []
     for s in submissions:
         parts.append(f"--- {s['status']} ({s['lang']}) ---\n{s['code']}")
     return "\n\n".join(parts)
+
+
+# Three different asks depending on how the submission actually went --
+# telling a student who got it wrong "here's a style nitpick" (or telling
+# someone with a clean optimal solution "here's a hint toward the right
+# approach") isn't useful. Keyed by exact LeetCode statusDisplay strings;
+# anything that isn't literally "Accepted" is treated as "didn't pass."
+_VERDICT_LINE = (
+    "\nStart your reply with exactly one tag on its own first line -- {options} -- "
+    "then a blank line, then your feedback. The tag drives whether this problem "
+    "gets marked done or stays in the backlog for another round, so it must "
+    "match your actual judgment."
+)
+
+
+def _diagnosis_instructions(status):
+    if status is None:
+        return (
+            "\nNo submission code is available for this problem, so diagnose "
+            "from the description, hints, and sub-pattern alone -- explain the "
+            "technique this problem calls for and how to approach it."
+            + _VERDICT_LINE.format(options="'VERDICT: WRONG'")
+        )
+
+    if status != "Accepted":
+        return (
+            f"\nThis submission did NOT pass (status: {status}). Do not just hand "
+            "over the full solution -- give a hint that points the student toward "
+            "the correct approach or technique, referencing what's actually wrong "
+            "in their code specifically enough that they can act on it."
+            + _VERDICT_LINE.format(options="'VERDICT: WRONG'")
+        )
+
+    return (
+        "\nThis submission passed. First judge whether it actually uses the "
+        "optimal time and space complexity for this problem, based on the "
+        "problem's constraints and the expected technique -- not just whether "
+        "it runs. If it is NOT optimal, explain that a better approach exists "
+        "and hint toward what that optimal solution would look like (again, "
+        "hint -- don't fully spell it out). If it IS already optimal, instead "
+        "review the code itself for small cleanliness issues -- unnecessary "
+        "if-statements, unused or redundant variables, or other minor "
+        "inefficiencies -- and give concrete feedback referencing the actual "
+        "lines. Only do one of these two, not both."
+        + _VERDICT_LINE.format(options="'VERDICT: SUBOPTIMAL' or 'VERDICT: OPTIMAL'")
+    )
 
 
 def create_prompt(problem):
@@ -64,8 +115,13 @@ def create_prompt(problem):
     diagnose it:
       - the problem's own description + official hints (from merged_problems.json)
       - its named sub-pattern(s) from the 94-pattern sheet, if it's covered
-      - its important submission code (first attempt, last failure, accepted)
-    No LLM call happens here -- this only assembles the text that would be sent."""
+      - their most recent submission's code (just the one, to save on
+        LeetCode calls and LLM tokens)
+    The closing ask depends on how that submission actually went (see
+    _diagnosis_instructions): wrong -> hint toward the fix, right but
+    suboptimal -> hint toward the better approach, right and optimal ->
+    nitpick code cleanliness. No LLM call happens here -- this only
+    assembles the text that would be sent."""
     frontend_id = problem.get("frontendId")
     reference = get_problem_reference(frontend_id)
     subpatterns = get_subpatterns(frontend_id)
@@ -90,16 +146,34 @@ def create_prompt(problem):
     else:
         lines.append("\nNo specific sub-pattern on file for this problem -- diagnose from the code alone.")
 
-    lines.append("\nSubmission history (oldest to newest):")
-    lines.append(_format_submissions(problem.get("submissions", [])))
+    submissions = problem.get("submissions", [])
+    lines.append("\nTheir most recent submission for this problem:")
+    lines.append(_format_submissions(submissions))
 
-    lines.append(
-        "\nBased on the above, identify the specific sub-pattern or technique this student "
-        "struggled with, and explain concretely what changed between their failed attempt(s) "
-        "and the accepted solution. Also compare their solutions to the MOST optimal solution that you know of for that problem. Provide EXTREMELY detailed information about what the code could improve on. (Ex: YOu could improve on the duplicate checking process for the right and left pointers for 3 sum)"
-    )
+    status = submissions[0]["status"] if submissions else None
+    lines.append(_diagnosis_instructions(status))
 
     return "\n".join(lines)
+
+
+def parse_verdict(response_text):
+    """Splits the required 'VERDICT: X' tag off the front of the LLM's
+    response. Returns (verdict, feedback) -- verdict is 'OPTIMAL',
+    'SUBOPTIMAL', or 'WRONG' (uppercase), or None if the model didn't
+    follow the format. feedback is the rest of the response with the tag
+    line removed, ready to show to the student.
+
+    A None verdict is deliberately treated as "not optimal" by whatever
+    calls this -- if we can't tell for sure that a problem is done, the
+    safe default is to leave it in the backlog, not mark it done."""
+    if not response_text:
+        return None, response_text
+
+    m = _VERDICT_RE.match(response_text)
+    if not m:
+        return None, response_text.strip()
+
+    return m.group(1).upper(), response_text[m.end():].strip()
 
 
 def build_prompts(batch):

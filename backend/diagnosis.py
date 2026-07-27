@@ -18,9 +18,15 @@ MAX_PER_TOPIC = 2
 
 def _load_state():
     if not os.path.exists(STATE_FILE):
-        return {"diagnosed": [], "history": []}
+        return {"diagnosed": [], "history": [], "pending": {}}
     with open(STATE_FILE, "r") as f:
-        return json.load(f)
+        state = json.load(f)
+    # "pending" was added after some people may already have a state file
+    # on disk -- default it in rather than crash on an old file.
+    state.setdefault("diagnosed", [])
+    state.setdefault("history", [])
+    state.setdefault("pending", {})
+    return state
 
 
 def _save_state(state):
@@ -83,9 +89,10 @@ def get_diagnosis_batch(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
     1. select_problems_to_diagnose() auto-picks which solved problems are
        worth analyzing, weighted toward weak topics and capped per topic.
     2. For each one, submission_history.get_submission_history() auto-fetches
-       its important code (first attempt, last failure, final accepted).
+       its most recent submission's code (just the one, to keep LeetCode
+       calls and LLM tokens down).
     Returns a list ready to hand to an LLM later -- problem info + the code
-    bundle for each pick."""
+    for each pick."""
     picked = select_problems_to_diagnose(limit=limit, max_per_topic=max_per_topic)
 
     batch = []
@@ -102,12 +109,40 @@ def get_diagnosis_batch(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
     return batch
 
 
-def mark_diagnosed(titleSlug, result=None):
-    """Call once a problem has actually been run through the (not-yet-built)
-    LLM diagnosis step, so it drops out of future backlogs."""
+def record_diagnosis(titleSlug, submission_id, verdict, result=None):
+    """Call once an LLM diagnosis actually comes back for a problem.
+    Only an OPTIMAL verdict marks the problem permanently done -- WRONG,
+    SUBOPTIMAL, and anything the model didn't tag cleanly all leave it in
+    the backlog so it keeps getting picked (and re-diagnosed) until an
+    actual better submission shows up. That's the point: it keeps nudging
+    you back to unfinished problems instead of letting them quietly drop
+    off once you've gotten one round of feedback.
+
+    Also remembers which submission_id this verdict was about, so
+    already_diagnosed_this_submission() can tell "still the same code,
+    skip re-diagnosing it" apart from "they resubmitted, diagnose it
+    again" without spending another LLM call to find out."""
     state = _load_state()
-    if titleSlug not in state["diagnosed"]:
-        state["diagnosed"].append(titleSlug)
+
+    if verdict == "OPTIMAL":
+        if titleSlug not in state["diagnosed"]:
+            state["diagnosed"].append(titleSlug)
+        state["pending"].pop(titleSlug, None)
+    else:
+        state["pending"][titleSlug] = {"submissionId": submission_id, "verdict": verdict}
+
     if result is not None:
-        state["history"].append({"titleSlug": titleSlug, "result": result})
+        state["history"].append({"titleSlug": titleSlug, "verdict": verdict, "result": result})
+
     _save_state(state)
+
+
+def already_diagnosed_this_submission(titleSlug, submission_id):
+    """True if the last diagnosis on this problem was about this exact
+    submission and it wasn't OPTIMAL (if it had been, the problem would be
+    in "diagnosed" and wouldn't be selected again at all). Callers use this
+    to skip the LLM call entirely when nothing has changed since last time
+    -- there's nothing new to say about identical code, so don't pay for it."""
+    state = _load_state()
+    pending = state["pending"].get(titleSlug)
+    return pending is not None and pending.get("submissionId") == submission_id
