@@ -4,6 +4,7 @@ from collections import defaultdict
 
 import leetcode_service
 import recommendations
+import submission_history
 
 STATE_FILE = os.path.join(os.path.dirname(__file__), "diagnosis_state.json")
 
@@ -75,6 +76,30 @@ def select_problems_to_diagnose(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
         topic_counts[topic] += 1
 
     return selected
+
+
+def get_diagnosis_batch(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
+    """The full pipeline in one call, nothing to type in by hand:
+    1. select_problems_to_diagnose() auto-picks which solved problems are
+       worth analyzing, weighted toward weak topics and capped per topic.
+    2. For each one, submission_history.get_submission_history() auto-fetches
+       its important code (first attempt, last failure, final accepted).
+    Returns a list ready to hand to an LLM later -- problem info + the code
+    bundle for each pick."""
+    picked = select_problems_to_diagnose(limit=limit, max_per_topic=max_per_topic)
+
+    batch = []
+    for p in picked:
+        history = submission_history.get_submission_history(p["titleSlug"])
+        batch.append({
+            "frontendId": p.get("frontendId"),
+            "title": p.get("title"),
+            "titleSlug": p["titleSlug"],
+            "difficulty": p.get("difficulty"),
+            "numSubmitted": p.get("numSubmitted"),
+            "submissions": history,
+        })
+    return batch
 
 
 def mark_diagnosed(titleSlug, result=None):

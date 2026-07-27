@@ -5,6 +5,7 @@ import leetcode_service
 import spaced_repetition
 import recommendations
 import diagnosis
+import submission_history
 
 app = Flask(__name__)
 # Dev-mode CORS: allow your React dev server (e.g. Vite on :5173) AND the
@@ -121,22 +122,32 @@ def get_recommendations_route():
 
 @app.route("/api/diagnosis/pending", methods=["GET"])
 def diagnosis_pending():
-    """Preview of what select_problems_to_diagnose() would pick right now --
-    no actual LLM diagnosis yet, just confirms the selection logic against
-    your real data."""
+    """The full pipeline: auto-picks which solved problems are worth
+    diagnosing (weak-topic-weighted, capped per topic) AND auto-fetches each
+    one's important submission code -- nothing to type in, everything is
+    driven from your solved-problems list. No LLM call yet, this just
+    assembles what would be sent to it."""
     try:
         limit = int(request.args.get("limit", diagnosis.BATCH_SIZE))
-        picked = diagnosis.select_problems_to_diagnose(limit=limit)
-        return jsonify([
-            {
-                "frontendId": p["frontendId"],
-                "title": p["title"],
-                "titleSlug": p["titleSlug"],
-                "difficulty": p["difficulty"],
-                "numSubmitted": p.get("numSubmitted"),
-            }
-            for p in picked
-        ])
+        batch = diagnosis.get_diagnosis_batch(limit=limit)
+        return jsonify(batch)
+    except leetcode_service.LeetCodeAuthError as e:
+        return _auth_error_response(e)
+    except leetcode_service.LeetCodeAPIError as e:
+        return jsonify({"error": "leetcode_api_error", "message": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
+
+
+@app.route("/api/submission-history/<title_slug>", methods=["GET"])
+def submission_history_route(title_slug):
+    """The important submissions (first attempt, last failure before it
+    passed, final accepted) for one problem, with code -- cached after the
+    first call. Pass ?refresh=true to bypass the cache."""
+    try:
+        force_refresh = request.args.get("refresh") == "true"
+        history = submission_history.get_submission_history(title_slug, force_refresh=force_refresh)
+        return jsonify(history)
     except leetcode_service.LeetCodeAuthError as e:
         return _auth_error_response(e)
     except leetcode_service.LeetCodeAPIError as e:

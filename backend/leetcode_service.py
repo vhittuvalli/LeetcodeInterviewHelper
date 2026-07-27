@@ -100,6 +100,43 @@ query userProgressQuestionList($filters: UserProgressQuestionListInput) {
 }
 """
 
+# Step 1 of getting submission history for a problem: list every submission
+# (accepted AND failed) filtered to one question via questionSlug. No code
+# in this response yet -- just id/status/lang/timestamp, enough to decide
+# which submissions are worth pulling code for.
+SUBMISSION_LIST_QUERY = """
+query submissionList($offset: Int!, $limit: Int!, $slug: String) {
+  submissionList(offset: $offset, limit: $limit, questionSlug: $slug) {
+    hasNext
+    submissions {
+      id
+      lang
+      timestamp
+      statusDisplay
+      titleSlug
+    }
+  }
+}
+"""
+
+# Step 2: given one submission id (from the list above), get its actual code.
+# This is a separate request per submission -- there's no bulk "give me the
+# code for all of these ids" query, which is exactly why we filter down to
+# only the important submissions before calling this.
+SUBMISSION_DETAIL_QUERY = """
+query submissionDetails($id: Int!) {
+  submissionDetails(submissionId: $id) {
+    id
+    code
+    timestamp
+    statusCode
+    lang { name }
+    runtimeError
+    compileError
+  }
+}
+"""
+
 NEETCODE_150_URL = "https://raw.githubusercontent.com/krmanik/Anki-NeetCode/main/neetcode-150-list.json"
 
 TOPIC_PRIORITY = [
@@ -226,6 +263,40 @@ def fetch_solved(limit=50):
 def fetch_attempted(limit=50):
     # "ATTEMPTED" == tried but never solved -- confirmed against the live API.
     return _fetch_by_status("ATTEMPTED", limit=limit)
+
+
+def fetch_submission_list(title_slug, limit=20):
+    """Every submission (accepted + failed) for one problem, paginated.
+    Normalizes id/timestamp from strings (what the raw API returns) to ints
+    so callers can compare/sort them without thinking about it."""
+    all_submissions = []
+    offset = 0
+    while True:
+        result = _post_graphql(
+            SUBMISSION_LIST_QUERY,
+            {"offset": offset, "limit": limit, "slug": title_slug},
+            "submissionList",
+        )
+        block = result["submissionList"]
+        subs = block["submissions"]
+        for s in subs:
+            s["id"] = int(s["id"])
+            s["timestamp"] = int(s["timestamp"])
+        all_submissions.extend(subs)
+        if not block.get("hasNext") or not subs:
+            break
+        offset += limit
+    return all_submissions
+
+
+def fetch_submission_code(submission_id):
+    """Code + a bit of metadata for exactly one submission id."""
+    result = _post_graphql(
+        SUBMISSION_DETAIL_QUERY,
+        {"id": int(submission_id)},
+        "submissionDetails",
+    )
+    return result["submissionDetails"]
 
 
 def load_neetcode_map():
