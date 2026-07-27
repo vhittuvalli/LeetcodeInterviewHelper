@@ -4,6 +4,7 @@ from flask_cors import CORS
 import leetcode_service
 import spaced_repetition
 import recommendations
+import diagnosis
 
 app = Flask(__name__)
 # Dev-mode CORS: allow your React dev server (e.g. Vite on :5173) AND the
@@ -114,6 +115,32 @@ def get_recommendations_route():
             "error": "missing_dataset",
             "message": "backend/data/merged_problems.json not found -- copy it in from your uploads.",
         }), 500
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
+
+
+@app.route("/api/diagnosis/pending", methods=["GET"])
+def diagnosis_pending():
+    """Preview of what select_problems_to_diagnose() would pick right now --
+    no actual LLM diagnosis yet, just confirms the selection logic against
+    your real data."""
+    try:
+        limit = int(request.args.get("limit", diagnosis.BATCH_SIZE))
+        picked = diagnosis.select_problems_to_diagnose(limit=limit)
+        return jsonify([
+            {
+                "frontendId": p["frontendId"],
+                "title": p["title"],
+                "titleSlug": p["titleSlug"],
+                "difficulty": p["difficulty"],
+                "numSubmitted": p.get("numSubmitted"),
+            }
+            for p in picked
+        ])
+    except leetcode_service.LeetCodeAuthError as e:
+        return _auth_error_response(e)
+    except leetcode_service.LeetCodeAPIError as e:
+        return jsonify({"error": "leetcode_api_error", "message": str(e)}), 502
     except Exception as e:
         return jsonify({"error": "server_error", "message": str(e)}), 500
 
