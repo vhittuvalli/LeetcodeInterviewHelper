@@ -51,7 +51,19 @@ export default function LoginPage() {
       // new session automatically -- App.jsx re-renders past this screen
       // on its own, nothing to do here.
     } else {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        // Without this, the confirmation email's link falls back to
+        // whichever "Site URL" is configured in Supabase's dashboard
+        // (Authentication -> URL Configuration) -- easy to leave at the
+        // default localhost placeholder and forget about. Being explicit
+        // here means it always lands back on wherever this app is
+        // actually running, not whatever the dashboard happens to say.
+        // Still needs to be added to the dashboard's Redirect URLs
+        // allow-list, or Supabase will reject it regardless.
+        options: { emailRedirectTo: window.location.origin },
+      });
       if (error) {
         setErrorMessage(error.message);
         setStatus("error");
