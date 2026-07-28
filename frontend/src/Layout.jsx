@@ -31,6 +31,12 @@ const icons = {
       <path d="M12 8v4.5l3 2" />
     </svg>
   ),
+  account: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M4.5 20c1.5-4 4.5-6 7.5-6s6 2 7.5 6" />
+    </svg>
+  ),
 };
 
 const NAV_ITEMS = [
@@ -38,6 +44,7 @@ const NAV_ITEMS = [
   { to: "/practice", label: "Practice", icon: icons.practice },
   { to: "/mock-interview", label: "Mock Interview", icon: icons.mockInterview },
   { to: "/history", label: "History", icon: icons.history },
+  { to: "/account", label: "Account", icon: icons.account },
 ];
 
 export default function Layout() {
