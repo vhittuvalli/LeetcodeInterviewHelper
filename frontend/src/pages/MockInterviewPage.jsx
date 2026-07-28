@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 const ROUNDS_OPTIONS = [2, 3, 4, 5];
 
 // Sent as X-API-Key on /evaluate (the one route here that calls the LLM) --

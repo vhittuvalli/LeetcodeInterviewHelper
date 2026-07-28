@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 const DIAGNOSIS_LIMIT = 3;
 
 // Sent as X-API-Key on the routes that actually cost money -- a no-op if
