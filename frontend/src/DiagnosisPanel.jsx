@@ -41,48 +41,71 @@ export default function DiagnosisPanel() {
   }, []);
 
   return (
-    <div className="diagnosis-panel">
-      <div className="diagnosis-panel__header">
-        <span className="diagnosis-panel__title">AI diagnosis</span>
-        <button onClick={runDiagnosis} disabled={status === "loading"}>
-          {status === "loading" ? "Diagnosing..." : "Diagnose weak problems"}
-        </button>
-      </div>
+    <div>
+      <button className="btn btn--primary" onClick={runDiagnosis} disabled={status === "loading"}>
+        {status === "loading" ? "Diagnosing..." : "Diagnose weak problems"}
+      </button>
 
       {status === "idle" && (
-        <p className="diagnosis-panel__hint">
+        <p className="hint-text" style={{ marginTop: 14 }}>
           Picks a few of your weakest-topic solved problems and gets AI feedback on each --
           uses a real API call, costs a small amount.
         </p>
       )}
 
-      {status === "error" && <p className="diagnosis-panel__error">{errorMessage}</p>}
-
-      {status === "ready" && results.length === 0 && (
-        <p className="diagnosis-panel__hint">
-          Nothing left to diagnose right now -- solve some new problems first.
+      {status === "error" && (
+        <p className="error-text" style={{ marginTop: 14 }}>
+          {errorMessage}
         </p>
       )}
 
+      {status === "ready" && results.length === 0 && (
+        <div className="empty-state" style={{ marginTop: 16 }}>
+          Nothing left to diagnose right now -- solve some new problems first.
+        </div>
+      )}
+
       {status === "ready" && results.length > 0 && (
-        <div className="diagnosis-panel__cards">
-          {results.map((r) => (
-            <div className="diagnosis-card" key={r.titleSlug}>
-              <div className="diagnosis-card__header">
-                <a href={`https://leetcode.com/problems/${r.titleSlug}/`} target="_blank" rel="noreferrer">
+        <div className="card-grid" style={{ marginTop: 18 }}>
+          {results.map((r) => {
+            const verdictClass = r.skipped ? "skipped" : (r.verdict || "unknown").toLowerCase();
+            return (
+              <div className={`diag-card diag-card--${verdictClass}`} key={r.titleSlug}>
+                <div className="diag-card__top">
+                  {r.skipped ? (
+                    <span className="badge badge--skipped">No new submission</span>
+                  ) : (
+                    <span className={`badge badge--${(r.verdict || "unknown").toLowerCase()}`}>
+                      {VERDICT_LABELS[r.verdict] || r.verdict || "Unknown"}
+                    </span>
+                  )}
+                </div>
+
+                <a
+                  className="diag-card__title"
+                  href={`https://leetcode.com/problems/${r.titleSlug}/`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   {r.title}
                 </a>
-                {r.skipped ? (
-                  <span className="badge badge--skipped">No new submission</span>
-                ) : (
-                  <span className={`badge badge--${(r.verdict || "unknown").toLowerCase()}`}>
-                    {VERDICT_LABELS[r.verdict] || r.verdict || "Unknown"}
-                  </span>
-                )}
+
+                <p className="diag-card__text">{r.diagnosis}</p>
+
+                <a
+                  className="diag-card__cta"
+                  href={`https://leetcode.com/problems/${r.titleSlug}/`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View on LeetCode
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M7 17L17 7M9 7h8v8" />
+                  </svg>
+                </a>
               </div>
-              <p className="diagnosis-card__text">{r.diagnosis}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

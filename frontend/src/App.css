@@ -1,293 +1,1120 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: -apple-system, sans-serif;
-}
-
-.app-shell {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.toolbar {
-  padding: 10px 16px;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.daily-review {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.daily-review--muted {
-  color: #777;
-  font-size: 13px;
-}
-
-.daily-review__label {
-  font-weight: 600;
-}
-
-.daily-review__progress {
-  color: #777;
-  margin-left: 4px;
-}
-
-.badge--neetcode {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: #cdeee0;
-  color: #0a5c3c;
-}
-
-.badge--retry {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: #fdecc8;
-  color: #7a4e00;
-}
-
-.recommendations-bar {
-  padding: 12px 16px;
-  border-bottom: 1px solid #ddd;
-  background: #fafafa;
-}
-
-.recommendations-bar__title {
-  font-weight: 600;
-  font-size: 13px;
-  display: block;
-  margin-bottom: 8px;
-}
-
-.recommendations-bar__cards {
-  display: flex;
-  gap: 12px;
-}
-
-.recommendation-card {
-  flex: 1;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px 12px;
-  background: white;
-}
-
-.recommendation-card__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.recommendation-card__meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  font-size: 11px;
-  color: #777;
-}
-
-.recommendation-card__topic {
-  font-weight: 500;
-}
-
-.recommendation-card__reason {
-  font-size: 11px;
-  color: #999;
-  margin-top: 4px;
-}
-
-.badge--optimal {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: #cdeee0;
-  color: #0a5c3c;
-}
-
-.badge--suboptimal {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: #fdecc8;
-  color: #7a4e00;
-}
-
-.badge--wrong {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: #f6d0d0;
-  color: #7a1f1f;
-}
-
-.badge--skipped {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: #e8e8e8;
-  color: #555;
-}
-
-.diagnosis-panel {
-  padding: 12px 16px;
-  border-bottom: 1px solid #ddd;
-  background: #fafafa;
-}
-
-.diagnosis-panel__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.diagnosis-panel__title {
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.diagnosis-panel__hint {
-  font-size: 11px;
-  color: #777;
-  margin: 8px 0 0;
-}
-
-.diagnosis-panel__error {
-  font-size: 11px;
-  color: #b02a2a;
-  margin: 8px 0 0;
-}
-
-.diagnosis-panel__cards {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.diagnosis-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px 12px;
-  background: white;
-}
-
-.diagnosis-card__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.diagnosis-card__text {
-  font-size: 12px;
-  color: #444;
-  margin: 6px 0 0;
-  line-height: 1.5;
-  white-space: pre-wrap;
-}
-
-.tree-container {
-  flex: 1;
-  position: relative;
-}
-
-.status-screen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  text-align: center;
-  padding: 24px;
-}
-
-.status-screen ol {
-  text-align: left;
-}
-
-.topic-node {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #999;
-  min-width: 170px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.topic-node--empty {
-  background: #e8e8e8;
-  color: #555;
-}
-
-.topic-node--some {
-  background: #fdecc8;
-  color: #7a4e00;
-}
-
-.topic-node--active {
-  background: #cdeee0;
-  color: #0a5c3c;
-}
-
-.topic-node__label {
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.topic-node__count {
-  font-size: 12px;
-  margin-top: 2px;
-}
-
-.side-panel {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 320px;
-  height: 100%;
-  background: white;
-  border-left: 1px solid #ddd;
-  padding: 16px;
-  overflow-y: auto;
-}
-
-.side-panel__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.difficulty {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.difficulty--easy {
-  background: #cdeee0;
-}
-
-.difficulty--medium {
-  background: #fdecc8;
-}
-
-.difficulty--hard {
-  background: #f6d0d0;
-}
+/* ---------------------------------------------------------------------
+   Design tokens -- dark, high-contrast, "dev tool" aesthetic (roadmap.sh /
+   NeetCode-style dark roadmap trees, Linear/Vercel-style dashboard chrome).
+   Everything downstream reads from these variables, so the whole palette
+   can be retuned from one place.
+   ------------------------------------------------------------------- */
+   :root {
+    --bg-app: #0a0e17;
+    --bg-sidebar: #0b0f1a;
+    --bg-surface: #10151f;
+    --bg-surface-raised: #161d2b;
+    --bg-hover: #1b2333;
+  
+    --border: #212939;
+    --border-soft: #1a2130;
+    --border-glow: rgba(56, 189, 248, 0.45);
+  
+    --text-primary: #e9eefb;
+    --text-secondary: #93a0b8;
+    --text-muted: #5b6579;
+  
+    --accent-blue: #3b82f6;
+    --accent-cyan: #22d3ee;
+    --accent-purple: #a78bfa;
+    --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #22d3ee 100%);
+    --accent-gradient-soft: linear-gradient(135deg, rgba(59, 130, 246, 0.16) 0%, rgba(34, 211, 238, 0.16) 100%);
+  
+    --success: #34d399;
+    --success-bg: rgba(52, 211, 153, 0.12);
+    --warning: #fbbf24;
+    --warning-bg: rgba(251, 191, 36, 0.12);
+    --danger: #f87171;
+    --danger-bg: rgba(248, 113, 113, 0.12);
+    --neutral-bg: rgba(148, 163, 184, 0.14);
+  
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+  
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.02);
+    --shadow-glow: 0 0 0 1px var(--border-glow), 0 0 24px rgba(34, 211, 238, 0.12);
+  
+    --sidebar-width: 232px;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  
+  body {
+    margin: 0;
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+  
+  /* Faint radial glow behind everything, like a dev-tool splash screen --
+     purely cosmetic, sits behind the app shell. */
+  .app-shell {
+    display: flex;
+    height: 100vh;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(59, 130, 246, 0.10), transparent 60%),
+      radial-gradient(ellipse 700px 400px at 100% 0%, rgba(34, 211, 238, 0.07), transparent 55%),
+      var(--bg-app);
+  }
+  
+  /* ---------------------------------------------------------------------
+     Sidebar
+     ------------------------------------------------------------------- */
+  .sidebar {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-soft);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 14px;
+  }
+  
+  .sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px 22px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  
+  .sidebar__brand-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-sm);
+    background: var(--accent-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #04121a;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: -0.5px;
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.35);
+  }
+  
+  .sidebar__brand-text {
+    font-weight: 700;
+    font-size: 14.5px;
+    letter-spacing: -0.2px;
+    color: var(--text-primary);
+  }
+  
+  .sidebar__brand-sub {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+  
+  .sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 14px;
+  }
+  
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    font-weight: 500;
+    border-left: 2px solid transparent;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  
+  .nav-link:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  
+  .nav-link svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    opacity: 0.85;
+  }
+  
+  .nav-link--active {
+    background: var(--accent-gradient-soft);
+    color: var(--text-primary);
+    border-left: 2px solid var(--accent-cyan);
+  }
+  
+  .nav-link--active svg {
+    opacity: 1;
+    color: var(--accent-cyan);
+  }
+  
+  .sidebar__footer {
+    margin-top: auto;
+    padding: 10px 8px 2px;
+    border-top: 1px solid var(--border-soft);
+  }
+  
+  .connection-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    padding-top: 12px;
+  }
+  
+  .connection-pill__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 6px var(--success);
+  }
+  
+  /* ---------------------------------------------------------------------
+     Main content area
+     ------------------------------------------------------------------- */
+  .main-area {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border-soft);
+    flex-shrink: 0;
+  }
+  
+  .topbar__title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    color: var(--text-primary);
+  }
+  
+  .topbar__subtitle {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  
+  .page-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px 40px;
+  }
+  
+  /* Generic buttons ------------------------------------------------------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: transform 0.1s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  }
+  
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  
+  .btn--primary {
+    background: var(--accent-gradient);
+    color: #04121a;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 4px 16px rgba(34, 211, 238, 0.18);
+  }
+  
+  .btn--primary:not(:disabled):hover {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 4px 22px rgba(34, 211, 238, 0.32);
+    transform: translateY(-1px);
+  }
+  
+  .btn--ghost {
+    background: var(--bg-surface-raised);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+  
+  .btn--ghost:not(:disabled):hover {
+    background: var(--bg-hover);
+    border-color: var(--border-glow);
+  }
+  
+  /* Badges & difficulty tags ----------------------------------------------- */
+  .badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  
+  .badge--neetcode {
+    background: var(--accent-gradient-soft);
+    color: var(--accent-cyan);
+  }
+  
+  .badge--retry {
+    background: var(--warning-bg);
+    color: var(--warning);
+  }
+  
+  .badge--optimal {
+    background: var(--success-bg);
+    color: var(--success);
+  }
+  
+  .badge--suboptimal {
+    background: var(--warning-bg);
+    color: var(--warning);
+  }
+  
+  .badge--wrong {
+    background: var(--danger-bg);
+    color: var(--danger);
+  }
+  
+  .badge--skipped {
+    background: var(--neutral-bg);
+    color: var(--text-secondary);
+  }
+  
+  .difficulty {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  
+  .difficulty--easy {
+    background: var(--success-bg);
+    color: var(--success);
+  }
+  
+  .difficulty--medium {
+    background: var(--warning-bg);
+    color: var(--warning);
+  }
+  
+  .difficulty--hard {
+    background: var(--danger-bg);
+    color: var(--danger);
+  }
+  
+  /* ---------------------------------------------------------------------
+     Page header (used at the top of every page)
+     ------------------------------------------------------------------- */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  
+  .page-header__title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin: 0 0 4px;
+  }
+  
+  .page-header__desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+  
+  /* ---------------------------------------------------------------------
+     Page sections -- used on Practice, which stacks Daily Review / AI
+     Diagnosis / Recommendations vertically on one page instead of each
+     living on its own route.
+     ------------------------------------------------------------------- */
+  .page-section {
+    margin-bottom: 36px;
+  }
+  
+  .page-section:last-child {
+    margin-bottom: 0;
+  }
+  
+  .page-section__title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .page-section__title::before {
+    content: "";
+    width: 3px;
+    height: 15px;
+    border-radius: 2px;
+    background: var(--accent-gradient);
+  }
+  
+  .page-section__desc {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    margin: 0 0 14px 11px;
+    line-height: 1.5;
+  }
+  
+  /* ---------------------------------------------------------------------
+     Cards (diagnosis / recommendations / review)
+     ------------------------------------------------------------------- */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+  }
+  
+  .panel-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  
+  .panel-card:hover {
+    border-color: var(--border-glow);
+  }
+  
+  .panel-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+  
+  .panel-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: var(--text-secondary);
+  }
+  
+  .panel-card__topic {
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  
+  .panel-card__reason {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+  
+  .panel-card__text {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    margin: 10px 0 0;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  
+  .panel-card--optimal {
+    border-left: 3px solid var(--success);
+  }
+  
+  .panel-card--suboptimal {
+    border-left: 3px solid var(--warning);
+  }
+  
+  .panel-card--wrong {
+    border-left: 3px solid var(--danger);
+  }
+  
+  .panel-card--skipped {
+    border-left: 3px solid var(--text-muted);
+  }
+  
+  /* Empty / hint / error text ---------------------------------------------- */
+  .hint-text {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  
+  .error-text {
+    font-size: 12.5px;
+    color: var(--danger);
+    line-height: 1.6;
+  }
+  
+  .empty-state {
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    padding: 32px 20px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+  }
+  
+  /* ---------------------------------------------------------------------
+     Recommendation cards (Practice page)
+     ------------------------------------------------------------------- */
+  .rec-card {
+    position: relative;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 18px 16px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    overflow: hidden;
+  }
+  
+  .rec-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--border);
+  }
+  
+  .rec-card--easy::before {
+    background: var(--success);
+  }
+  
+  .rec-card--medium::before {
+    background: var(--warning);
+  }
+  
+  .rec-card--hard::before {
+    background: var(--danger);
+  }
+  
+  .rec-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .rec-card__ribbon {
+    position: absolute;
+    top: 12px;
+    right: -30px;
+    transform: rotate(40deg);
+    background: var(--warning);
+    color: #241900;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    padding: 3px 34px;
+  }
+  
+  .rec-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .rec-card__rank {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    background: var(--accent-gradient-soft);
+    color: var(--accent-cyan);
+  }
+  
+  .rec-card__title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+  
+  .rec-card__title:hover {
+    color: var(--accent-cyan);
+  }
+  
+  .rec-card__topic-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--bg-surface-raised);
+    border: 1px solid var(--border-soft);
+    padding: 4px 10px 4px 8px;
+    border-radius: 999px;
+  }
+  
+  .rec-card__topic-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-gradient);
+    flex-shrink: 0;
+  }
+  
+  .rec-card__reason {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin: 0;
+    padding-left: 10px;
+    border-left: 2px solid var(--border);
+  }
+  
+  .rec-card__cta {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--bg-surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  
+  .rec-card__cta:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-glow);
+    text-decoration: none;
+  }
+  
+  .rec-card__cta svg {
+    width: 13px;
+    height: 13px;
+  }
+  
+  /* ---------------------------------------------------------------------
+     Diagnosis cards (Practice page) -- same visual language as rec-card
+     (top accent stripe, hover lift, CTA button) but colored by verdict
+     instead of difficulty.
+     ------------------------------------------------------------------- */
+  .diag-card {
+    position: relative;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 18px 16px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    overflow: hidden;
+  }
+  
+  .diag-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--border);
+  }
+  
+  .diag-card--optimal::before {
+    background: var(--success);
+  }
+  
+  .diag-card--suboptimal::before {
+    background: var(--warning);
+  }
+  
+  .diag-card--wrong::before {
+    background: var(--danger);
+  }
+  
+  .diag-card--skipped::before {
+    background: var(--text-muted);
+  }
+  
+  .diag-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .diag-card__top {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .diag-card__title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+  
+  .diag-card__title:hover {
+    color: var(--accent-cyan);
+  }
+  
+  .diag-card__text {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    padding-left: 10px;
+    border-left: 2px solid var(--border);
+    white-space: pre-wrap;
+  }
+  
+  .diag-card__cta {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--bg-surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  
+  .diag-card__cta:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-glow);
+    text-decoration: none;
+  }
+  
+  .diag-card__cta svg {
+    width: 13px;
+    height: 13px;
+  }
+  
+  /* ---------------------------------------------------------------------
+     Daily review card -- same visual language as rec-card / diag-card (top
+     accent stripe colored by difficulty, hover lift, CTA button) since
+     there's only ever one pick shown at a time, this is just a wider single
+     card instead of living in a grid.
+     ------------------------------------------------------------------- */
+  .review-card {
+    position: relative;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px 20px;
+    max-width: 480px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    overflow: hidden;
+  }
+  
+  .review-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--border);
+  }
+  
+  .review-card--easy::before {
+    background: var(--success);
+  }
+  
+  .review-card--medium::before {
+    background: var(--warning);
+  }
+  
+  .review-card--hard::before {
+    background: var(--danger);
+  }
+  
+  .review-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .review-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .review-card__eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+  }
+  
+  .review-card__badges {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .review-card__title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+  
+  .review-card__title:hover {
+    color: var(--accent-cyan);
+  }
+  
+  .review-card__progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .review-card__progress-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--bg-surface-raised);
+    overflow: hidden;
+  }
+  
+  .review-card__progress-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+  
+  .review-card__progress-label {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  
+  .review-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .review-card__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--bg-surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  
+  .review-card__cta:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-glow);
+    text-decoration: none;
+  }
+  
+  .review-card__cta svg {
+    width: 13px;
+    height: 13px;
+  }
+  
+  /* ---------------------------------------------------------------------
+     Topic tree (ReactFlow)
+     ------------------------------------------------------------------- */
+  .tree-container {
+    flex: 1;
+    position: relative;
+  }
+  
+  .tree-container .react-flow__attribution {
+    display: none;
+  }
+  
+  /* ReactFlow ships light-mode chrome by default -- override its controls
+     widget to match the dark theme instead of leaving a bright white box
+     floating over the graph. */
+  .tree-container .react-flow__controls {
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  
+  .tree-container .react-flow__controls-button {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-soft);
+    fill: var(--text-secondary);
+    stroke: var(--text-secondary);
+  }
+  
+  .tree-container .react-flow__controls-button:hover {
+    background: var(--bg-hover);
+  }
+  
+  .topic-node {
+    padding: 11px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    min-width: 178px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  
+  .topic-node:hover {
+    transform: translateY(-2px);
+  }
+  
+  .topic-node--empty {
+    border-color: var(--border);
+  }
+  
+  .topic-node--empty .topic-node__label {
+    color: var(--text-secondary);
+  }
+  
+  .topic-node--empty .topic-node__count {
+    color: var(--text-muted);
+  }
+  
+  .topic-node--some {
+    border-color: rgba(251, 191, 36, 0.5);
+    box-shadow: 0 0 16px rgba(251, 191, 36, 0.08);
+  }
+  
+  .topic-node--some .topic-node__count {
+    color: var(--warning);
+  }
+  
+  .topic-node--active {
+    border-color: rgba(34, 211, 238, 0.6);
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.14);
+  }
+  
+  .topic-node--active .topic-node__count {
+    color: var(--accent-cyan);
+  }
+  
+  /* Extensively covered (10+ solved) -- reuses --success, the same green
+     used for Easy difficulty and Optimal verdicts elsewhere, so "you've
+     really got this topic down" reads consistently across the whole app. */
+  .topic-node--extensive {
+    border-color: rgba(52, 211, 153, 0.65);
+    box-shadow: 0 0 22px rgba(52, 211, 153, 0.18);
+  }
+  
+  .topic-node--extensive .topic-node__label {
+    color: var(--text-primary);
+  }
+  
+  .topic-node--extensive .topic-node__count {
+    color: var(--success);
+    font-weight: 700;
+  }
+  
+  .topic-node__label {
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--text-primary);
+  }
+  
+  .topic-node__count {
+    font-size: 11px;
+    margin-top: 3px;
+    font-weight: 600;
+  }
+  
+  /* Side panel (problem list for a selected topic) ------------------------ */
+  .side-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 340px;
+    height: 100%;
+    background: var(--bg-surface);
+    border-left: 1px solid var(--border);
+    padding: 18px 20px;
+    overflow-y: auto;
+    box-shadow: -12px 0 32px rgba(0, 0, 0, 0.35);
+  }
+  
+  .side-panel__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  
+  .side-panel__header h3 {
+    font-size: 15px;
+    margin: 0;
+  }
+  
+  .side-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .side-panel li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface-raised);
+    border: 1px solid var(--border-soft);
+    font-size: 13px;
+  }
+  
+  /* ---------------------------------------------------------------------
+     Full-screen status states (loading / not connected / expired / error)
+     ------------------------------------------------------------------- */
+  .status-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    padding: 24px;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% 0%, rgba(59, 130, 246, 0.12), transparent 60%),
+      var(--bg-app);
+  }
+  
+  .status-screen__card {
+    max-width: 420px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 30px;
+    box-shadow: var(--shadow-card);
+  }
+  
+  .status-screen h2 {
+    font-size: 17px;
+    margin: 0 0 10px;
+    color: var(--text-primary);
+  }
+  
+  .status-screen p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+  
+  .status-screen ol {
+    text-align: left;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.9;
+    padding-left: 20px;
+    margin: 0 0 18px;
+  }
+  
+  .status-screen__spinner {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2.5px solid var(--border);
+    border-top-color: var(--accent-cyan);
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
