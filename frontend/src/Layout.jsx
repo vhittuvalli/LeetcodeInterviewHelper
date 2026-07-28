@@ -24,12 +24,20 @@ const icons = {
       <path d="M12 9v4l2.6 2.6M10 2.5h4M12 5.5V2.5" />
     </svg>
   ),
+  history: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M3 12a9 9 0 1 0 3-6.7" />
+      <path d="M3 4v5h5" />
+      <path d="M12 8v4.5l3 2" />
+    </svg>
+  ),
 };
 
 const NAV_ITEMS = [
   { to: "/", label: "Roadmap", icon: icons.roadmap, end: true },
   { to: "/practice", label: "Practice", icon: icons.practice },
   { to: "/mock-interview", label: "Mock Interview", icon: icons.mockInterview },
+  { to: "/history", label: "History", icon: icons.history },
 ];
 
 export default function Layout() {
