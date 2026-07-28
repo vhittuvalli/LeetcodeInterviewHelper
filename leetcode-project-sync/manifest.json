@@ -5,6 +5,7 @@
     "description": "Keeps your LeetCode session synced with your progress tracker automatically.",
     "permissions": ["cookies"],
     "host_permissions": [
+      "https://leetcodeinterviewhelper.onrender.com",
       "https://leetcode.com/*",
       "https://*.leetcode.com/*",
       "http://localhost:5000/*"

@@ -1,6 +1,6 @@
 // Where your Flask backend is running. Change this if you deploy the
 // backend somewhere other than your own machine.
-const BACKEND_URL = "http://localhost:5000/api/credentials";
+const BACKEND_URL = "https://leetcodeinterviewhelper.onrender.com/api/credentials";
 
 // Grab every cookie LeetCode has set, not just the two we care about --
 // LeetCode's Cloudflare protection (cf_clearance) can reject requests that
