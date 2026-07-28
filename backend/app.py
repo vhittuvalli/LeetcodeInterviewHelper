@@ -260,6 +260,38 @@ def mock_interview_start():
         return jsonify({"error": "server_error", "message": str(e)}), 500
 
 
+@app.route("/api/mock-interview/start-loop", methods=["GET"])
+def mock_interview_start_loop():
+    """Multi-round mode: picks the whole loop's problems upfront (no
+    repeats), but doesn't start any clock -- the frontend starts each
+    round's timer only once that round is actually shown, then evaluates
+    it through the same /api/mock-interview/evaluate route single-round
+    mode uses."""
+    company = request.args.get("company")
+    if not company:
+        return jsonify({"error": "bad_request", "message": "Expected a 'company' query param"}), 400
+
+    window = request.args.get("window", "all")
+    rounds = request.args.get("rounds", 3)
+    try:
+        rounds = int(rounds)
+    except (TypeError, ValueError):
+        return jsonify({"error": "bad_request", "message": "'rounds' must be an integer"}), 400
+
+    try:
+        return jsonify(mock_interview.start_loop(company, rounds, window=window))
+    except mock_interview.MockInterviewError as e:
+        return jsonify({"error": "no_problems_available", "message": str(e)}), 404
+    except company_bank.CompanyBankError as e:
+        return jsonify({"error": "company_bank_error", "message": str(e)}), 502
+    except leetcode_service.LeetCodeAuthError as e:
+        return _auth_error_response(e)
+    except leetcode_service.LeetCodeAPIError as e:
+        return jsonify({"error": "leetcode_api_error", "message": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
+
+
 @app.route("/api/mock-interview/evaluate", methods=["POST"])
 def mock_interview_evaluate():
     """Grades a finished (or timed-out) round -- re-fetches your latest

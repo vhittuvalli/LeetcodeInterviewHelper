@@ -1126,6 +1126,121 @@
     letter-spacing: -0.3px;
   }
   
+  /* Single Round / Full Loop segmented toggle */
+  .mode-toggle {
+    display: inline-flex;
+    gap: 3px;
+    padding: 3px;
+    margin-top: 18px;
+    background: var(--bg-surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  
+  .mode-toggle__option {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    font-weight: 600;
+    font-family: inherit;
+    padding: 7px 16px;
+    border-radius: var(--radius-sm);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  
+  .mode-toggle__option--active {
+    background: var(--accent-gradient);
+    color: #04121a;
+  }
+  
+  /* Rounds-count stepper for loop mode */
+  .rounds-stepper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .rounds-stepper__option {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  
+  .rounds-stepper__option:hover {
+    border-color: var(--border-glow);
+  }
+  
+  .rounds-stepper__option--active {
+    background: var(--accent-gradient);
+    color: #04121a;
+    border-color: transparent;
+  }
+  
+  .rounds-stepper .hint-text {
+    margin-left: 4px;
+  }
+  
+  /* "Round N of M" label shown on both the active round and its result */
+  .interview-card__round-label {
+    align-self: flex-start;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  
+  /* Per-round rows on the loop summary screen */
+  .loop-summary__rounds {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 6px 0 4px;
+  }
+  
+  .loop-summary__round {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface-raised);
+    border: 1px solid var(--border-soft);
+  }
+  
+  .loop-summary__round-index {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--bg-hover);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .loop-summary__round-title {
+    flex: 1;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
   .mix-bar__track {
     display: flex;
     height: 10px;

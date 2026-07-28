@@ -154,18 +154,29 @@ def select_round_problems(company, num_rounds=1, window="all", solved_slugs=None
     return picked
 
 
+# Real onsite loops researched at 3-5 separate rounds -- capped at 6 here
+# mostly to keep a single sitting from ballooning past what anyone would
+# actually do in one go (6 rounds x 45 min is already a 4.5-hour session).
+MAX_LOOP_ROUNDS = 6
+
+
+def _best_effort_solved_slugs():
+    """Used to steer round selection away from problems you've already
+    solved. Best-effort on purpose: if fetching your solved list fails for
+    any reason (auth hiccup, LeetCode flakiness), that filter is just
+    skipped rather than blocking the round entirely."""
+    try:
+        return {p["titleSlug"] for p in leetcode_service.fetch_solved()}
+    except Exception:
+        return set()
+
+
 def start_round(company, window="all"):
     """Single-round mode's entry point: picks one problem for this
-    company and starts the clock. Best-effort excludes problems you've
-    already solved (if fetching your solved list fails for any reason,
-    that filter is just skipped rather than blocking the round)."""
-    solved_slugs = set()
-    try:
-        solved_slugs = {p["titleSlug"] for p in leetcode_service.fetch_solved()}
-    except Exception:
-        pass
-
-    picked = select_round_problems(company, num_rounds=1, window=window, solved_slugs=solved_slugs)
+    company and starts the clock."""
+    picked = select_round_problems(
+        company, num_rounds=1, window=window, solved_slugs=_best_effort_solved_slugs()
+    )
     if not picked:
         raise MockInterviewError(f"Couldn't find an eligible problem for '{company}'")
 
@@ -174,6 +185,36 @@ def start_round(company, window="all"):
         "difficultyMix": difficulty_mix(company, window=window),
         "timeLimitSeconds": ROUND_TIME_SECONDS,
         "startedAt": int(time.time()),
+    }
+
+
+def start_loop(company, num_rounds, window="all"):
+    """Multi-round mode's entry point: picks num_rounds non-repeating
+    problems for this company in one shot (via select_round_problems,
+    which single-round mode already uses with num_rounds=1) so the whole
+    loop is decided upfront -- no risk of round 3 accidentally repeating
+    round 1's problem.
+
+    Deliberately does NOT stamp a startedAt here the way start_round()
+    does: a loop's rounds happen one at a time, often with a pause between
+    them while the frontend shows that round's result, so each round's
+    clock should start when the candidate actually begins THAT round, not
+    when the whole loop was requested. The frontend captures its own
+    "now" the moment it displays each round and sends that to
+    evaluate_round() -- same value start_round() would have stamped
+    anyway, just captured at the moment it's actually needed."""
+    num_rounds = max(1, min(int(num_rounds), MAX_LOOP_ROUNDS))
+
+    picked = select_round_problems(
+        company, num_rounds=num_rounds, window=window, solved_slugs=_best_effort_solved_slugs()
+    )
+    if not picked:
+        raise MockInterviewError(f"Couldn't find eligible problems for '{company}'")
+
+    return {
+        "problems": picked,
+        "difficultyMix": difficulty_mix(company, window=window),
+        "timeLimitSeconds": ROUND_TIME_SECONDS,
     }
 
 
