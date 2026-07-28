@@ -3,6 +3,11 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 const API_BASE = "http://localhost:5000";
 const ROUNDS_OPTIONS = [2, 3, 4, 5];
 
+// Sent as X-API-Key on /evaluate (the one route here that calls the LLM) --
+// a no-op if VITE_API_SHARED_SECRET isn't set, since the backend only
+// enforces this check when its own API_SHARED_SECRET is configured too.
+const API_SHARED_SECRET = import.meta.env.VITE_API_SHARED_SECRET || "";
+
 const OUTCOME_LABELS = {
   strong_pass: "Strong Pass",
   pass: "Pass",
@@ -174,11 +179,15 @@ export default function MockInterviewPage() {
     try {
       const res = await fetch(`${API_BASE}/api/mock-interview/evaluate`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(API_SHARED_SECRET ? { "X-API-Key": API_SHARED_SECRET } : {}),
+        },
         body: JSON.stringify({
           problem: round.problem,
           startedAt: round.startedAt,
           timeLimitSeconds: round.timeLimitSeconds,
+          company,
         }),
       });
       const body = await res.json();
@@ -194,7 +203,7 @@ export default function MockInterviewPage() {
       setEvalError(err.message || "Couldn't evaluate this round.");
       setEvalStatus("error");
     }
-  }, [round, mode]);
+  }, [round, mode, company]);
 
   const goToNextRound = () => {
     const nextIndex = currentRoundIndex + 1;

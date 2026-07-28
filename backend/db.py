@@ -18,6 +18,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     Column,
     Date,
     DateTime,
@@ -96,6 +97,22 @@ class SpacedRepetitionQueue(Base):
     title_slug = Column(Text, nullable=False)
     assigned_date = Column(Date, nullable=False)
     reviewed_at = Column(DateTime(timezone=True))
+
+
+class MockInterviewRound(Base):
+    __tablename__ = "mock_interview_rounds"
+    id = Column(_id_type, primary_key=True, autoincrement=True)
+    user_id = Column(Uuid, ForeignKey("users.id"), nullable=False)
+    company = Column(Text, nullable=False)
+    title_slug = Column(Text, nullable=False)
+    title = Column(Text, nullable=False)
+    difficulty = Column(Text, nullable=False)
+    outcome = Column(Text, nullable=False)  # 'strong_pass' | 'pass' | 'no_pass'
+    verdict = Column(Text)  # 'OPTIMAL' | 'SUBOPTIMAL' | 'WRONG' | None
+    within_time = Column(Boolean, nullable=False)
+    time_taken_seconds = Column(Integer)
+    started_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 
 # ---------------------------------------------------------------------------
@@ -363,3 +380,62 @@ def mark_reviewed(user_id, title_slug, today):
         )
         if row is not None:
             row.reviewed_at = datetime.now(timezone.utc)
+
+
+# ---------------------------------------------------------------------------
+# Mock interview history (new table -- nothing to migrate away from)
+# ---------------------------------------------------------------------------
+
+def record_mock_interview_round(
+    user_id, company, title_slug, title, difficulty, outcome, verdict, within_time, time_taken_seconds, started_at
+):
+    """One row per evaluated round. started_at comes in as a unix int (the
+    same value the frontend sends to /api/mock-interview/evaluate) --
+    converted to a real timestamptz here so it sorts/queries properly
+    alongside every other timestamp column in the schema."""
+    with session_scope() as session:
+        session.add(MockInterviewRound(
+            user_id=user_id,
+            company=company,
+            title_slug=title_slug,
+            title=title,
+            difficulty=difficulty,
+            outcome=outcome,
+            verdict=verdict,
+            within_time=within_time,
+            time_taken_seconds=time_taken_seconds,
+            started_at=datetime.fromtimestamp(started_at, tz=timezone.utc),
+        ))
+
+
+def get_mock_interview_history(user_id, limit=50):
+    """Most recent evaluated rounds first -- the raw material for a future
+    "performance over time" view. Returns plain dicts, not ORM rows, so
+    callers (and eventually a JSON API route) don't need to know anything
+    about SQLAlchemy."""
+    with session_scope() as session:
+        rows = (
+            session.query(MockInterviewRound)
+            .filter_by(user_id=user_id)
+            # id as a tiebreaker: two rounds evaluated within the same
+            # second would otherwise have an ambiguous order since
+            # created_at's resolution isn't fine enough to tell them apart.
+            .order_by(MockInterviewRound.created_at.desc(), MockInterviewRound.id.desc())
+            .limit(limit)
+            .all()
+        )
+        return [
+            {
+                "company": r.company,
+                "titleSlug": r.title_slug,
+                "title": r.title,
+                "difficulty": r.difficulty,
+                "outcome": r.outcome,
+                "verdict": r.verdict,
+                "withinTime": r.within_time,
+                "timeTakenSeconds": r.time_taken_seconds,
+                "startedAt": int(r.started_at.replace(tzinfo=r.started_at.tzinfo or timezone.utc).timestamp()),
+                "createdAt": r.created_at.isoformat(),
+            }
+            for r in rows
+        ]

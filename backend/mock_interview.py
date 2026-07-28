@@ -3,12 +3,16 @@ that company's real interviews actually skew (by difficulty, weighted by
 how often each problem has been reported), work it under a countdown, and
 get graded on whether you'd plausibly have passed the round.
 
-Deliberately stateless and separate from diagnosis.py's backlog tables --
-a mock interview round isn't "diagnose this problem once and mark it
-done," it's "grade this specific timed attempt," so nothing here writes to
-problem_diagnoses/diagnosis_history. The frontend holds the one thing that
-needs to persist across the round (which problem + when it started) and
-hands it back to evaluate_round() when the round ends.
+Deliberately separate from diagnosis.py's backlog tables -- a mock
+interview round isn't "diagnose this problem once and mark it done," it's
+"grade this specific timed attempt," so nothing here writes to
+problem_diagnoses/diagnosis_history. It has its own append-only history
+table instead (mock_interview_rounds), logged from evaluate_round() every
+time a round actually gets graded. The round itself is still tracked
+client-side while it's in progress -- the frontend holds which problem and
+when it started, and hands that back to evaluate_round() when the round
+ends -- logging only happens at that final step, not while a round is
+still live.
 
 single-round mode (num_rounds=1) is what's wired up to the API right now;
 select_round_problems() already generalizes to a full multi-round loop for
@@ -18,6 +22,7 @@ import random
 import time
 
 import company_bank
+import db
 import leetcode_service
 import llm_client
 import llm_diagnosis
@@ -218,10 +223,40 @@ def start_loop(company, num_rounds, window="all"):
     }
 
 
-def evaluate_round(problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS):
+def _log_round(company, problem, started_at, result):
+    """Append-only log of a graded round, feeding both a future "your
+    performance over time" view and (later) excluding recently-seen
+    problems from being picked again. Best-effort on purpose -- a logging
+    hiccup shouldn't stop the actual result from reaching the user, so
+    any failure here is swallowed rather than raised. Skipped entirely if
+    no company was given (keeps evaluate_round callable without logging,
+    e.g. from a script or a future caller that doesn't track a company)."""
+    if not company:
+        return
+    try:
+        db.record_mock_interview_round(
+            db.get_default_user_id(),
+            company=company,
+            title_slug=problem["titleSlug"],
+            title=problem.get("title") or problem["titleSlug"],
+            difficulty=problem.get("difficulty") or "Unknown",
+            outcome=result["outcome"],
+            verdict=result["verdict"],
+            within_time=result["withinTime"],
+            time_taken_seconds=result["timeTakenSeconds"],
+            started_at=started_at,
+        )
+    except Exception:
+        pass
+
+
+def evaluate_round(problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS, company=None):
     """Grades one finished (or timed-out) round. `problem` is the dict
-    start_round() returned under "problem"; `started_at` is the unix
-    timestamp it returned under "startedAt".
+    start_round()/start_loop() returned; `started_at` is the unix
+    timestamp the frontend captured when this specific round began.
+    `company` is optional but should be passed whenever it's known -- it's
+    what gets logged to mock_interview_rounds; without it, this still
+    grades the round correctly, it just doesn't get recorded to history.
 
     Always re-fetches the latest submission fresh from LeetCode
     (force_refresh=True) instead of trusting any cache -- a cached
@@ -249,7 +284,7 @@ def evaluate_round(problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS):
     submission = history[0] if history else None
 
     if submission is None or submission["timestamp"] < started_at:
-        return {
+        result = {
             "outcome": "no_pass",
             "outcomeLabel": OUTCOME_LABELS["no_pass"],
             "solved": False,
@@ -258,6 +293,8 @@ def evaluate_round(problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS):
             "feedback": "No submission was found for this round -- nothing was submitted before evaluating.",
             "timeTakenSeconds": None,
         }
+        _log_round(company, problem, started_at, result)
+        return result
 
     within_time = submission["timestamp"] <= deadline
     time_taken = submission["timestamp"] - started_at
@@ -282,7 +319,7 @@ def evaluate_round(problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS):
         # safe-default reasoning diagnosis.py uses: don't overclaim.
         outcome = "pass"
 
-    return {
+    result = {
         "outcome": outcome,
         "outcomeLabel": OUTCOME_LABELS[outcome],
         "solved": accepted,
@@ -291,3 +328,5 @@ def evaluate_round(problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS):
         "feedback": feedback,
         "timeTakenSeconds": time_taken,
     }
+    _log_round(company, problem, started_at, result)
+    return result

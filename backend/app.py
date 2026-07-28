@@ -16,6 +16,8 @@ import llm_diagnosis
 import llm_client
 import company_bank
 import mock_interview
+import db
+from security import require_api_secret, rate_limit
 
 app = Flask(__name__)
 # Dev-mode CORS: allow your React dev server (e.g. Vite on :5173) AND the
@@ -183,6 +185,8 @@ def diagnosis_prompt_preview():
 
 
 @app.route("/api/diagnosis/run", methods=["POST"])
+@require_api_secret
+@rate_limit(max_requests=5, window_seconds=600)
 def diagnosis_run():
     """Actually runs the LLM diagnosis pipeline: auto-selects weak problems,
     fetches their code, builds prompts, and calls DeepSeek. Only a verdict
@@ -191,7 +195,8 @@ def diagnosis_run():
     last diagnosis get skipped (no LLM call, no charge) instead of
     re-diagnosing identical code. Costs real API credits for the calls
     that do happen -- POST on purpose so it can't fire from just visiting
-    a URL."""
+    a URL. Also gated by require_api_secret + rate_limit (see security.py)
+    since this is one of the two routes that actually spends money."""
     try:
         limit = int(request.args.get("limit", diagnosis.BATCH_SIZE))
         results = llm_client.diagnose_batch(limit=limit)
@@ -293,17 +298,21 @@ def mock_interview_start_loop():
 
 
 @app.route("/api/mock-interview/evaluate", methods=["POST"])
+@require_api_secret
+@rate_limit(max_requests=10, window_seconds=600)
 def mock_interview_evaluate():
     """Grades a finished (or timed-out) round -- re-fetches your latest
     submission fresh from LeetCode, checks it against the round's actual
     start time and time limit, and (only if there's something to grade)
     makes one LLM call for the optimal/suboptimal judgment. Costs real API
     credits when it does call the LLM -- POST on purpose, same reasoning
-    as /api/diagnosis/run."""
+    as /api/diagnosis/run. Also gated by require_api_secret + rate_limit
+    (see security.py) for the same reason."""
     body = request.get_json(silent=True) or {}
     problem = body.get("problem")
     started_at = body.get("startedAt")
     time_limit = body.get("timeLimitSeconds", mock_interview.ROUND_TIME_SECONDS)
+    company = body.get("company")
 
     if not problem or not problem.get("titleSlug") or started_at is None:
         return jsonify({
@@ -312,13 +321,25 @@ def mock_interview_evaluate():
         }), 400
 
     try:
-        return jsonify(mock_interview.evaluate_round(problem, int(started_at), int(time_limit)))
+        return jsonify(mock_interview.evaluate_round(problem, int(started_at), int(time_limit), company=company))
     except RuntimeError as e:
         return jsonify({"error": "missing_api_key", "message": str(e)}), 500
     except leetcode_service.LeetCodeAuthError as e:
         return _auth_error_response(e)
     except leetcode_service.LeetCodeAPIError as e:
         return jsonify({"error": "leetcode_api_error", "message": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
+
+
+@app.route("/api/mock-interview/history", methods=["GET"])
+def mock_interview_history():
+    """Every past graded round, most recent first -- the raw material for
+    a future performance-over-time view. Pass ?limit=N to cap it (default
+    50). Purely a read -- no LLM call, no LeetCode call, just the log."""
+    limit = int(request.args.get("limit", 50))
+    try:
+        return jsonify(db.get_mock_interview_history(db.get_default_user_id(), limit=limit))
     except Exception as e:
         return jsonify({"error": "server_error", "message": str(e)}), 500
 

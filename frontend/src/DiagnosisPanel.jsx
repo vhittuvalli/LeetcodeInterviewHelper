@@ -3,6 +3,11 @@ import { useState, useCallback } from "react";
 const API_BASE = "http://localhost:5000";
 const DIAGNOSIS_LIMIT = 3;
 
+// Sent as X-API-Key on the routes that actually cost money -- a no-op if
+// VITE_API_SHARED_SECRET isn't set (local dev), since the backend only
+// enforces this check when its own API_SHARED_SECRET is configured too.
+const API_SHARED_SECRET = import.meta.env.VITE_API_SHARED_SECRET || "";
+
 const VERDICT_LABELS = {
   OPTIMAL: "Optimal",
   SUBOPTIMAL: "Suboptimal",
@@ -22,6 +27,7 @@ export default function DiagnosisPanel() {
     try {
       const res = await fetch(`${API_BASE}/api/diagnosis/run?limit=${DIAGNOSIS_LIMIT}`, {
         method: "POST",
+        headers: API_SHARED_SECRET ? { "X-API-Key": API_SHARED_SECRET } : {},
       });
       const body = await res.json();
 
