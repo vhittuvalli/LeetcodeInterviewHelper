@@ -6,6 +6,7 @@ import { buildLayoutedNodes } from "./topicGraph";
 import Layout from "./Layout";
 import RoadmapPage from "./pages/RoadmapPage";
 import PracticePage from "./pages/PracticePage";
+import MockInterviewPage from "./pages/MockInterviewPage";
 
 const API_BASE = "http://localhost:5000";
 
@@ -112,6 +113,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route index element={<RoadmapPage nodes={nodes} edges={edges} onRefresh={loadTopics} />} />
           <Route path="practice" element={<PracticePage />} />
+          <Route path="mock-interview" element={<MockInterviewPage />} />
         </Route>
       </Routes>
     </HashRouter>

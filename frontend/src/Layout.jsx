@@ -18,11 +18,18 @@ const icons = {
       <circle cx="12" cy="12" r="0.8" fill="currentColor" />
     </svg>
   ),
+  mockInterview: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="13" r="7.5" />
+      <path d="M12 9v4l2.6 2.6M10 2.5h4M12 5.5V2.5" />
+    </svg>
+  ),
 };
 
 const NAV_ITEMS = [
   { to: "/", label: "Roadmap", icon: icons.roadmap, end: true },
   { to: "/practice", label: "Practice", icon: icons.practice },
+  { to: "/mock-interview", label: "Mock Interview", icon: icons.mockInterview },
 ];
 
 export default function Layout() {

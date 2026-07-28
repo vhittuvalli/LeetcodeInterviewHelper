@@ -14,6 +14,8 @@ import diagnosis
 import submission_history
 import llm_diagnosis
 import llm_client
+import company_bank
+import mock_interview
 
 app = Flask(__name__)
 # Dev-mode CORS: allow your React dev server (e.g. Vite on :5173) AND the
@@ -194,6 +196,91 @@ def diagnosis_run():
         limit = int(request.args.get("limit", diagnosis.BATCH_SIZE))
         results = llm_client.diagnose_batch(limit=limit)
         return jsonify(results)
+    except RuntimeError as e:
+        return jsonify({"error": "missing_api_key", "message": str(e)}), 500
+    except leetcode_service.LeetCodeAuthError as e:
+        return _auth_error_response(e)
+    except leetcode_service.LeetCodeAPIError as e:
+        return jsonify({"error": "leetcode_api_error", "message": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
+
+
+@app.route("/api/mock-interview/companies", methods=["GET"])
+def mock_interview_companies():
+    """Every company the problem bank has data for, straight from GitHub
+    (cached after the first call). Falls back to a short known-good list
+    if GitHub can't be reached, rather than erroring the whole picker out."""
+    try:
+        return jsonify(company_bank.list_companies())
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
+
+
+@app.route("/api/mock-interview/difficulty-mix", methods=["GET"])
+def mock_interview_difficulty_mix():
+    """This company's real Easy/Medium/Hard split (frequency-weighted from
+    its actual tagged problems) -- lets the picker show what a round will
+    skew toward before you commit to starting one."""
+    company = request.args.get("company")
+    if not company:
+        return jsonify({"error": "bad_request", "message": "Expected a 'company' query param"}), 400
+
+    window = request.args.get("window", "all")
+    try:
+        return jsonify(mock_interview.difficulty_mix(company, window=window))
+    except company_bank.CompanyBankError as e:
+        return jsonify({"error": "company_bank_error", "message": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
+
+
+@app.route("/api/mock-interview/start", methods=["GET"])
+def mock_interview_start():
+    """Picks one problem for this company (difficulty sampled from its
+    real distribution, best-effort excluding what you've already solved)
+    and starts the clock. Free -- no LLM call happens until the round is
+    actually submitted for evaluation."""
+    company = request.args.get("company")
+    if not company:
+        return jsonify({"error": "bad_request", "message": "Expected a 'company' query param"}), 400
+
+    window = request.args.get("window", "all")
+    try:
+        return jsonify(mock_interview.start_round(company, window=window))
+    except mock_interview.MockInterviewError as e:
+        return jsonify({"error": "no_problems_available", "message": str(e)}), 404
+    except company_bank.CompanyBankError as e:
+        return jsonify({"error": "company_bank_error", "message": str(e)}), 502
+    except leetcode_service.LeetCodeAuthError as e:
+        return _auth_error_response(e)
+    except leetcode_service.LeetCodeAPIError as e:
+        return jsonify({"error": "leetcode_api_error", "message": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": "server_error", "message": str(e)}), 500
+
+
+@app.route("/api/mock-interview/evaluate", methods=["POST"])
+def mock_interview_evaluate():
+    """Grades a finished (or timed-out) round -- re-fetches your latest
+    submission fresh from LeetCode, checks it against the round's actual
+    start time and time limit, and (only if there's something to grade)
+    makes one LLM call for the optimal/suboptimal judgment. Costs real API
+    credits when it does call the LLM -- POST on purpose, same reasoning
+    as /api/diagnosis/run."""
+    body = request.get_json(silent=True) or {}
+    problem = body.get("problem")
+    started_at = body.get("startedAt")
+    time_limit = body.get("timeLimitSeconds", mock_interview.ROUND_TIME_SECONDS)
+
+    if not problem or not problem.get("titleSlug") or started_at is None:
+        return jsonify({
+            "error": "bad_request",
+            "message": "Expected JSON body with 'problem' (from /start) and 'startedAt'",
+        }), 400
+
+    try:
+        return jsonify(mock_interview.evaluate_round(problem, int(started_at), int(time_limit)))
     except RuntimeError as e:
         return jsonify({"error": "missing_api_key", "message": str(e)}), 500
     except leetcode_service.LeetCodeAuthError as e:
