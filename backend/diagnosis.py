@@ -24,7 +24,7 @@ def _pick_score(problem, weak_topics, neetcode_map):
     return num_submitted + weakness_bonus
 
 
-def select_problems_to_diagnose(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
+def select_problems_to_diagnose(user_id, limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
     """Returns up to `limit` solved problems worth running an LLM diagnosis
     on next -- highest pick_score first, excluding anything already
     diagnosed in a previous call, and capped at `max_per_topic` picks from
@@ -32,10 +32,10 @@ def select_problems_to_diagnose(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
     dominated by whichever topic happens to be weakest. No date/schedule
     logic: this is a backlog, not a daily cache -- call it whenever, it
     just returns what's new."""
-    diagnosed_slugs = db.get_diagnosed_slugs(db.get_default_user_id())
+    diagnosed_slugs = db.get_diagnosed_slugs(user_id)
 
-    solved_problems = leetcode_service.fetch_solved()
-    attempted_problems = leetcode_service.fetch_attempted()
+    solved_problems = leetcode_service.fetch_solved(user_id)
+    attempted_problems = leetcode_service.fetch_attempted(user_id)
     neetcode_map = leetcode_service.load_neetcode_map()
 
     weak_topics = recommendations._rank_weak_topics(solved_problems, attempted_problems, neetcode_map)
@@ -62,7 +62,7 @@ def select_problems_to_diagnose(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
     return selected
 
 
-def get_diagnosis_batch(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
+def get_diagnosis_batch(user_id, limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
     """The full pipeline in one call, nothing to type in by hand:
     1. select_problems_to_diagnose() auto-picks which solved problems are
        worth analyzing, weighted toward weak topics and capped per topic.
@@ -71,11 +71,11 @@ def get_diagnosis_batch(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
        calls and LLM tokens down).
     Returns a list ready to hand to an LLM later -- problem info + the code
     for each pick."""
-    picked = select_problems_to_diagnose(limit=limit, max_per_topic=max_per_topic)
+    picked = select_problems_to_diagnose(user_id, limit=limit, max_per_topic=max_per_topic)
 
     batch = []
     for p in picked:
-        history = submission_history.get_submission_history(p["titleSlug"])
+        history = submission_history.get_submission_history(user_id, p["titleSlug"])
         batch.append({
             "frontendId": p.get("frontendId"),
             "title": p.get("title"),
@@ -87,7 +87,7 @@ def get_diagnosis_batch(limit=BATCH_SIZE, max_per_topic=MAX_PER_TOPIC):
     return batch
 
 
-def record_diagnosis(titleSlug, submission_id, verdict, result=None):
+def record_diagnosis(user_id, titleSlug, submission_id, verdict, result=None):
     """Call once an LLM diagnosis actually comes back for a problem.
     Only an OPTIMAL verdict marks the problem permanently done -- WRONG,
     SUBOPTIMAL, and anything the model didn't tag cleanly all leave it in
@@ -100,14 +100,14 @@ def record_diagnosis(titleSlug, submission_id, verdict, result=None):
     already_diagnosed_this_submission() can tell "still the same code,
     skip re-diagnosing it" apart from "they resubmitted, diagnose it
     again" without spending another LLM call to find out."""
-    db.record_diagnosis(db.get_default_user_id(), titleSlug, submission_id, verdict, result=result)
+    db.record_diagnosis(user_id, titleSlug, submission_id, verdict, result=result)
 
 
-def already_diagnosed_this_submission(titleSlug, submission_id):
+def already_diagnosed_this_submission(user_id, titleSlug, submission_id):
     """True if the last diagnosis on this problem was about this exact
     submission and it wasn't OPTIMAL (if it had been, the problem would be
     in "diagnosed" and wouldn't be selected again at all). Callers use this
     to skip the LLM call entirely when nothing has changed since last time
     -- there's nothing new to say about identical code, so don't pay for it."""
-    pending = db.get_pending_diagnosis(db.get_default_user_id(), titleSlug)
+    pending = db.get_pending_diagnosis(user_id, titleSlug)
     return pending is not None and pending.get("submissionId") == submission_id

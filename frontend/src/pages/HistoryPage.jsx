@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+import { apiFetch } from "../apiFetch";
 
 const OUTCOME_LABELS = {
   strong_pass: "Strong Pass",
@@ -63,7 +62,7 @@ export default function HistoryPage() {
   const load = useCallback(async () => {
     setStatus("loading");
     try {
-      const res = await fetch(`${API_BASE}/api/mock-interview/history?limit=100`);
+      const res = await apiFetch("/api/mock-interview/history?limit=100");
       const body = await res.json();
       if (!res.ok) throw new Error(body.message || "Failed to load history");
       if (body.length === 0) {

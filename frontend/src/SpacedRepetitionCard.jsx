@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+import { apiFetch } from "./apiFetch";
 
 export default function SpacedRepetitionCard() {
   const [data, setData] = useState(null);
@@ -9,7 +8,7 @@ export default function SpacedRepetitionCard() {
   const load = useCallback(async () => {
     setStatus("loading");
     try {
-      const res = await fetch(`${API_BASE}/api/spaced-repetition/today`);
+      const res = await apiFetch("/api/spaced-repetition/today");
       const body = await res.json();
 
       if (!res.ok) {
@@ -31,7 +30,7 @@ export default function SpacedRepetitionCard() {
 
   const markReviewed = async () => {
     if (!data) return;
-    await fetch(`${API_BASE}/api/spaced-repetition/complete`, {
+    await apiFetch("/api/spaced-repetition/complete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ titleSlug: data.problem.titleSlug }),

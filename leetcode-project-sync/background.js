@@ -12,7 +12,26 @@ async function getAllLeetCodeCookies() {
   });
 }
 
+// The extension's own account-scoped bearer token, pasted into popup.html
+// once (from the app's Account page) and stored locally. This is what
+// tells the backend WHICH account to sync this cookie to -- deliberately
+// not a login JWT (see auth.py's module docstring for why), and there's
+// no fallback to a "default" account anymore: with nothing set here, the
+// backend has no way to know whose data this is, so syncing is skipped
+// entirely rather than guessing.
+async function getSyncToken() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(["syncToken"], (result) => resolve(result.syncToken || ""));
+  });
+}
+
 async function syncCredentialsToBackend() {
+  const syncToken = await getSyncToken();
+  if (!syncToken) {
+    console.log("LeetCode sync: no sync token configured yet -- open the extension popup and paste one in from the app's Account page.");
+    return;
+  }
+
   const cookies = await getAllLeetCodeCookies();
   const sessionCookie = cookies.find((c) => c.name === "LEETCODE_SESSION");
   const csrfCookie = cookies.find((c) => c.name === "csrftoken");
@@ -27,9 +46,17 @@ async function syncCredentialsToBackend() {
   try {
     const response = await fetch(BACKEND_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-Sync-Token": syncToken,
+      },
       body: JSON.stringify({ cookie: cookieHeader, csrf: csrfCookie.value }),
     });
+
+    if (response.status === 401) {
+      console.error("LeetCode sync: backend rejected the sync token -- it may have been revoked or regenerated. Get a fresh one from the app's Account page.");
+      return;
+    }
 
     if (!response.ok) {
       console.error("LeetCode sync: backend rejected the credentials", response.status);
@@ -60,6 +87,15 @@ chrome.cookies.onChanged.addListener((changeInfo) => {
   }
 
   if (cookie.name === "LEETCODE_SESSION" || cookie.name === "csrftoken") {
+    syncCredentialsToBackend();
+  }
+});
+
+// Fires the moment the popup saves a new (or changed) sync token -- syncs
+// immediately instead of waiting for the next cookie change, so pasting a
+// token in and seeing it work feels instant.
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "local" && changes.syncToken) {
     syncCredentialsToBackend();
   }
 });

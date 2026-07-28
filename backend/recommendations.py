@@ -122,9 +122,9 @@ def _explain(info):
     return "; ".join(parts) if parts else "lower relative mastery"
 
 
-def get_recommendations(limit=5):
-    solved_problems = leetcode_service.fetch_solved()
-    attempted_problems = leetcode_service.fetch_attempted()
+def get_recommendations(user_id, limit=5):
+    solved_problems = leetcode_service.fetch_solved(user_id)
+    attempted_problems = leetcode_service.fetch_attempted(user_id)
     neetcode_map = leetcode_service.load_neetcode_map()
     all_problems = _load_all_problems()
 

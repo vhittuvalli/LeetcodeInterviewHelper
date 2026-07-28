@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
+import { apiFetch } from "./apiFetch";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 const RECOMMENDATION_LIMIT = 6;
 
 export default function RecommendedProblems() {
@@ -10,7 +10,7 @@ export default function RecommendedProblems() {
   const load = useCallback(async () => {
     setStatus("loading");
     try {
-      const res = await fetch(`${API_BASE}/api/recommendations?limit=${RECOMMENDATION_LIMIT}`);
+      const res = await apiFetch(`/api/recommendations?limit=${RECOMMENDATION_LIMIT}`);
       const body = await res.json();
 
       if (!res.ok) {

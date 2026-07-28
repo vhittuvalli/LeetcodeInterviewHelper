@@ -165,22 +165,22 @@ def select_round_problems(company, num_rounds=1, window="all", solved_slugs=None
 MAX_LOOP_ROUNDS = 6
 
 
-def _best_effort_solved_slugs():
+def _best_effort_solved_slugs(user_id):
     """Used to steer round selection away from problems you've already
     solved. Best-effort on purpose: if fetching your solved list fails for
     any reason (auth hiccup, LeetCode flakiness), that filter is just
     skipped rather than blocking the round entirely."""
     try:
-        return {p["titleSlug"] for p in leetcode_service.fetch_solved()}
+        return {p["titleSlug"] for p in leetcode_service.fetch_solved(user_id)}
     except Exception:
         return set()
 
 
-def start_round(company, window="all"):
+def start_round(user_id, company, window="all"):
     """Single-round mode's entry point: picks one problem for this
     company and starts the clock."""
     picked = select_round_problems(
-        company, num_rounds=1, window=window, solved_slugs=_best_effort_solved_slugs()
+        company, num_rounds=1, window=window, solved_slugs=_best_effort_solved_slugs(user_id)
     )
     if not picked:
         raise MockInterviewError(f"Couldn't find an eligible problem for '{company}'")
@@ -193,7 +193,7 @@ def start_round(company, window="all"):
     }
 
 
-def start_loop(company, num_rounds, window="all"):
+def start_loop(user_id, company, num_rounds, window="all"):
     """Multi-round mode's entry point: picks num_rounds non-repeating
     problems for this company in one shot (via select_round_problems,
     which single-round mode already uses with num_rounds=1) so the whole
@@ -211,7 +211,7 @@ def start_loop(company, num_rounds, window="all"):
     num_rounds = max(1, min(int(num_rounds), MAX_LOOP_ROUNDS))
 
     picked = select_round_problems(
-        company, num_rounds=num_rounds, window=window, solved_slugs=_best_effort_solved_slugs()
+        company, num_rounds=num_rounds, window=window, solved_slugs=_best_effort_solved_slugs(user_id)
     )
     if not picked:
         raise MockInterviewError(f"Couldn't find eligible problems for '{company}'")
@@ -223,7 +223,7 @@ def start_loop(company, num_rounds, window="all"):
     }
 
 
-def _log_round(company, problem, started_at, result):
+def _log_round(user_id, company, problem, started_at, result):
     """Append-only log of a graded round, feeding both a future "your
     performance over time" view and (later) excluding recently-seen
     problems from being picked again. Best-effort on purpose -- a logging
@@ -235,7 +235,7 @@ def _log_round(company, problem, started_at, result):
         return
     try:
         db.record_mock_interview_round(
-            db.get_default_user_id(),
+            user_id,
             company=company,
             title_slug=problem["titleSlug"],
             title=problem.get("title") or problem["titleSlug"],
@@ -250,7 +250,7 @@ def _log_round(company, problem, started_at, result):
         pass
 
 
-def evaluate_round(problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS, company=None):
+def evaluate_round(user_id, problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS, company=None):
     """Grades one finished (or timed-out) round. `problem` is the dict
     start_round()/start_loop() returned; `started_at` is the unix
     timestamp the frontend captured when this specific round began.
@@ -280,7 +280,7 @@ def evaluate_round(problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS, c
     title_slug = problem["titleSlug"]
     deadline = started_at + time_limit_seconds
 
-    history = submission_history.get_submission_history(title_slug, force_refresh=True)
+    history = submission_history.get_submission_history(user_id, title_slug, force_refresh=True)
     submission = history[0] if history else None
 
     if submission is None or submission["timestamp"] < started_at:
@@ -293,7 +293,7 @@ def evaluate_round(problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS, c
             "feedback": "No submission was found for this round -- nothing was submitted before evaluating.",
             "timeTakenSeconds": None,
         }
-        _log_round(company, problem, started_at, result)
+        _log_round(user_id, company, problem, started_at, result)
         return result
 
     within_time = submission["timestamp"] <= deadline
@@ -328,5 +328,5 @@ def evaluate_round(problem, started_at, time_limit_seconds=ROUND_TIME_SECONDS, c
         "feedback": feedback,
         "timeTakenSeconds": time_taken,
     }
-    _log_round(company, problem, started_at, result)
+    _log_round(user_id, company, problem, started_at, result)
     return result

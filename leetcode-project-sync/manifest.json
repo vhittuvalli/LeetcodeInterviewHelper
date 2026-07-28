@@ -1,16 +1,20 @@
 {
-    "manifest_version": 3,
-    "name": "LeetCode Progress Sync",
-    "version": "1.0",
-    "description": "Keeps your LeetCode session synced with your progress tracker automatically.",
-    "permissions": ["cookies"],
-    "host_permissions": [
-      "https://leetcodeinterviewhelper.onrender.com",
-      "https://leetcode.com/*",
-      "https://*.leetcode.com/*",
-      "http://localhost:5000/*"
-    ],
-    "background": {
-      "service_worker": "background.js"
-    }
+  "manifest_version": 3,
+  "name": "LeetCode Progress Sync",
+  "version": "1.0",
+  "description": "Keeps your LeetCode session synced with your progress tracker automatically.",
+  "permissions": ["cookies", "storage"],
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "https://*.leetcode.com/*",
+    "https://leetcodeinterviewhelper.onrender.com/*",
+    "http://localhost:5000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "LeetCode Progress Sync"
   }
+}

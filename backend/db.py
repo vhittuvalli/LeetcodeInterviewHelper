@@ -11,7 +11,9 @@ actually creates them in Supabase; these are just Python's view of
 already-existing tables (create_all() is never called against a real
 database, only against the in-memory SQLite used in tests).
 """
+import hashlib
 import os
+import secrets
 import uuid
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -99,6 +101,21 @@ class SpacedRepetitionQueue(Base):
     reviewed_at = Column(DateTime(timezone=True))
 
 
+class ExtensionToken(Base):
+    """The Chrome extension's opaque bearer token -- separate from a login
+    JWT on purpose (see auth.py's module docstring). Only token_hash is
+    ever stored; the raw token is returned once, at generation time, and
+    never persisted anywhere. At most one row per user should have
+    revoked_at IS NULL at a time -- create_sync_token() enforces that by
+    revoking any existing live token before creating a new one."""
+    __tablename__ = "extension_tokens"
+    id = Column(_id_type, primary_key=True, autoincrement=True)
+    user_id = Column(Uuid, ForeignKey("users.id"), nullable=False)
+    token_hash = Column(Text, nullable=False, unique=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    revoked_at = Column(DateTime(timezone=True))
+
+
 class MockInterviewRound(Base):
     __tablename__ = "mock_interview_rounds"
     id = Column(_id_type, primary_key=True, autoincrement=True)
@@ -173,10 +190,10 @@ def session_scope():
 
 
 # ---------------------------------------------------------------------------
-# Default user (Phase 1: single-user). Every other function below takes a
-# user_id -- for now, everything in app.py passes get_default_user_id().
-# When real multi-user auth exists, only this one function's caller needs
-# to change (to "the currently authenticated user"), not every query.
+# Default user -- Phase 1 leftover, kept only for tests/scripts that don't
+# run inside a real HTTP request (nothing in app.py calls this anymore).
+# Real requests resolve their user via auth.get_current_user_id() instead,
+# which pulls the verified id out of that request's Supabase JWT.
 # ---------------------------------------------------------------------------
 
 _default_user_id_cache = None
@@ -196,6 +213,75 @@ def get_default_user_id():
         _default_user_id_cache = user.id
 
     return _default_user_id_cache
+
+
+def ensure_user_exists(user_id):
+    """Mirrors a Supabase Auth account into our own users table the first
+    time it's ever seen here. Supabase manages auth.users entirely on its
+    own -- this app never touches it directly -- but every foreign key in
+    this schema (leetcode_credentials, problem_diagnoses, mock_interview_
+    rounds, etc.) points at users.id, so a matching row needs to exist
+    here too, using the exact same UUID Supabase already assigned."""
+    with session_scope() as session:
+        if session.query(User).filter_by(id=user_id).first() is None:
+            session.add(User(id=user_id))
+
+
+# ---------------------------------------------------------------------------
+# Extension sync tokens (Chrome extension auth -- see auth.py)
+# ---------------------------------------------------------------------------
+
+def _hash_token(token):
+    # Plain SHA-256, not bcrypt/argon2: this is a 32-byte random opaque
+    # token (secrets.token_urlsafe), not a human-chosen low-entropy
+    # password, so a slow KDF meant to resist brute-forcing guessable
+    # passwords isn't needed -- SHA-256 is standard practice for hashing
+    # high-entropy API tokens (GitHub, Stripe, etc. all do this).
+    return hashlib.sha256(token.encode()).hexdigest()
+
+
+def create_sync_token(user_id):
+    """Generates a new opaque token for the Chrome extension and revokes
+    any existing live one first -- only one valid sync token per account
+    at a time, so regenerating (e.g. because the old one might have
+    leaked) immediately invalidates the old one rather than leaving two
+    valid tokens floating around. Returns the raw token -- this is the
+    only place it's ever available in plaintext; only its hash is stored,
+    so if the DB ever leaked, the tokens inside it couldn't be replayed
+    directly."""
+    token = secrets.token_urlsafe(32)
+    token_hash = _hash_token(token)
+    with session_scope() as session:
+        existing = session.query(ExtensionToken).filter_by(user_id=user_id, revoked_at=None).all()
+        for row in existing:
+            row.revoked_at = datetime.now(timezone.utc)
+        session.add(ExtensionToken(user_id=user_id, token_hash=token_hash))
+    return token
+
+
+def get_user_for_sync_token(token):
+    """None if the token is unknown, malformed, or was revoked -- callers
+    (auth.require_sync_token) treat all three identically, as a plain
+    401, so there's no need to distinguish them here."""
+    token_hash = _hash_token(token)
+    with session_scope() as session:
+        row = session.query(ExtensionToken).filter_by(token_hash=token_hash, revoked_at=None).first()
+        return row.user_id if row else None
+
+
+def revoke_sync_token(user_id):
+    with session_scope() as session:
+        existing = session.query(ExtensionToken).filter_by(user_id=user_id, revoked_at=None).all()
+        for row in existing:
+            row.revoked_at = datetime.now(timezone.utc)
+
+
+def has_sync_token(user_id):
+    """Lets the Account page show 'a sync token is active' without ever
+    displaying the token itself back (it can't -- only the hash is
+    stored, by design)."""
+    with session_scope() as session:
+        return session.query(ExtensionToken).filter_by(user_id=user_id, revoked_at=None).first() is not None
 
 
 # ---------------------------------------------------------------------------

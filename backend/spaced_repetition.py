@@ -13,8 +13,7 @@ def _pick_problem(candidates, neetcode_slugs):
     return random.choice(pool)
 
 
-def get_todays_problem(solved_problems, neetcode_slugs):
-    user_id = db.get_default_user_id()
+def get_todays_problem(user_id, solved_problems, neetcode_slugs):
     today = date.today()
 
     # Already picked something for today and it hasn't been marked done yet --
@@ -63,8 +62,7 @@ def get_todays_problem(solved_problems, neetcode_slugs):
     }
 
 
-def mark_reviewed(slug):
-    user_id = db.get_default_user_id()
+def mark_reviewed(user_id, slug):
     today = date.today()
     db.mark_reviewed(user_id, slug, today)
     reviewed = db.get_reviewed_slugs(user_id)

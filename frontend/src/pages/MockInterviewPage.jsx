@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { apiFetch } from "../apiFetch";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 const ROUNDS_OPTIONS = [2, 3, 4, 5];
 
 // Sent as X-API-Key on /evaluate (the one route here that calls the LLM) --
@@ -75,7 +75,7 @@ export default function MockInterviewPage() {
     const load = async () => {
       setCompaniesStatus("loading");
       try {
-        const res = await fetch(`${API_BASE}/api/mock-interview/companies`);
+        const res = await apiFetch("/api/mock-interview/companies");
         const body = await res.json();
         if (!res.ok) throw new Error(body.message || "Failed to load companies");
         setCompanies(body);
@@ -102,7 +102,7 @@ export default function MockInterviewPage() {
     setStep("ready");
     setMixStatus("loading");
     try {
-      const res = await fetch(`${API_BASE}/api/mock-interview/difficulty-mix?company=${encodeURIComponent(name)}`);
+      const res = await apiFetch(`/api/mock-interview/difficulty-mix?company=${encodeURIComponent(name)}`);
       const body = await res.json();
       if (!res.ok) throw new Error(body.message || "Failed to load difficulty mix");
       setMix(body);
@@ -133,7 +133,7 @@ export default function MockInterviewPage() {
   const startRound = useCallback(async () => {
     setStartError("");
     try {
-      const res = await fetch(`${API_BASE}/api/mock-interview/start?company=${encodeURIComponent(company)}`);
+      const res = await apiFetch(`/api/mock-interview/start?company=${encodeURIComponent(company)}`);
       const body = await res.json();
       if (!res.ok) throw new Error(body.message || "Failed to start round");
       beginRound(body.problem, body.timeLimitSeconds);
@@ -146,8 +146,8 @@ export default function MockInterviewPage() {
   const startLoop = useCallback(async () => {
     setStartError("");
     try {
-      const res = await fetch(
-        `${API_BASE}/api/mock-interview/start-loop?company=${encodeURIComponent(company)}&rounds=${roundsCount}`
+      const res = await apiFetch(
+        `/api/mock-interview/start-loop?company=${encodeURIComponent(company)}&rounds=${roundsCount}`
       );
       const body = await res.json();
       if (!res.ok) throw new Error(body.message || "Failed to start loop");
@@ -177,7 +177,7 @@ export default function MockInterviewPage() {
     setEvalStatus("loading");
     setEvalError("");
     try {
-      const res = await fetch(`${API_BASE}/api/mock-interview/evaluate`, {
+      const res = await apiFetch("/api/mock-interview/evaluate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

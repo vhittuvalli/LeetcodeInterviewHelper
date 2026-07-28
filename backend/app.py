@@ -17,12 +17,14 @@ import llm_client
 import company_bank
 import mock_interview
 import db
-from security import require_api_secret, rate_limit
+from auth import get_current_user_id, require_auth, require_sync_token
+from security import rate_limit, require_api_secret
 
 app = Flask(__name__)
-# Dev-mode CORS: allow your React dev server (e.g. Vite on :5173) AND the
-# Chrome extension (which sends requests from a chrome-extension:// origin)
-# to call this API. Tighten this to specific origins before deploying anywhere real.
+# Locked-down CORS: only the Vite dev server, your deployed frontend, and
+# your own Chrome extension can call this API -- anything else (a random
+# website trying to hit this URL from someone else's browser) gets blocked
+# by the browser before the request even reaches your routes.
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://leetcode-interview-helper.vercel.app",
@@ -31,12 +33,15 @@ CORS(
     app,
     origins=ALLOWED_ORIGINS + [r"chrome-extension://.*"],
 )
- 
+
 
 def _auth_error_response(e):
-    """Shared handler for both /api/topics and /api/credentials so the two
+    """Shared handler for the routes that talk to LeetCode, so the two
     error cases -- 'never connected' vs 'was connected, now rejected' --
-    always come back with the same shape and the same instructions."""
+    always come back with the same shape and the same instructions. Not
+    to be confused with the 401s require_auth/require_sync_token return
+    for a missing/invalid login -- this one is specifically about the
+    stored LeetCode session, once you're already a recognized account."""
     if isinstance(e, leetcode_service.LeetCodeNotConnectedError):
         return jsonify({
             "error": "not_connected",
@@ -47,17 +52,21 @@ def _auth_error_response(e):
 
 
 @app.route("/api/session-status", methods=["GET"])
+@require_auth
 def session_status():
     """Cheap check the frontend can poll to know whether to show a
     'reconnect your account' prompt before attempting a real fetch."""
-    return jsonify(leetcode_service.check_session())
+    return jsonify(leetcode_service.check_session(get_current_user_id()))
 
 
 @app.route("/api/credentials", methods=["POST"])
+@require_sync_token
 def receive_credentials():
     """The Chrome extension POSTs here whenever it sees LEETCODE_SESSION
     change -- on install (syncing whatever's already there), on login, or
-    when LeetCode silently renews the session during normal browsing."""
+    when LeetCode silently renews the session during normal browsing.
+    Authenticated by the extension's own sync token (see auth.py), not a
+    login JWT -- the extension never signs into Supabase directly."""
     body = request.get_json(silent=True) or {}
     cookie = body.get("cookie")
     csrf = body.get("csrf")
@@ -65,14 +74,44 @@ def receive_credentials():
     if not cookie or not csrf:
         return jsonify({"error": "bad_request", "message": "Expected JSON body with 'cookie' and 'csrf'"}), 400
 
-    leetcode_service.set_credentials(cookie, csrf)
+    leetcode_service.set_credentials(get_current_user_id(), cookie, csrf)
     return jsonify({"status": "ok", "connected": True})
 
 
+@app.route("/api/account/sync-token", methods=["GET"])
+@require_auth
+def sync_token_status():
+    """Whether this account currently has a live extension sync token --
+    never returns the token itself (it can't, only its hash is stored),
+    just enough for the Account page to show 'active' vs 'not set up'."""
+    return jsonify({"active": db.has_sync_token(get_current_user_id())})
+
+
+@app.route("/api/account/sync-token", methods=["POST"])
+@require_auth
+def sync_token_generate():
+    """Issues a fresh sync token, revoking any previous one -- this is the
+    value the Account page shows once (and only once) for the user to
+    paste into the extension's settings popup."""
+    token = db.create_sync_token(get_current_user_id())
+    return jsonify({"token": token})
+
+
+@app.route("/api/account/sync-token", methods=["DELETE"])
+@require_auth
+def sync_token_revoke():
+    """Immediately invalidates any live sync token for this account --
+    for a 'this device's extension might be compromised' moment, without
+    needing to touch the account's actual login."""
+    db.revoke_sync_token(get_current_user_id())
+    return jsonify({"status": "ok"})
+
+
 @app.route("/api/topics", methods=["GET"])
+@require_auth
 def get_topics():
     try:
-        summary = leetcode_service.get_topic_summary()
+        summary = leetcode_service.get_topic_summary(get_current_user_id())
         return jsonify(summary)
     except leetcode_service.LeetCodeAuthError as e:
         # Covers both LeetCodeNotConnectedError and plain LeetCodeAuthError --
@@ -85,13 +124,15 @@ def get_topics():
 
 
 @app.route("/api/spaced-repetition/today", methods=["GET"])
+@require_auth
 def spaced_repetition_today():
     """Today's review problem -- favors NeetCode 150 problems first, only
     falling back to the rest of your solved list once those are exhausted."""
     try:
-        problems = leetcode_service.fetch_solved()
+        user_id = get_current_user_id()
+        problems = leetcode_service.fetch_solved(user_id)
         neetcode_map = leetcode_service.load_neetcode_map()
-        result = spaced_repetition.get_todays_problem(problems, set(neetcode_map.keys()))
+        result = spaced_repetition.get_todays_problem(user_id, problems, set(neetcode_map.keys()))
 
         if result is None:
             return jsonify({"error": "no_solved_problems", "message": "Solve something on LeetCode first!"}), 404
@@ -106,6 +147,7 @@ def spaced_repetition_today():
 
 
 @app.route("/api/spaced-repetition/complete", methods=["POST"])
+@require_auth
 def spaced_repetition_complete():
     """Mark today's problem reviewed -- moves it off the 'up next' pool and
     clears the day's pick so a new one can be selected if requested again."""
@@ -115,17 +157,18 @@ def spaced_repetition_complete():
     if not slug:
         return jsonify({"error": "bad_request", "message": "Expected JSON body with 'titleSlug'"}), 400
 
-    return jsonify(spaced_repetition.mark_reviewed(slug))
+    return jsonify(spaced_repetition.mark_reviewed(get_current_user_id(), slug))
 
 
 @app.route("/api/recommendations", methods=["GET"])
+@require_auth
 def get_recommendations_route():
     """Ranks topics by weakness (avg submissions-to-solve + missing harder
     difficulties among what you've reached), then recommends unsolved,
     non-NeetCode-150 problems from the weakest ones first."""
     try:
         limit = int(request.args.get("limit", 5))
-        return jsonify(recommendations.get_recommendations(limit=limit))
+        return jsonify(recommendations.get_recommendations(get_current_user_id(), limit=limit))
     except leetcode_service.LeetCodeAuthError as e:
         return _auth_error_response(e)
     except leetcode_service.LeetCodeAPIError as e:
@@ -140,6 +183,7 @@ def get_recommendations_route():
 
 
 @app.route("/api/diagnosis/pending", methods=["GET"])
+@require_auth
 def diagnosis_pending():
     """The full pipeline: auto-picks which solved problems are worth
     diagnosing (weak-topic-weighted, capped per topic) AND auto-fetches each
@@ -148,7 +192,7 @@ def diagnosis_pending():
     assembles what would be sent to it."""
     try:
         limit = int(request.args.get("limit", diagnosis.BATCH_SIZE))
-        batch = diagnosis.get_diagnosis_batch(limit=limit)
+        batch = diagnosis.get_diagnosis_batch(get_current_user_id(), limit=limit)
         return jsonify(batch)
     except leetcode_service.LeetCodeAuthError as e:
         return _auth_error_response(e)
@@ -159,12 +203,13 @@ def diagnosis_pending():
 
 
 @app.route("/api/submission-history/<title_slug>", methods=["GET"])
+@require_auth
 def submission_history_route(title_slug):
     """The most recent submission for one problem, with code -- cached
     after the first call. Pass ?refresh=true to bypass the cache."""
     try:
         force_refresh = request.args.get("refresh") == "true"
-        history = submission_history.get_submission_history(title_slug, force_refresh=force_refresh)
+        history = submission_history.get_submission_history(get_current_user_id(), title_slug, force_refresh=force_refresh)
         return jsonify(history)
     except leetcode_service.LeetCodeAuthError as e:
         return _auth_error_response(e)
@@ -175,13 +220,14 @@ def submission_history_route(title_slug):
 
 
 @app.route("/api/diagnosis/prompt-preview", methods=["GET"])
+@require_auth
 def diagnosis_prompt_preview():
     """Same auto-selection + auto-fetched code as /api/diagnosis/pending,
     but also runs create_prompt() so you can see the actual text that would
     be sent to an LLM. No LLM call yet -- just the prompt-building step."""
     try:
         limit = int(request.args.get("limit", diagnosis.BATCH_SIZE))
-        batch = diagnosis.get_diagnosis_batch(limit=limit)
+        batch = diagnosis.get_diagnosis_batch(get_current_user_id(), limit=limit)
         return jsonify(llm_diagnosis.build_prompts(batch))
     except leetcode_service.LeetCodeAuthError as e:
         return _auth_error_response(e)
@@ -192,6 +238,7 @@ def diagnosis_prompt_preview():
 
 
 @app.route("/api/diagnosis/run", methods=["POST"])
+@require_auth
 @require_api_secret
 @rate_limit(max_requests=5, window_seconds=600)
 def diagnosis_run():
@@ -202,11 +249,12 @@ def diagnosis_run():
     last diagnosis get skipped (no LLM call, no charge) instead of
     re-diagnosing identical code. Costs real API credits for the calls
     that do happen -- POST on purpose so it can't fire from just visiting
-    a URL. Also gated by require_api_secret + rate_limit (see security.py)
-    since this is one of the two routes that actually spends money."""
+    a URL. Gated by require_auth (who), require_api_secret (came through
+    the real frontend), and rate_limit (see security.py) since this is
+    one of the two routes that actually spends money."""
     try:
         limit = int(request.args.get("limit", diagnosis.BATCH_SIZE))
-        results = llm_client.diagnose_batch(limit=limit)
+        results = llm_client.diagnose_batch(get_current_user_id(), limit=limit)
         return jsonify(results)
     except RuntimeError as e:
         return jsonify({"error": "missing_api_key", "message": str(e)}), 500
@@ -222,7 +270,9 @@ def diagnosis_run():
 def mock_interview_companies():
     """Every company the problem bank has data for, straight from GitHub
     (cached after the first call). Falls back to a short known-good list
-    if GitHub can't be reached, rather than erroring the whole picker out."""
+    if GitHub can't be reached, rather than erroring the whole picker out.
+    No @require_auth -- this is the same public company/problem-frequency
+    data for everyone, nothing user-specific, nothing that costs money."""
     try:
         return jsonify(company_bank.list_companies())
     except Exception as e:
@@ -233,7 +283,8 @@ def mock_interview_companies():
 def mock_interview_difficulty_mix():
     """This company's real Easy/Medium/Hard split (frequency-weighted from
     its actual tagged problems) -- lets the picker show what a round will
-    skew toward before you commit to starting one."""
+    skew toward before you commit to starting one. Also public/no-auth for
+    the same reason as /companies above."""
     company = request.args.get("company")
     if not company:
         return jsonify({"error": "bad_request", "message": "Expected a 'company' query param"}), 400
@@ -248,6 +299,7 @@ def mock_interview_difficulty_mix():
 
 
 @app.route("/api/mock-interview/start", methods=["GET"])
+@require_auth
 def mock_interview_start():
     """Picks one problem for this company (difficulty sampled from its
     real distribution, best-effort excluding what you've already solved)
@@ -259,7 +311,7 @@ def mock_interview_start():
 
     window = request.args.get("window", "all")
     try:
-        return jsonify(mock_interview.start_round(company, window=window))
+        return jsonify(mock_interview.start_round(get_current_user_id(), company, window=window))
     except mock_interview.MockInterviewError as e:
         return jsonify({"error": "no_problems_available", "message": str(e)}), 404
     except company_bank.CompanyBankError as e:
@@ -273,6 +325,7 @@ def mock_interview_start():
 
 
 @app.route("/api/mock-interview/start-loop", methods=["GET"])
+@require_auth
 def mock_interview_start_loop():
     """Multi-round mode: picks the whole loop's problems upfront (no
     repeats), but doesn't start any clock -- the frontend starts each
@@ -291,7 +344,7 @@ def mock_interview_start_loop():
         return jsonify({"error": "bad_request", "message": "'rounds' must be an integer"}), 400
 
     try:
-        return jsonify(mock_interview.start_loop(company, rounds, window=window))
+        return jsonify(mock_interview.start_loop(get_current_user_id(), company, rounds, window=window))
     except mock_interview.MockInterviewError as e:
         return jsonify({"error": "no_problems_available", "message": str(e)}), 404
     except company_bank.CompanyBankError as e:
@@ -305,6 +358,7 @@ def mock_interview_start_loop():
 
 
 @app.route("/api/mock-interview/evaluate", methods=["POST"])
+@require_auth
 @require_api_secret
 @rate_limit(max_requests=10, window_seconds=600)
 def mock_interview_evaluate():
@@ -313,8 +367,8 @@ def mock_interview_evaluate():
     start time and time limit, and (only if there's something to grade)
     makes one LLM call for the optimal/suboptimal judgment. Costs real API
     credits when it does call the LLM -- POST on purpose, same reasoning
-    as /api/diagnosis/run. Also gated by require_api_secret + rate_limit
-    (see security.py) for the same reason."""
+    as /api/diagnosis/run. Gated by require_auth + require_api_secret +
+    rate_limit for the same reason."""
     body = request.get_json(silent=True) or {}
     problem = body.get("problem")
     started_at = body.get("startedAt")
@@ -328,7 +382,10 @@ def mock_interview_evaluate():
         }), 400
 
     try:
-        return jsonify(mock_interview.evaluate_round(problem, int(started_at), int(time_limit), company=company))
+        result = mock_interview.evaluate_round(
+            get_current_user_id(), problem, int(started_at), int(time_limit), company=company
+        )
+        return jsonify(result)
     except RuntimeError as e:
         return jsonify({"error": "missing_api_key", "message": str(e)}), 500
     except leetcode_service.LeetCodeAuthError as e:
@@ -340,13 +397,14 @@ def mock_interview_evaluate():
 
 
 @app.route("/api/mock-interview/history", methods=["GET"])
+@require_auth
 def mock_interview_history():
     """Every past graded round, most recent first -- the raw material for
     a future performance-over-time view. Pass ?limit=N to cap it (default
     50). Purely a read -- no LLM call, no LeetCode call, just the log."""
     limit = int(request.args.get("limit", 50))
     try:
-        return jsonify(db.get_mock_interview_history(db.get_default_user_id(), limit=limit))
+        return jsonify(db.get_mock_interview_history(get_current_user_id(), limit=limit))
     except Exception as e:
         return jsonify({"error": "server_error", "message": str(e)}), 500
 

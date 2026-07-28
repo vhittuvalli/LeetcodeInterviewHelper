@@ -2,7 +2,7 @@ import db
 import leetcode_service
 
 
-def get_submission_history(title_slug, force_refresh=False):
+def get_submission_history(user_id, title_slug, force_refresh=False):
     """Just the most recent submission for one problem, with code -- one
     LeetCode call to find it (fetch_latest_submission) and one to pull its
     code (fetch_submission_code), instead of the full first-attempt/last-
@@ -17,18 +17,16 @@ def get_submission_history(title_slug, force_refresh=False):
     LeetCode on every call until it actually finds something. That's a
     minor tradeoff worth knowing about, not a bug: it's cheap (one list
     call) and self-correcting once a submission actually exists."""
-    user_id = db.get_default_user_id()
-
     if not force_refresh:
         cached = db.get_cached_submission(user_id, title_slug)
         if cached is not None:
             return [cached]
 
-    latest = leetcode_service.fetch_latest_submission(title_slug)
+    latest = leetcode_service.fetch_latest_submission(user_id, title_slug)
     if latest is None:
         return []
 
-    detail = leetcode_service.fetch_submission_code(latest["id"])
+    detail = leetcode_service.fetch_submission_code(user_id, latest["id"])
     submission = {
         "id": latest["id"],
         "status": latest["statusDisplay"],

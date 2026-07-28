@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
+import { apiFetch } from "./apiFetch";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 const DIAGNOSIS_LIMIT = 3;
 
 // Sent as X-API-Key on the routes that actually cost money -- a no-op if
@@ -25,7 +25,7 @@ export default function DiagnosisPanel() {
   const runDiagnosis = useCallback(async () => {
     setStatus("loading");
     try {
-      const res = await fetch(`${API_BASE}/api/diagnosis/run?limit=${DIAGNOSIS_LIMIT}`, {
+      const res = await apiFetch(`/api/diagnosis/run?limit=${DIAGNOSIS_LIMIT}`, {
         method: "POST",
         headers: API_SHARED_SECRET ? { "X-API-Key": API_SHARED_SECRET } : {},
       });

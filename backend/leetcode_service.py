@@ -42,32 +42,32 @@ CONNECT_INSTRUCTIONS = [
     "Open Chrome and go to chrome://extensions.",
     "Turn on \"Developer mode\" using the toggle in the top-right corner.",
     "Click \"Load unpacked\" and select the extension folder.",
+    "Go to the Account page in this app and generate a sync token.",
+    "Click the extension's icon in your toolbar and paste the sync token in.",
     "Make sure you're logged into leetcode.com in this browser -- the extension syncs automatically once you are.",
     "Come back and refresh this page.",
 ]
 
 
-def set_credentials(cookie, csrf):
+def set_credentials(user_id, cookie, csrf):
     """Called by POST /api/credentials whenever the extension sends a fresh
     cookie -- either because the user just connected, or because their
     session was silently renewed while browsing LeetCode. Writes straight
-    to the leetcode_credentials table now instead of a module global --
-    survives server restarts, and is the piece Phase 2's multi-user support
-    builds on (this already writes per-user, just always the same one
-    default user for now)."""
-    db.upsert_credentials(db.get_default_user_id(), cookie or "", csrf or "")
+    to the leetcode_credentials table, scoped to whichever account the
+    extension's sync token resolved to (see auth.require_sync_token)."""
+    db.upsert_credentials(user_id, cookie or "", csrf or "")
 
 
-def has_credentials():
-    cookie, csrf = db.get_credentials(db.get_default_user_id())
+def has_credentials(user_id):
+    cookie, csrf = db.get_credentials(user_id)
     return bool(cookie and csrf)
 
 
-def _build_headers():
+def _build_headers(user_id):
     # Read from the DB per-request (not cached) so a credential update from
     # set_credentials() takes effect on the very next call, not just after a
     # server restart -- same reasoning as the old in-memory version had.
-    cookie, csrf = db.get_credentials(db.get_default_user_id())
+    cookie, csrf = db.get_credentials(user_id)
     return {
         "Accept": "*/*",
         "Content-Type": "application/json",
@@ -176,7 +176,7 @@ _neetcode_map_cache = None
 AUTH_ERROR_HINTS = ("sign in", "log in", "login", "unauthorized", "unauthenticated", "authenticate")
 
 
-def _post_graphql(query, variables, operation_name):
+def _post_graphql(user_id, query, variables, operation_name):
     """Shared request wrapper with layered error detection:
     1. missing credentials      -> LeetCodeAuthError (fail fast, no request sent)
     2. network/connection issue -> LeetCodeAPIError
@@ -187,7 +187,7 @@ def _post_graphql(query, variables, operation_name):
                                     else LeetCodeAPIError
     6. anything else unexpected -> LeetCodeAPIError
     """
-    if not has_credentials():
+    if not has_credentials(user_id):
         raise LeetCodeNotConnectedError(
             "No LeetCode credentials on file -- the Chrome extension hasn't been connected yet"
         )
@@ -197,7 +197,7 @@ def _post_graphql(query, variables, operation_name):
     time.sleep(_REQUEST_DELAY_SECONDS)
 
     try:
-        r = requests.post("https://leetcode.com/graphql/", headers=_build_headers(), json=payload, timeout=20)
+        r = requests.post("https://leetcode.com/graphql/", headers=_build_headers(user_id), json=payload, timeout=20)
     except requests.exceptions.RequestException as e:
         raise LeetCodeAPIError(f"Could not reach LeetCode: {e}") from e
 
@@ -228,14 +228,14 @@ def _post_graphql(query, variables, operation_name):
     return data["data"]
 
 
-def check_session():
+def check_session(user_id):
     """Lightweight pre-flight check: is this stored credential still valid?
     Cheap enough to poll from the frontend before attempting a full fetch."""
-    if not has_credentials():
+    if not has_credentials(user_id):
         return {"signedIn": False, "connected": False}
 
     try:
-        result = _post_graphql(SESSION_CHECK_QUERY, {}, "globalData")
+        result = _post_graphql(user_id, SESSION_CHECK_QUERY, {}, "globalData")
     except LeetCodeAuthError:
         return {"signedIn": False, "connected": True}
 
@@ -243,12 +243,13 @@ def check_session():
     return {"signedIn": bool(status.get("isSignedIn")), "connected": True, "username": status.get("username")}
 
 
-def _fetch_by_status(status, limit=50):
+def _fetch_by_status(user_id, status, limit=50):
     all_questions = []
     skip = 0
     total = None
     while True:
         result = _post_graphql(
+            user_id,
             QUERY,
             {"filters": {"skip": skip, "limit": limit, "questionStatus": status}},
             "userProgressQuestionList",
@@ -263,16 +264,16 @@ def _fetch_by_status(status, limit=50):
     return all_questions
 
 
-def fetch_solved(limit=50):
-    return _fetch_by_status("SOLVED", limit=limit)
+def fetch_solved(user_id, limit=50):
+    return _fetch_by_status(user_id, "SOLVED", limit=limit)
 
 
-def fetch_attempted(limit=50):
+def fetch_attempted(user_id, limit=50):
     # "ATTEMPTED" == tried but never solved -- confirmed against the live API.
-    return _fetch_by_status("ATTEMPTED", limit=limit)
+    return _fetch_by_status(user_id, "ATTEMPTED", limit=limit)
 
 
-def fetch_submission_list(title_slug, limit=20):
+def fetch_submission_list(user_id, title_slug, limit=20):
     """Every submission (accepted + failed) for one problem, paginated.
     Normalizes id/timestamp from strings (what the raw API returns) to ints
     so callers can compare/sort them without thinking about it."""
@@ -280,6 +281,7 @@ def fetch_submission_list(title_slug, limit=20):
     offset = 0
     while True:
         result = _post_graphql(
+            user_id,
             SUBMISSION_LIST_QUERY,
             {"offset": offset, "limit": limit, "slug": title_slug},
             "submissionList",
@@ -296,7 +298,7 @@ def fetch_submission_list(title_slug, limit=20):
     return all_submissions
 
 
-def fetch_latest_submission(title_slug):
+def fetch_latest_submission(user_id, title_slug):
     """The single most recent submission for one problem, picked by
     comparing timestamps -- NOT by trusting offset=0 to be "the newest."
     (It was assumed newest-first based on how the reference JS client uses
@@ -309,15 +311,16 @@ def fetch_latest_submission(title_slug):
     has on record for this problem, so this just takes the max-timestamp
     entry out of that -- correct regardless of what order the API actually
     returns them in. Returns None if there's no submission on record at all."""
-    all_submissions = fetch_submission_list(title_slug)
+    all_submissions = fetch_submission_list(user_id, title_slug)
     if not all_submissions:
         return None
     return max(all_submissions, key=lambda s: s["timestamp"])
 
 
-def fetch_submission_code(submission_id):
+def fetch_submission_code(user_id, submission_id):
     """Code + a bit of metadata for exactly one submission id."""
     result = _post_graphql(
+        user_id,
         SUBMISSION_DETAIL_QUERY,
         {"id": int(submission_id)},
         "submissionDetails",
@@ -367,10 +370,10 @@ def group_by_topic(problems, neetcode_map):
     return grouped
 
 
-def get_topic_summary():
+def get_topic_summary(user_id):
     """The single entry point the Flask route calls."""
     neetcode_map = load_neetcode_map()
-    problems = fetch_solved()
+    problems = fetch_solved(user_id)
     grouped = group_by_topic(problems, neetcode_map)
 
     return [

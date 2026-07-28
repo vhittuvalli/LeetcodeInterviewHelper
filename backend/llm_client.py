@@ -76,7 +76,7 @@ def call_llm(prompt):
     return response.choices[0].message.content
 
 
-def diagnose_problem(problem):
+def diagnose_problem(user_id, problem):
     """Runs one problem through the pipeline, with a token-saving shortcut
     up front: if we already gave feedback on this exact submission before
     (and it wasn't optimal), skip the LLM call entirely -- there's nothing
@@ -90,7 +90,7 @@ def diagnose_problem(problem):
     submission_id = submissions[0]["id"] if submissions else None
 
     if submission_id is not None and diagnosis.already_diagnosed_this_submission(
-        problem["titleSlug"], submission_id
+        user_id, problem["titleSlug"], submission_id
     ):
         return {
             "titleSlug": problem["titleSlug"],
@@ -108,7 +108,7 @@ def diagnose_problem(problem):
     result_text = call_llm(prompt)
     verdict, feedback = llm_diagnosis.parse_verdict(result_text)
 
-    diagnosis.record_diagnosis(problem["titleSlug"], submission_id, verdict or "UNKNOWN", result=feedback)
+    diagnosis.record_diagnosis(user_id, problem["titleSlug"], submission_id, verdict or "UNKNOWN", result=feedback)
 
     return {
         "titleSlug": problem["titleSlug"],
@@ -120,20 +120,20 @@ def diagnose_problem(problem):
     }
 
 
-def diagnose_batch(limit=None):
+def diagnose_batch(user_id, limit=None):
     """The full pipeline end-to-end: auto-select weak-topic-weighted
     problems (capped per topic), auto-fetch each one's most recent
     submission code, skip anything unchanged since its last diagnosis, and
     call the LLM for the rest (with a small delay between actual calls --
     skipped problems don't need one, since nothing was sent for them)."""
-    batch = diagnosis.get_diagnosis_batch(limit=limit or diagnosis.BATCH_SIZE)
+    batch = diagnosis.get_diagnosis_batch(user_id, limit=limit or diagnosis.BATCH_SIZE)
 
     results = []
     made_a_call = False
     for p in batch:
         if made_a_call:
             time.sleep(_REQUEST_DELAY_SECONDS)
-        result = diagnose_problem(p)
+        result = diagnose_problem(user_id, p)
         results.append(result)
         if not result["skipped"]:
             made_a_call = True

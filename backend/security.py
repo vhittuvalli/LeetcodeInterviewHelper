@@ -1,6 +1,6 @@
 """Lightweight abuse protection for the routes that actually cost money --
-anything that calls the DeepSeek LLM. Two independent layers, meant to be
-stacked on a route together:
+anything that calls the DeepSeek LLM. Layers, meant to be stacked on a
+route together:
 
 1. require_api_secret -- a shared-secret header check. Stops a stranger
    who finds the deployed backend's URL directly (not through your
@@ -8,12 +8,19 @@ stacked on a route together:
    credits. Only enforced if API_SHARED_SECRET is actually set in the
    environment -- local development without it configured isn't broken;
    set it before deploying anywhere public and enforcement turns on
-   automatically, no code changes needed.
+   automatically, no code changes needed. Now that real accounts exist,
+   this is a secondary layer, not the primary gate -- require_auth (see
+   auth.py) is what actually stops a stranger with no account at all.
 
-2. rate_limit -- a simple in-memory per-IP cap. Catches abuse even from
-   someone who does have the secret (your own frontend misbehaving, a
-   leaked secret, etc). Always active regardless of whether the secret is
-   configured, since it's a useful safety net either way.
+2. rate_limit -- a simple in-memory cap, keyed per-user when the route is
+   already behind @require_auth (so one abusive or compromised account
+   can't just rotate IPs to get around its own limit), falling back to
+   per-IP for any route that isn't authenticated. Always active
+   regardless of whether the shared secret is configured, since it's a
+   useful safety net either way -- and matters more with multiple real
+   users, since normal simultaneous usage (not just abuse) can now burn
+   through a shared DeepSeek budget faster than one person alone ever
+   would have.
 
 Both are appropriately scoped for this project (a single Flask process) --
 the rate limit state is a plain in-memory dict, so it resets on restart
@@ -27,7 +34,7 @@ import time
 from collections import defaultdict
 from functools import wraps
 
-from flask import jsonify, request
+from flask import g, jsonify, request
 
 _request_log = defaultdict(list)
 
@@ -54,15 +61,25 @@ def require_api_secret(fn):
 
 
 def rate_limit(max_requests, window_seconds):
-    """Caps a route at max_requests per window_seconds, per client IP.
-    Checked BEFORE the wrapped function ever runs, so a request that gets
-    rate-limited never reaches the LLM call it would have made."""
+    """Caps a route at max_requests per window_seconds, keyed per-user if
+    this request already passed through @require_auth or
+    @require_sync_token (both stash the resolved user id on flask.g),
+    otherwise per client IP. Checked BEFORE the wrapped function ever
+    runs, so a request that gets rate-limited never reaches the LLM call
+    it would have made.
+
+    Per-user keying matters once there's more than one real account: two
+    people rate-limited by IP alone would actually share one combined
+    budget if they're ever behind the same IP (a school/office network,
+    a VPN), and -- the bigger reason -- keying by IP alone means a
+    misbehaving or compromised single account could dodge its own limit
+    just by switching networks."""
     def decorator(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            ip = request.remote_addr or "unknown"
+            key = str(getattr(g, "user_id", None) or request.remote_addr or "unknown")
             now = time.time()
-            recent = [t for t in _request_log[ip] if now - t < window_seconds]
+            recent = [t for t in _request_log[key] if now - t < window_seconds]
 
             if len(recent) >= max_requests:
                 retry_after = max(1, int(window_seconds - (now - recent[0])))
@@ -72,7 +89,7 @@ def rate_limit(max_requests, window_seconds):
                 }), 429
 
             recent.append(now)
-            _request_log[ip] = recent
+            _request_log[key] = recent
             return fn(*args, **kwargs)
         return wrapper
     return decorator
