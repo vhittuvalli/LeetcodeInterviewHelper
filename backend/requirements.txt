@@ -6,4 +6,4 @@ python-dotenv==1.2.2
 sqlalchemy==2.0.51
 psycopg2-binary==2.9.12
 gunicorn==26.0.0
-pyjwt==2.13.0
+pyjwt[crypto]==2.13.0

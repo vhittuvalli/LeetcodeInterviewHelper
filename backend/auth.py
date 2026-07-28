@@ -28,9 +28,41 @@ import uuid
 from functools import wraps
 
 import jwt
+from jwt import PyJWKClient
 from flask import g, jsonify, request
 
 import db
+
+# Supabase has two generations of token signing:
+#   - legacy: one shared secret, tokens signed HS256
+#   - current: a real public/private key pair per project, tokens signed
+#     ES256 -- verified against the project's *public* keys, published at
+#     a JWKS endpoint, no secret involved at all
+# Which one a given project uses depends on whether it's rotated to the
+# newer "JWT Signing Keys" system (Settings -> API -> JWT Keys). Rather
+# than assume, _decode_token looks at the token's own header and verifies
+# it the way it says it was signed -- this project's tokens were confirmed
+# (by decoding a real one) to be ES256, but supporting both means this
+# doesn't silently break again if that ever changes.
+_jwks_client = None
+
+
+def _get_jwks_client():
+    global _jwks_client
+    if _jwks_client is None:
+        supabase_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
+        if not supabase_url:
+            raise RuntimeError(
+                "SUPABASE_URL is not set -- needed to fetch your project's "
+                "public signing keys to verify ES256 tokens. Copy it from "
+                "Supabase's Project Settings -> API -> Project URL (same "
+                "value as the frontend's VITE_SUPABASE_URL)."
+            )
+        # PyJWKClient fetches and caches this by itself (Supabase's edge
+        # layer caches the response ~10 min too), so one client instance
+        # reused across requests avoids a network round trip per login.
+        _jwks_client = PyJWKClient(f"{supabase_url}/auth/v1/.well-known/jwks.json")
+    return _jwks_client
 
 
 def _get_jwt_secret():
@@ -42,6 +74,31 @@ def _get_jwt_secret():
             "HS256 secret, not the publishable/anon key)."
         )
     return secret
+
+
+def _decode_token(token):
+    """Verifies a Supabase-issued JWT, branching on how it's actually
+    signed rather than assuming. ES256 is the modern default (verified
+    against the project's public JWKS, no shared secret needed); HS256 is
+    the legacy path, kept as a fallback for projects that haven't rotated
+    to the newer signing keys."""
+    header = jwt.get_unverified_header(token)
+
+    if header.get("alg") == "ES256":
+        signing_key = _get_jwks_client().get_signing_key_from_jwt(token)
+        return jwt.decode(
+            token,
+            signing_key.key,
+            algorithms=["ES256"],
+            audience="authenticated",
+        )
+
+    return jwt.decode(
+        token,
+        _get_jwt_secret(),
+        algorithms=["HS256"],
+        audience="authenticated",
+    )
 
 
 def require_auth(fn):
@@ -68,12 +125,7 @@ def require_auth(fn):
 
         token = auth_header[len("Bearer "):]
         try:
-            payload = jwt.decode(
-                token,
-                _get_jwt_secret(),
-                algorithms=["HS256"],
-                audience="authenticated",
-            )
+            payload = _decode_token(token)
         except jwt.ExpiredSignatureError:
             return jsonify({
                 "error": "token_expired",
@@ -83,6 +135,16 @@ def require_auth(fn):
             return jsonify({
                 "error": "unauthorized",
                 "message": "Invalid authentication token.",
+            }), 401
+        except jwt.PyJWKClientError:
+            # Couldn't fetch/find a matching public key from Supabase's
+            # JWKS endpoint -- most likely SUPABASE_URL is wrong, or a
+            # transient network issue reaching Supabase. Distinct from "the
+            # token itself is bad," but a request without a verifiable
+            # signature is unauthenticated either way.
+            return jsonify({
+                "error": "unauthorized",
+                "message": "Could not verify token signature -- check the backend's SUPABASE_URL.",
             }), 401
 
         try:
