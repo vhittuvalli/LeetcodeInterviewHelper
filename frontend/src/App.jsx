@@ -2,16 +2,18 @@ import { useState, useCallback, useEffect } from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import "reactflow/dist/style.css";
 import "./App.css";
+import { apiFetch } from "./apiFetch";
+import { AuthProvider, useAuth } from "./AuthContext";
 import { buildLayoutedNodes } from "./topicGraph";
 import Layout from "./Layout";
 import RoadmapPage from "./pages/RoadmapPage";
 import PracticePage from "./pages/PracticePage";
 import MockInterviewPage from "./pages/MockInterviewPage";
 import HistoryPage from "./pages/HistoryPage";
+import AccountPage from "./pages/AccountPage";
+import LoginPage from "./pages/LoginPage";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
-export default function App() {
+function AuthenticatedApp() {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
   const [status, setStatus] = useState("loading"); // loading | ready | not_connected | session_expired | error
@@ -21,11 +23,13 @@ export default function App() {
   // it's the cheapest real request that fails with not_connected /
   // session_expired the same way every other route would, so the whole
   // app (all pages, not just the roadmap) gates on it once up front
-  // instead of every page re-checking connection state on its own.
+  // instead of every page re-checking connection state on its own. This
+  // is about the LeetCode session specifically, separate from (and
+  // running only after) the login check in <App> below.
   const loadTopics = useCallback(async () => {
     setStatus("loading");
     try {
-      const res = await fetch(`${API_BASE}/api/topics`);
+      const res = await apiFetch("/api/topics");
       const body = await res.json();
 
       if (!res.ok) {
@@ -116,8 +120,53 @@ export default function App() {
           <Route path="practice" element={<PracticePage />} />
           <Route path="mock-interview" element={<MockInterviewPage />} />
           <Route path="history" element={<HistoryPage />} />
+          <Route path="account" element={<AccountPage />} />
         </Route>
       </Routes>
     </HashRouter>
+  );
+}
+
+function Gate() {
+  // Two independent gates, checked in order: are you logged into this
+  // app at all (session), and only once that's true, is your LeetCode
+  // account actually connected (AuthenticatedApp's own loadTopics check).
+  // Keeping them separate means a logged-out visitor sees a login screen
+  // immediately, never a flash of "connect your LeetCode account" for an
+  // account that isn't even signed in yet.
+  const { session, authError } = useAuth();
+
+  if (session === undefined) {
+    return (
+      <div className="status-screen">
+        <div className="status-screen__spinner" />
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (authError) {
+    return (
+      <div className="status-screen">
+        <div className="status-screen__card">
+          <h2>Couldn&apos;t reach the authentication service</h2>
+          <p>{authError}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (session === null) {
+    return <LoginPage />;
+  }
+
+  return <AuthenticatedApp />;
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Gate />
+    </AuthProvider>
   );
 }
