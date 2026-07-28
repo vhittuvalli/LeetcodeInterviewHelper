@@ -13,19 +13,83 @@ import HistoryPage from "./pages/HistoryPage";
 import AccountPage from "./pages/AccountPage";
 import LoginPage from "./pages/LoginPage";
 
+function RoadmapGate({ status, instructions, nodes, edges, onRefresh }) {
+  // Only the roadmap's own content depends on whether LeetCode is
+  // connected -- every other page (practice, mock interview, history,
+  // account) fetches its own data independently and doesn't need this.
+  // Rendered *inside* <Layout>, so the sidebar (and therefore the Account
+  // page you'd need to visit to fix a "not connected" state) is always
+  // reachable, instead of the whole app being replaced by this screen.
+  if (status === "loading") {
+    return (
+      <div className="status-screen">
+        <div className="status-screen__spinner" />
+        <p>Loading your progress...</p>
+      </div>
+    );
+  }
+
+  if (status === "not_connected") {
+    return (
+      <div className="status-screen">
+        <div className="status-screen__card">
+          <h2>Connect your LeetCode account</h2>
+          <ol>
+            {instructions.map((step, i) => (
+              <li key={i}>{step}</li>
+            ))}
+          </ol>
+          <button className="btn btn--primary" onClick={onRefresh}>
+            I&apos;ve connected it -- refresh
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "session_expired") {
+    return (
+      <div className="status-screen">
+        <div className="status-screen__card">
+          <h2>Your LeetCode session expired</h2>
+          <p>Visit leetcode.com in your browser to renew it, then refresh.</p>
+          <button className="btn btn--primary" onClick={onRefresh}>
+            Refresh
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div className="status-screen">
+        <div className="status-screen__card">
+          <h2>Couldn&apos;t reach the backend</h2>
+          <p>Make sure the Flask server is running on port 5000.</p>
+          <button className="btn btn--primary" onClick={onRefresh}>
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return <RoadmapPage nodes={nodes} edges={edges} onRefresh={onRefresh} />;
+}
+
 function AuthenticatedApp() {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
   const [status, setStatus] = useState("loading"); // loading | ready | not_connected | session_expired | error
   const [instructions, setInstructions] = useState([]);
 
-  // This same /api/topics call doubles as the app's connection check --
-  // it's the cheapest real request that fails with not_connected /
-  // session_expired the same way every other route would, so the whole
-  // app (all pages, not just the roadmap) gates on it once up front
-  // instead of every page re-checking connection state on its own. This
-  // is about the LeetCode session specifically, separate from (and
-  // running only after) the login check in <App> below.
+  // This same /api/topics call doubles as the roadmap's connection check
+  // -- it's the cheapest real request that fails with not_connected /
+  // session_expired the same way every other route would. Scoped to the
+  // roadmap tab only (see RoadmapGate above); it no longer gates the
+  // whole app, so a not-yet-connected account can still reach every other
+  // page, including Account, where the fix actually happens.
   const loadTopics = useCallback(async () => {
     setStatus("loading");
     try {
@@ -57,66 +121,22 @@ function AuthenticatedApp() {
     loadTopics();
   }, [loadTopics]);
 
-  if (status === "loading") {
-    return (
-      <div className="status-screen">
-        <div className="status-screen__spinner" />
-        <p>Loading your progress...</p>
-      </div>
-    );
-  }
-
-  if (status === "not_connected") {
-    return (
-      <div className="status-screen">
-        <div className="status-screen__card">
-          <h2>Connect your LeetCode account</h2>
-          <ol>
-            {instructions.map((step, i) => (
-              <li key={i}>{step}</li>
-            ))}
-          </ol>
-          <button className="btn btn--primary" onClick={loadTopics}>
-            I&apos;ve connected it -- refresh
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (status === "session_expired") {
-    return (
-      <div className="status-screen">
-        <div className="status-screen__card">
-          <h2>Your LeetCode session expired</h2>
-          <p>Visit leetcode.com in your browser to renew it, then refresh.</p>
-          <button className="btn btn--primary" onClick={loadTopics}>
-            Refresh
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (status === "error") {
-    return (
-      <div className="status-screen">
-        <div className="status-screen__card">
-          <h2>Couldn&apos;t reach the backend</h2>
-          <p>Make sure the Flask server is running on port 5000.</p>
-          <button className="btn btn--primary" onClick={loadTopics}>
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <HashRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<RoadmapPage nodes={nodes} edges={edges} onRefresh={loadTopics} />} />
+          <Route
+            index
+            element={
+              <RoadmapGate
+                status={status}
+                instructions={instructions}
+                nodes={nodes}
+                edges={edges}
+                onRefresh={loadTopics}
+              />
+            }
+          />
           <Route path="practice" element={<PracticePage />} />
           <Route path="mock-interview" element={<MockInterviewPage />} />
           <Route path="history" element={<HistoryPage />} />
