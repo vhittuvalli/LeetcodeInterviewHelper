@@ -23,8 +23,15 @@ app = Flask(__name__)
 # Dev-mode CORS: allow your React dev server (e.g. Vite on :5173) AND the
 # Chrome extension (which sends requests from a chrome-extension:// origin)
 # to call this API. Tighten this to specific origins before deploying anywhere real.
-CORS(app)
-
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://leetcode-interview-helper.vercel.app",
+]
+CORS(
+    app,
+    origins=ALLOWED_ORIGINS + [r"chrome-extension://.*"],
+)
+ 
 
 def _auth_error_response(e):
     """Shared handler for both /api/topics and /api/credentials so the two
