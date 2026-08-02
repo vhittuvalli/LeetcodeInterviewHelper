@@ -67,8 +67,14 @@ def list_companies():
         companies = sorted(e["name"] for e in entries if e.get("type") == "dir")
         if not companies:
             raise CompanyBankError("GitHub returned no company directories")
-    except (requests.exceptions.RequestException, ValueError, KeyError, CompanyBankError):
-        # Degraded but usable -- better than a broken company picker.
+    except (requests.exceptions.RequestException, ValueError, KeyError, CompanyBankError) as e:
+        # Degraded but usable -- better than a broken company picker. Printed
+        # (not swallowed silently) so Render's logs actually show *why* --
+        # e.g. a 403 here almost always means GitHub's unauthenticated rate
+        # limit (60 requests/hour per source IP) got hit, which is a very
+        # different fix than a real network failure would be.
+        status = getattr(getattr(e, "response", None), "status_code", None)
+        print(f"company_bank.list_companies: falling back to hardcoded list -- {type(e).__name__}: {e} (status={status})")
         companies = list(_FALLBACK_COMPANIES)
 
     _company_list_cache = companies
