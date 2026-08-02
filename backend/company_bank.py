@@ -11,6 +11,7 @@ freshly-added company on GitHub shows up here without a code change.
 """
 import csv
 import io
+import os
 from urllib.parse import quote
 
 import requests
@@ -18,6 +19,23 @@ import requests
 REPO = "liquidslr/leetcode-company-wise-problems"
 CONTENTS_API = f"https://api.github.com/repos/{REPO}/contents/"
 RAW_BASE = f"https://raw.githubusercontent.com/{REPO}/main"
+
+
+def _github_headers():
+    """GitHub's REST API (api.github.com -- used only by list_companies()
+    below, not the raw.githubusercontent.com CSV fetches, which have a much
+    more generous, separate limit) caps unauthenticated requests at 60/hour
+    per source IP. On a host like Render, that IP is shared with however
+    many other apps/customers are also making outbound requests from the
+    same pool, so the budget can run out from traffic that has nothing to
+    do with this app at all. Setting GITHUB_TOKEN raises it to 5000/hour --
+    a token needs no scopes/permissions at all for this, since the repo and
+    its contents are public; it only needs to exist and be valid."""
+    headers = {"Accept": "application/vnd.github+json"}
+    token = os.environ.get("GITHUB_TOKEN", "")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    return headers
 
 # Recency windows the dataset actually ships, in the exact filenames used
 # in each company's folder. "all" is the default -- widest pool, best for
@@ -61,7 +79,7 @@ def list_companies():
         return _company_list_cache
 
     try:
-        r = requests.get(CONTENTS_API, timeout=20, headers={"Accept": "application/vnd.github+json"})
+        r = requests.get(CONTENTS_API, timeout=20, headers=_github_headers())
         r.raise_for_status()
         entries = r.json()
         companies = sorted(e["name"] for e in entries if e.get("type") == "dir")
