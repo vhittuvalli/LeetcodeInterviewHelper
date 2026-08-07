@@ -35,12 +35,6 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 Base = declarative_base()
 
-# Postgres's `bigint generated always as identity` (from schema.sql) handles
-# auto-incrementing IDs regardless of column type. SQLite -- used only by
-# the tests below, since this sandbox can't reach a real Postgres server --
-# only auto-increments a primary key typed exactly as INTEGER, not BIGINT.
-# with_variant() lets production keep real BigInteger while tests get a
-# type SQLite knows how to auto-increment, without duplicating any models.
 _id_type = BigInteger().with_variant(Integer(), "sqlite")
 
 
@@ -63,7 +57,7 @@ class ProblemDiagnosis(Base):
     id = Column(_id_type, primary_key=True, autoincrement=True)
     user_id = Column(Uuid, ForeignKey("users.id"), nullable=False)
     title_slug = Column(Text, nullable=False)
-    status = Column(Text, nullable=False)  # 'pending' | 'optimal'
+    status = Column(Text, nullable=False)
     last_submission_id = Column(BigInteger)
     last_verdict = Column(Text)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
@@ -124,19 +118,14 @@ class MockInterviewRound(Base):
     title_slug = Column(Text, nullable=False)
     title = Column(Text, nullable=False)
     difficulty = Column(Text, nullable=False)
-    outcome = Column(Text, nullable=False)  # 'strong_pass' | 'pass' | 'no_pass'
-    verdict = Column(Text)  # 'OPTIMAL' | 'SUBOPTIMAL' | 'WRONG' | None
+    outcome = Column(Text, nullable=False)
+    verdict = Column(Text)
     within_time = Column(Boolean, nullable=False)
     time_taken_seconds = Column(Integer)
     started_at = Column(DateTime(timezone=True), nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 
-# ---------------------------------------------------------------------------
-# Connection setup -- lazy, same reasoning as llm_client.py's _get_client():
-# importing this module shouldn't require DATABASE_URL to already be set,
-# only actually touching the database should.
-# ---------------------------------------------------------------------------
 
 _engine = None
 _SessionLocal = None
@@ -189,12 +178,6 @@ def session_scope():
         session.close()
 
 
-# ---------------------------------------------------------------------------
-# Default user -- Phase 1 leftover, kept only for tests/scripts that don't
-# run inside a real HTTP request (nothing in app.py calls this anymore).
-# Real requests resolve their user via auth.get_current_user_id() instead,
-# which pulls the verified id out of that request's Supabase JWT.
-# ---------------------------------------------------------------------------
 
 _default_user_id_cache = None
 
@@ -209,7 +192,7 @@ def get_default_user_id():
         if user is None:
             user = User(id=uuid.uuid4())
             session.add(user)
-            session.flush()  # so user.id is populated before we read it below
+            session.flush()
         _default_user_id_cache = user.id
 
     return _default_user_id_cache
@@ -227,16 +210,8 @@ def ensure_user_exists(user_id):
             session.add(User(id=user_id))
 
 
-# ---------------------------------------------------------------------------
-# Extension sync tokens (Chrome extension auth -- see auth.py)
-# ---------------------------------------------------------------------------
 
 def _hash_token(token):
-    # Plain SHA-256, not bcrypt/argon2: this is a 32-byte random opaque
-    # token (secrets.token_urlsafe), not a human-chosen low-entropy
-    # password, so a slow KDF meant to resist brute-forcing guessable
-    # passwords isn't needed -- SHA-256 is standard practice for hashing
-    # high-entropy API tokens (GitHub, Stripe, etc. all do this).
     return hashlib.sha256(token.encode()).hexdigest()
 
 
@@ -284,9 +259,6 @@ def has_sync_token(user_id):
         return session.query(ExtensionToken).filter_by(user_id=user_id, revoked_at=None).first() is not None
 
 
-# ---------------------------------------------------------------------------
-# Credentials (replaces leetcode_service.py's _COOKIE / _CSRF globals)
-# ---------------------------------------------------------------------------
 
 def get_credentials(user_id):
     """Returns (cookie, csrf) or (None, None) if nothing's been synced yet."""
@@ -308,9 +280,6 @@ def upsert_credentials(user_id, cookie, csrf):
             row.updated_at = datetime.now(timezone.utc)
 
 
-# ---------------------------------------------------------------------------
-# Diagnosis state (replaces diagnosis_state.json)
-# ---------------------------------------------------------------------------
 
 def get_diagnosed_slugs(user_id):
     """titleSlugs with status='optimal' -- what select_problems_to_diagnose()
@@ -359,9 +328,6 @@ def record_diagnosis(user_id, title_slug, submission_id, verdict, result=None):
             ))
 
 
-# ---------------------------------------------------------------------------
-# Submission cache (replaces submission_history.json)
-# ---------------------------------------------------------------------------
 
 def get_cached_submission(user_id, title_slug):
     with session_scope() as session:
@@ -369,12 +335,6 @@ def get_cached_submission(user_id, title_slug):
         if row is None:
             return None
 
-        # Values are always stored in UTC (see upsert_cached_submission), but
-        # not every driver hands them back tz-aware -- SQLite in particular
-        # always returns naive datetimes regardless of what was stored,
-        # which would silently shift .timestamp() by the server's local
-        # offset if not corrected here. Postgres returns proper tz-aware
-        # values, so this is a no-op there.
         submitted_at = row.submitted_at
         if submitted_at.tzinfo is None:
             submitted_at = submitted_at.replace(tzinfo=timezone.utc)
@@ -413,9 +373,6 @@ def upsert_cached_submission(user_id, title_slug, submission):
             row.fetched_at = datetime.now(timezone.utc)
 
 
-# ---------------------------------------------------------------------------
-# Spaced repetition queue (replaces spaced_repetition_state.json)
-# ---------------------------------------------------------------------------
 
 def get_reviewed_slugs(user_id):
     """Every titleSlug ever marked reviewed, regardless of when."""
@@ -468,9 +425,6 @@ def mark_reviewed(user_id, title_slug, today):
             row.reviewed_at = datetime.now(timezone.utc)
 
 
-# ---------------------------------------------------------------------------
-# Mock interview history (new table -- nothing to migrate away from)
-# ---------------------------------------------------------------------------
 
 def record_mock_interview_round(
     user_id, company, title_slug, title, difficulty, outcome, verdict, within_time, time_taken_seconds, started_at
@@ -503,9 +457,6 @@ def get_mock_interview_history(user_id, limit=50):
         rows = (
             session.query(MockInterviewRound)
             .filter_by(user_id=user_id)
-            # id as a tiebreaker: two rounds evaluated within the same
-            # second would otherwise have an ambiguous order since
-            # created_at's resolution isn't fine enough to tell them apart.
             .order_by(MockInterviewRound.created_at.desc(), MockInterviewRound.id.desc())
             .limit(limit)
             .all()

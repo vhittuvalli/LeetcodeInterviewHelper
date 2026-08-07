@@ -8,9 +8,6 @@ _VERDICT_RE = re.compile(r"^\s*VERDICT:\s*(OPTIMAL|SUBOPTIMAL|WRONG)\s*\n?", re.
 
 SUBPATTERNS_FILE = os.path.join(os.path.dirname(__file__), "data", "subpatterns.json")
 
-# Both of these are expensive to build (94-pattern JSON parse / 2900-problem
-# scan) but never change during a run, so cache them the first time each is
-# needed instead of redoing the work on every prompt.
 _subpatterns_cache = None
 _problem_index_cache = None
 
@@ -54,19 +51,12 @@ def _format_submissions(submissions):
     if not submissions:
         return "(no submission code available for this problem)"
 
-    # Just the most recent submission now (a single-item list), but keep
-    # this loop-shaped in case that ever changes back.
     parts = []
     for s in submissions:
         parts.append(f"--- {s['status']} ({s['lang']}) ---\n{s['code']}")
     return "\n\n".join(parts)
 
 
-# Three different asks depending on how the submission actually went --
-# telling a student who got it wrong "here's a style nitpick" (or telling
-# someone with a clean optimal solution "here's a hint toward the right
-# approach") isn't useful. Keyed by exact LeetCode statusDisplay strings;
-# anything that isn't literally "Accepted" is treated as "didn't pass."
 _VERDICT_LINE = (
     "\nStart your reply with exactly one tag on its own first line -- {options} -- "
     "then a blank line, then your feedback. The tag drives whether this problem "

@@ -6,16 +6,8 @@ from openai import OpenAI, RateLimitError
 import diagnosis
 import llm_diagnosis
 
-# Small pause between LLM calls in a batch. DeepSeek enforces its own
-# rate limits server-side (per-minute request/token caps) -- this doesn't
-# guarantee you'll never hit them, but it keeps a 5-problem batch from
-# firing all 5 requests back-to-back for no reason.
 _REQUEST_DELAY_SECONDS = 1.0
 
-# DeepSeek V4 Flash -- as of July 2026 the cheapest per-token option among
-# labs with real coding capability ($0.14 / $0.28 per 1M input/output
-# tokens, vs. ~$1/$5 for Claude Haiku 4.5). Ships an OpenAI-compatible API,
-# so the standard `openai` SDK works unmodified with just base_url swapped.
 DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
 MODEL = "deepseek-v4-flash"
 

@@ -1,7 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
 
-// Small inline SVGs instead of pulling in an icon library -- keeps this
-// redesign to a single new dependency (react-router-dom), not two.
 const icons = {
   roadmap: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">

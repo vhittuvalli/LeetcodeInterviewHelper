@@ -6,16 +6,8 @@ import leetcode_service
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), "data", "merged_problems.json")
 
-# Topics need EITHER enough solved problems to judge submission struggle,
-# OR at least one attempted-but-unsolved problem (direct evidence of getting
-# stuck) to be considered "reached" at all. Otherwise they're just topics
-# you haven't gotten to yet, not weak ones.
 MIN_SOLVED_FOR_RANKING = 3
 
-# How much each signal adds to a topic's weakness score. Attempted-and-gave-up
-# is weighted highest since it's the most direct evidence of getting stuck;
-# missing harder difficulties is a softer signal (you may just not have tried
-# yet, not necessarily failed).
 DIFFICULTY_GAP_WEIGHT = 1.5
 ATTEMPTED_UNSOLVED_WEIGHT = 2.0
 
@@ -30,9 +22,6 @@ def _load_all_problems():
 
 
 def _topic_for_dataset_problem(problem, neetcode_map):
-    # merged_problems.json uses a different shape than LeetCode's live API
-    # (topics: ["Array", ...] vs topicTags: [{"name": "Array"}, ...], and
-    # problem_slug vs titleSlug) -- normalize it to what primary_topic() expects.
     normalized = {
         "titleSlug": problem["problem_slug"],
         "topicTags": [{"name": t} for t in problem.get("topics", [])],
@@ -63,7 +52,7 @@ def _rank_weak_topics(solved_problems, attempted_problems, neetcode_map):
         has_stuck_attempts = len(attempted) > 0
 
         if not has_enough_solved_data and not has_stuck_attempts:
-            continue  # genuinely "not yet reached" -- no data either way
+            continue
 
         avg_submissions = 0
         missing = []
@@ -94,7 +83,6 @@ def _rank_weak_topics(solved_problems, attempted_problems, neetcode_map):
             "weaknessScore": round(weakness_score, 2),
         }
 
-    # Highest weakness score first.
     return dict(sorted(scores.items(), key=lambda kv: kv[1]["weaknessScore"], reverse=True))
 
 
@@ -139,9 +127,6 @@ def get_recommendations(user_id, limit=5):
 
     recommendations = []
     for topic, info in weak_topics.items():
-        # Prefer recommending a problem you already started but never
-        # finished -- closing that loop directly addresses the exact signal
-        # that flagged this topic as weak, instead of piling on something new.
         if info["attemptedUnsolved"]:
             recommendations.append({
                 "topic": topic,

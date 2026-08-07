@@ -20,8 +20,6 @@ function formatClock(seconds) {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-// Same weighting as the loop summary's aggregate score -- keeps "how am I
-// doing overall" consistent whether it's one loop or your whole history.
 const OUTCOME_SCORES = { strong_pass: 100, pass: 60, no_pass: 0 };
 
 function buildStats(history) {
@@ -57,7 +55,7 @@ function buildStats(history) {
 
 export default function HistoryPage() {
   const [history, setHistory] = useState([]);
-  const [status, setStatus] = useState("loading"); // loading | ready | empty | error
+  const [status, setStatus] = useState("loading");
 
   const load = useCallback(async () => {
     setStatus("loading");

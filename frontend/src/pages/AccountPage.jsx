@@ -4,9 +4,9 @@ import { useAuth } from "../AuthContext";
 
 export default function AccountPage() {
   const { user, signOut } = useAuth();
-  const [status, setStatus] = useState("loading"); // loading | ready | error
+  const [status, setStatus] = useState("loading");
   const [active, setActive] = useState(false);
-  const [freshToken, setFreshToken] = useState(""); // only ever held in memory, once
+  const [freshToken, setFreshToken] = useState("");
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -62,9 +62,6 @@ export default function AccountPage() {
       await navigator.clipboard.writeText(freshToken);
       setCopied(true);
     } catch {
-      // Clipboard API can fail in some browser/permission contexts -- the
-      // token is still selectable text on screen either way, so this
-      // isn't a dead end, just a slightly worse click-to-copy experience.
     }
   };
 

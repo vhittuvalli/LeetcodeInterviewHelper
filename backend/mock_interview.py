@@ -29,9 +29,6 @@ import llm_diagnosis
 import recommendations
 import submission_history
 
-# 45 minutes -- matches the real-world norm for a single technical round
-# (one problem, not several): most interviewers expect a working solution
-# with time left over for discussion, not a multi-problem sprint.
 ROUND_TIME_SECONDS = 45 * 60
 
 DIFFICULTIES = ["Easy", "Medium", "Hard"]
@@ -82,8 +79,6 @@ def difficulty_mix(company, window="all"):
     totals = {"Easy": 0.0, "Medium": 0.0, "Hard": 0.0}
     for p in problems:
         if p["difficulty"] in totals:
-            # Floor so a problem with a 0/near-0 frequency score isn't
-            # literally impossible to ever land on -- it just becomes rare.
             totals[p["difficulty"]] += max(p["frequency"], 0.1)
 
     grand_total = sum(totals.values())
@@ -131,11 +126,6 @@ def select_round_problems(company, num_rounds=1, window="all", solved_slugs=None
         candidates = [p for p in by_difficulty.get(difficulty, []) if p["titleSlug"] not in used_slugs]
         remaining = [p for p in problems if p["titleSlug"] not in used_slugs]
 
-        # Fallback order: unsolved + this difficulty, then unsolved + any
-        # difficulty, then (only if truly nothing unsolved is left) allow
-        # already-solved problems back in -- same difficulty first, then
-        # any. This way a solved problem only ever gets picked as a last
-        # resort, never ahead of an unsolved alternative in another tier.
         fresh = (
             [p for p in candidates if p["titleSlug"] not in solved]
             or [p for p in remaining if p["titleSlug"] not in solved]
@@ -144,7 +134,7 @@ def select_round_problems(company, num_rounds=1, window="all", solved_slugs=None
         )
 
         if not fresh:
-            break  # genuinely out of problems for this company
+            break
 
         chosen = _weighted_choice(fresh)
         used_slugs.add(chosen["titleSlug"])
@@ -159,9 +149,6 @@ def select_round_problems(company, num_rounds=1, window="all", solved_slugs=None
     return picked
 
 
-# Real onsite loops researched at 3-5 separate rounds -- capped at 6 here
-# mostly to keep a single sitting from ballooning past what anyone would
-# actually do in one go (6 rounds x 45 min is already a 4.5-hour session).
 MAX_LOOP_ROUNDS = 6
 
 
@@ -315,8 +302,7 @@ def evaluate_round(user_id, problem, started_at, time_limit_seconds=ROUND_TIME_S
         outcome = "no_pass"
     elif verdict == "OPTIMAL":
         outcome = "strong_pass"
-    else:  # SUBOPTIMAL, or a verdict the model didn't tag cleanly -- same
-        # safe-default reasoning diagnosis.py uses: don't overclaim.
+    else:
         outcome = "pass"
 
     result = {

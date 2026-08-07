@@ -3,9 +3,6 @@ import { apiFetch } from "../apiFetch";
 
 const ROUNDS_OPTIONS = [2, 3, 4, 5];
 
-// Sent as X-API-Key on /evaluate (the one route here that calls the LLM) --
-// a no-op if VITE_API_SHARED_SECRET isn't set, since the backend only
-// enforces this check when its own API_SHARED_SECRET is configured too.
 const API_SHARED_SECRET = import.meta.env.VITE_API_SHARED_SECRET || "";
 
 const OUTCOME_LABELS = {
@@ -21,13 +18,6 @@ function formatClock(seconds) {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-// Weighted average instead of a hard "one no-pass sinks the whole loop"
-// veto -- this is a practice tool, not an actual hiring decision, so a
-// single rough round shouldn't erase real signal from the rounds that
-// went well. no_pass still hurts a lot (it's worth 0), just proportionally
-// instead of absolutely: four strong passes and one no-pass average to 80
-// and read as "Pass" -- mostly strong, dragged down by one weak round --
-// instead of being flattened to "No Pass" outright.
 const OUTCOME_SCORES = { strong_pass: 100, pass: 60, no_pass: 0 };
 
 function loopScore(results) {
@@ -43,29 +33,28 @@ function aggregateOutcome(score) {
 }
 
 export default function MockInterviewPage() {
-  // step: pick -> ready -> active -> result -> (loop: back to active, or loop-summary)
   const [step, setStep] = useState("pick");
 
   const [companies, setCompanies] = useState([]);
-  const [companiesStatus, setCompaniesStatus] = useState("loading"); // loading | ready | error
+  const [companiesStatus, setCompaniesStatus] = useState("loading");
   const [query, setQuery] = useState("");
   const [company, setCompany] = useState(null);
 
   const [mix, setMix] = useState(null);
-  const [mixStatus, setMixStatus] = useState("idle"); // idle | loading | ready | error
+  const [mixStatus, setMixStatus] = useState("idle");
 
-  const [mode, setMode] = useState("single"); // single | loop
+  const [mode, setMode] = useState("single");
   const [roundsCount, setRoundsCount] = useState(3);
 
   const [loopProblems, setLoopProblems] = useState([]);
   const [currentRoundIndex, setCurrentRoundIndex] = useState(0);
   const [roundResults, setRoundResults] = useState([]);
 
-  const [round, setRound] = useState(null); // { problem, startedAt, timeLimitSeconds }
+  const [round, setRound] = useState(null);
   const [startError, setStartError] = useState("");
   const [now, setNow] = useState(() => Date.now() / 1000);
 
-  const [evalStatus, setEvalStatus] = useState("idle"); // idle | loading | error
+  const [evalStatus, setEvalStatus] = useState("idle");
   const [evalError, setEvalError] = useState("");
   const [result, setResult] = useState(null);
 
@@ -120,8 +109,6 @@ export default function MockInterviewPage() {
     setMixStatus("idle");
   };
 
-  // Shared by both modes -- starts this round's clock the moment it's
-  // actually shown, not whenever the problem was originally fetched.
   const beginRound = (problem, timeLimitSeconds) => {
     setRound({ problem, startedAt: Date.now() / 1000, timeLimitSeconds });
     setNow(Date.now() / 1000);
@@ -161,9 +148,6 @@ export default function MockInterviewPage() {
     }
   }, [company, roundsCount]);
 
-  // Countdown -- purely client-side display; the backend independently
-  // checks the real submission timestamp against startedAt/timeLimitSeconds
-  // when evaluating, so nothing here needs to be trusted for grading.
   useEffect(() => {
     if (step !== "active") return;
     tickRef.current = setInterval(() => setNow(Date.now() / 1000), 1000);

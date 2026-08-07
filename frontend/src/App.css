@@ -1,9 +1,4 @@
-/* ---------------------------------------------------------------------
-   Design tokens -- dark, high-contrast, "dev tool" aesthetic (roadmap.sh /
-   NeetCode-style dark roadmap trees, Linear/Vercel-style dashboard chrome).
-   Everything downstream reads from these variables, so the whole palette
-   can be retuned from one place.
-   ------------------------------------------------------------------- */
+
    :root {
     --bg-app: #0a0e17;
     --bg-sidebar: #0b0f1a;
@@ -75,8 +70,7 @@
     cursor: pointer;
   }
   
-  /* Faint radial glow behind everything, like a dev-tool splash screen --
-     purely cosmetic, sits behind the app shell. */
+  
   .app-shell {
     display: flex;
     height: 100vh;
@@ -86,9 +80,7 @@
       var(--bg-app);
   }
   
-  /* ---------------------------------------------------------------------
-     Sidebar
-     ------------------------------------------------------------------- */
+  
   .sidebar {
     width: var(--sidebar-width);
     flex-shrink: 0;
@@ -205,9 +197,7 @@
     box-shadow: 0 0 6px var(--success);
   }
   
-  /* ---------------------------------------------------------------------
-     Main content area
-     ------------------------------------------------------------------- */
+  
   .main-area {
     flex: 1;
     min-width: 0;
@@ -244,7 +234,7 @@
     padding: 24px 28px 40px;
   }
   
-  /* Generic buttons ------------------------------------------------------- */
+  
   .btn {
     display: inline-flex;
     align-items: center;
@@ -284,7 +274,7 @@
     border-color: var(--border-glow);
   }
   
-  /* Badges & difficulty tags ----------------------------------------------- */
+  
   .badge {
     font-size: 10.5px;
     font-weight: 700;
@@ -349,9 +339,7 @@
     color: var(--danger);
   }
   
-  /* ---------------------------------------------------------------------
-     Page header (used at the top of every page)
-     ------------------------------------------------------------------- */
+  
   .page-header {
     display: flex;
     align-items: flex-start;
@@ -375,11 +363,7 @@
     line-height: 1.5;
   }
   
-  /* ---------------------------------------------------------------------
-     Page sections -- used on Practice, which stacks Daily Review / AI
-     Diagnosis / Recommendations vertically on one page instead of each
-     living on its own route.
-     ------------------------------------------------------------------- */
+  
   .page-section {
     margin-bottom: 36px;
   }
@@ -413,9 +397,7 @@
     line-height: 1.5;
   }
   
-  /* ---------------------------------------------------------------------
-     Cards (diagnosis / recommendations / review)
-     ------------------------------------------------------------------- */
+  
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -489,7 +471,7 @@
     border-left: 3px solid var(--text-muted);
   }
   
-  /* Empty / hint / error text ---------------------------------------------- */
+  
   .hint-text {
     font-size: 12.5px;
     color: var(--text-secondary);
@@ -511,9 +493,7 @@
     font-size: 13px;
   }
   
-  /* ---------------------------------------------------------------------
-     Recommendation cards (Practice page)
-     ------------------------------------------------------------------- */
+  
   .rec-card {
     position: relative;
     background: var(--bg-surface);
@@ -658,11 +638,7 @@
     height: 13px;
   }
   
-  /* ---------------------------------------------------------------------
-     Diagnosis cards (Practice page) -- same visual language as rec-card
-     (top accent stripe, hover lift, CTA button) but colored by verdict
-     instead of difficulty.
-     ------------------------------------------------------------------- */
+  
   .diag-card {
     position: relative;
     background: var(--bg-surface);
@@ -762,12 +738,7 @@
     height: 13px;
   }
   
-  /* ---------------------------------------------------------------------
-     Daily review card -- same visual language as rec-card / diag-card (top
-     accent stripe colored by difficulty, hover lift, CTA button) since
-     there's only ever one pick shown at a time, this is just a wider single
-     card instead of living in a grid.
-     ------------------------------------------------------------------- */
+  
   .review-card {
     position: relative;
     background: var(--bg-surface);
@@ -902,9 +873,7 @@
     height: 13px;
   }
   
-  /* ---------------------------------------------------------------------
-     Topic tree (ReactFlow)
-     ------------------------------------------------------------------- */
+  
   .tree-container {
     flex: 1;
     position: relative;
@@ -914,9 +883,7 @@
     display: none;
   }
   
-  /* ReactFlow ships light-mode chrome by default -- override its controls
-     widget to match the dark theme instead of leaving a bright white box
-     floating over the graph. */
+  
   .tree-container .react-flow__controls {
     box-shadow: var(--shadow-card);
     border-radius: var(--radius-sm);
@@ -980,9 +947,7 @@
     color: var(--accent-cyan);
   }
   
-  /* Extensively covered (10+ solved) -- reuses --success, the same green
-     used for Easy difficulty and Optimal verdicts elsewhere, so "you've
-     really got this topic down" reads consistently across the whole app. */
+  
   .topic-node--extensive {
     border-color: rgba(52, 211, 153, 0.65);
     box-shadow: 0 0 22px rgba(52, 211, 153, 0.18);
@@ -1009,7 +974,7 @@
     font-weight: 600;
   }
   
-  /* Side panel (problem list for a selected topic) ------------------------ */
+  
   .side-panel {
     position: absolute;
     top: 0;
@@ -1056,9 +1021,7 @@
     font-size: 13px;
   }
   
-  /* ---------------------------------------------------------------------
-     Company Mock Interview
-     ------------------------------------------------------------------- */
+  
   .mock-picker {
     max-width: 480px;
     position: relative;
@@ -1126,7 +1089,7 @@
     letter-spacing: -0.3px;
   }
   
-  /* Single Round / Full Loop segmented toggle */
+  
   .mode-toggle {
     display: inline-flex;
     gap: 3px;
@@ -1154,7 +1117,7 @@
     color: #04121a;
   }
   
-  /* Rounds-count stepper for loop mode */
+  
   .rounds-stepper {
     display: flex;
     align-items: center;
@@ -1188,7 +1151,7 @@
     margin-left: 4px;
   }
   
-  /* "Round N of M" label shown on both the active round and its result */
+  
   .interview-card__round-label {
     align-self: flex-start;
     font-size: 10.5px;
@@ -1198,7 +1161,7 @@
     color: var(--text-muted);
   }
   
-  /* Per-round rows on the loop summary screen */
+  
   .loop-summary__rounds {
     display: flex;
     flex-direction: column;
@@ -1294,8 +1257,7 @@
     background: var(--danger);
   }
   
-  /* The active-round card -- same top-accent-stripe card language as
-     rec-card / diag-card / review-card, plus a countdown timer badge. */
+  
   .interview-card {
     position: relative;
     background: var(--bg-surface);
@@ -1378,9 +1340,7 @@
     margin-top: 4px;
   }
   
-  /* Result card -- outcome-colored top stripe, same family as the other
-     result-style cards but with a bigger, unmissable outcome label since
-     this is the payoff moment of the whole feature. */
+  
   .result-card {
     position: relative;
     background: var(--bg-surface);
@@ -1468,9 +1428,7 @@
     white-space: pre-wrap;
   }
   
-  /* ---------------------------------------------------------------------
-     Full-screen status states (loading / not connected / expired / error)
-     ------------------------------------------------------------------- */
+  
   .status-screen {
     display: flex;
     flex-direction: column;
@@ -1531,9 +1489,7 @@
     }
   }
   
-  /* ---------------------------------------------------------------------
-     Mock Interview History page
-     ------------------------------------------------------------------- */
+  
   .stats-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1713,9 +1669,7 @@
     }
   }
   
-  /* ---------------------------------------------------------------------
-     Login / Account pages
-     ------------------------------------------------------------------- */
+  
   .auth-card {
     position: relative;
     width: 100%;

@@ -23,10 +23,10 @@ const icons = {
 };
 
 export default function LoginPage() {
-  const [mode, setMode] = useState("signIn"); // signIn | signUp
+  const [mode, setMode] = useState("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [status, setStatus] = useState("idle"); // idle | loading | error | check-email
+  const [status, setStatus] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   const switchMode = (next) => {
@@ -47,21 +47,10 @@ export default function LoginPage() {
         setStatus("error");
         return;
       }
-      // On success, AuthContext's onAuthStateChange listener picks up the
-      // new session automatically -- App.jsx re-renders past this screen
-      // on its own, nothing to do here.
     } else {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        // Without this, the confirmation email's link falls back to
-        // whichever "Site URL" is configured in Supabase's dashboard
-        // (Authentication -> URL Configuration) -- easy to leave at the
-        // default localhost placeholder and forget about. Being explicit
-        // here means it always lands back on wherever this app is
-        // actually running, not whatever the dashboard happens to say.
-        // Still needs to be added to the dashboard's Redirect URLs
-        // allow-list, or Supabase will reject it regardless.
         options: { emailRedirectTo: window.location.origin },
       });
       if (error) {
@@ -69,10 +58,6 @@ export default function LoginPage() {
         setStatus("error");
         return;
       }
-      // Whether this requires email confirmation depends on your
-      // Supabase project's Auth settings -- if it does, there's no
-      // session yet at this point, so show a clear next step instead of
-      // silently doing nothing.
       setStatus("check-email");
     }
   };

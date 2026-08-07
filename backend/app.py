@@ -2,9 +2,6 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-# Loads backend/.env into the environment (DEEPSEEK_API_KEY, etc.) before
-# anything else runs -- must happen before llm_client is imported below so
-# its lazy client init sees the key when it's actually needed.
 load_dotenv()
 
 import leetcode_service
@@ -21,10 +18,6 @@ from auth import get_current_user_id, require_auth, require_sync_token
 from security import rate_limit, require_api_secret
 
 app = Flask(__name__)
-# Locked-down CORS: only the Vite dev server, your deployed frontend, and
-# your own Chrome extension can call this API -- anything else (a random
-# website trying to hit this URL from someone else's browser) gets blocked
-# by the browser before the request even reaches your routes.
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://leetcode-interview-helper.vercel.app",
@@ -114,8 +107,6 @@ def get_topics():
         summary = leetcode_service.get_topic_summary(get_current_user_id())
         return jsonify(summary)
     except leetcode_service.LeetCodeAuthError as e:
-        # Covers both LeetCodeNotConnectedError and plain LeetCodeAuthError --
-        # _auth_error_response picks the right code/instructions for each.
         return _auth_error_response(e)
     except leetcode_service.LeetCodeAPIError as e:
         return jsonify({"error": "leetcode_api_error", "message": str(e)}), 502

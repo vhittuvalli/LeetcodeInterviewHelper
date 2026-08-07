@@ -4,11 +4,6 @@ import requests
 
 import db
 
-# LeetCode's GraphQL endpoint is unofficial -- there's no published rate
-# limit, but hammering it with a burst of requests (which the diagnosis
-# pipeline now does: submission list + code pulls across several problems)
-# risks getting flagged as bot traffic. A small delay before every request
-# spaces things out without being noticeable on single-call endpoints.
 _REQUEST_DELAY_SECONDS = 0.3
 
 
@@ -34,9 +29,6 @@ class LeetCodeAPIError(Exception):
     unrelated to auth)."""
     pass
 
-# Step-by-step instructions surfaced to the frontend whenever a request fails
-# because no credentials have ever been provided -- keeps the "how do I fix
-# this" copy in one place instead of duplicated in frontend code.
 CONNECT_INSTRUCTIONS = [
     "Download the extension folder (ask for the latest copy if you don't have it).",
     "Open Chrome and go to chrome://extensions.",
@@ -64,9 +56,6 @@ def has_credentials(user_id):
 
 
 def _build_headers(user_id):
-    # Read from the DB per-request (not cached) so a credential update from
-    # set_credentials() takes effect on the very next call, not just after a
-    # server restart -- same reasoning as the old in-memory version had.
     cookie, csrf = db.get_credentials(user_id)
     return {
         "Accept": "*/*",
@@ -105,10 +94,6 @@ query userProgressQuestionList($filters: UserProgressQuestionListInput) {
 }
 """
 
-# Step 1 of getting submission history for a problem: list every submission
-# (accepted AND failed) filtered to one question via questionSlug. No code
-# in this response yet -- just id/status/lang/timestamp, enough to decide
-# which submissions are worth pulling code for.
 SUBMISSION_LIST_QUERY = """
 query submissionList($offset: Int!, $limit: Int!, $slug: String) {
   submissionList(offset: $offset, limit: $limit, questionSlug: $slug) {
@@ -124,10 +109,6 @@ query submissionList($offset: Int!, $limit: Int!, $slug: String) {
 }
 """
 
-# Step 2: given one submission id (from the list above), get its actual code.
-# This is a separate request per submission -- there's no bulk "give me the
-# code for all of these ids" query, which is exactly why we filter down to
-# only the important submissions before calling this.
 SUBMISSION_DETAIL_QUERY = """
 query submissionDetails($id: Int!) {
   submissionDetails(submissionId: $id) {
@@ -168,8 +149,6 @@ TOPIC_PRIORITY = [
 OTHER = "Other"
 TOPIC_ORDER = [name for name, _ in TOPIC_PRIORITY] + [OTHER]
 
-# Simple in-memory cache for the NeetCode 150 map -- it doesn't change between
-# requests, no reason to re-fetch it from GitHub on every /api/topics call.
 _neetcode_map_cache = None
 
 
@@ -212,8 +191,6 @@ def _post_graphql(user_id, query, variables, operation_name):
     try:
         data = r.json()
     except ValueError as e:
-        # Expired sessions often get redirected to an HTML login page instead
-        # of a JSON error -- that shows up here as a JSON parse failure.
         raise LeetCodeAuthError("LeetCode did not return JSON -- session is likely expired or invalid") from e
 
     if "errors" in data:
@@ -269,7 +246,6 @@ def fetch_solved(user_id, limit=50):
 
 
 def fetch_attempted(user_id, limit=50):
-    # "ATTEMPTED" == tried but never solved -- confirmed against the live API.
     return _fetch_by_status(user_id, "ATTEMPTED", limit=limit)
 
 

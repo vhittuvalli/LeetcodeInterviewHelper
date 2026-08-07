@@ -3,7 +3,7 @@ import { apiFetch } from "./apiFetch";
 
 export default function SpacedRepetitionCard() {
   const [data, setData] = useState(null);
-  const [status, setStatus] = useState("loading"); // loading | ready | empty | error
+  const [status, setStatus] = useState("loading");
 
   const load = useCallback(async () => {
     setStatus("loading");
@@ -35,7 +35,7 @@ export default function SpacedRepetitionCard() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ titleSlug: data.problem.titleSlug }),
     });
-    load(); // pull the next one immediately, per the backend clearing "current"
+    load();
   };
 
   if (status === "loading") {

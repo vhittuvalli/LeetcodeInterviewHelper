@@ -37,9 +37,6 @@ def _github_headers():
         headers["Authorization"] = f"Bearer {token}"
     return headers
 
-# Recency windows the dataset actually ships, in the exact filenames used
-# in each company's folder. "all" is the default -- widest pool, best for
-# picking a realistic problem instead of only the last 30 days' worth.
 WINDOW_FILES = {
     "thirty_days": "1. Thirty Days.csv",
     "three_months": "2. Three Months.csv",
@@ -48,10 +45,6 @@ WINDOW_FILES = {
     "all": "5. All.csv",
 }
 
-# If the GitHub directory listing can't be reached (rate-limited, network
-# hiccup, API shape changes), fall back to a short list of companies that
-# are almost certainly still present -- keeps the feature usable in a
-# degraded state instead of failing outright.
 _FALLBACK_COMPANIES = [
     "Amazon", "Google", "Meta", "Microsoft", "Apple", "Netflix",
     "Bloomberg", "LinkedIn", "Uber", "Adobe",
@@ -66,7 +59,7 @@ class CompanyBankError(Exception):
 
 
 _company_list_cache = None
-_csv_cache = {}  # (company, window) -> parsed problem list
+_csv_cache = {}
 
 
 def list_companies():
@@ -86,11 +79,6 @@ def list_companies():
         if not companies:
             raise CompanyBankError("GitHub returned no company directories")
     except (requests.exceptions.RequestException, ValueError, KeyError, CompanyBankError) as e:
-        # Degraded but usable -- better than a broken company picker. Printed
-        # (not swallowed silently) so Render's logs actually show *why* --
-        # e.g. a 403 here almost always means GitHub's unauthenticated rate
-        # limit (60 requests/hour per source IP) got hit, which is a very
-        # different fix than a real network failure would be.
         status = getattr(getattr(e, "response", None), "status_code", None)
         print(f"company_bank.list_companies: falling back to hardcoded list -- {type(e).__name__}: {e} (status={status})")
         companies = list(_FALLBACK_COMPANIES)
@@ -109,7 +97,7 @@ def _fetch_csv(company, window):
         raise CompanyBankError(f"Could not reach GitHub: {e}") from e
 
     if r.status_code == 404:
-        return None  # this company doesn't have that particular window file
+        return None
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -130,7 +118,7 @@ def _parse_csv(text):
         link = (row.get("Link") or "").strip().rstrip("/")
         title_slug = link.rsplit("/", 1)[-1] if link else None
         if not title_slug:
-            continue  # malformed row -- skip rather than fail the whole batch
+            continue
 
         try:
             frequency = float(row.get("Frequency") or 0)

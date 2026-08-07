@@ -3,9 +3,6 @@ import { apiFetch } from "./apiFetch";
 
 const DIAGNOSIS_LIMIT = 3;
 
-// Sent as X-API-Key on the routes that actually cost money -- a no-op if
-// VITE_API_SHARED_SECRET isn't set (local dev), since the backend only
-// enforces this check when its own API_SHARED_SECRET is configured too.
 const API_SHARED_SECRET = import.meta.env.VITE_API_SHARED_SECRET || "";
 
 const VERDICT_LABELS = {
@@ -15,13 +12,10 @@ const VERDICT_LABELS = {
 };
 
 export default function DiagnosisPanel() {
-  const [status, setStatus] = useState("idle"); // idle | loading | ready | error
+  const [status, setStatus] = useState("idle");
   const [results, setResults] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Deliberately NOT auto-run on mount -- this hits a real LLM API and
-  // costs actual money per call, so it only fires when the button below is
-  // clicked, same reasoning as why the backend route is a POST not a GET.
   const runDiagnosis = useCallback(async () => {
     setStatus("loading");
     try {

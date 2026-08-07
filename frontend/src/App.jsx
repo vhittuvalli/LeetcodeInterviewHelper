@@ -14,12 +14,6 @@ import AccountPage from "./pages/AccountPage";
 import LoginPage from "./pages/LoginPage";
 
 function RoadmapGate({ status, instructions, nodes, edges, onRefresh }) {
-  // Only the roadmap's own content depends on whether LeetCode is
-  // connected -- every other page (practice, mock interview, history,
-  // account) fetches its own data independently and doesn't need this.
-  // Rendered *inside* <Layout>, so the sidebar (and therefore the Account
-  // page you'd need to visit to fix a "not connected" state) is always
-  // reachable, instead of the whole app being replaced by this screen.
   if (status === "loading") {
     return (
       <div className="status-screen">
@@ -81,15 +75,9 @@ function RoadmapGate({ status, instructions, nodes, edges, onRefresh }) {
 function AuthenticatedApp() {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
-  const [status, setStatus] = useState("loading"); // loading | ready | not_connected | session_expired | error
+  const [status, setStatus] = useState("loading");
   const [instructions, setInstructions] = useState([]);
 
-  // This same /api/topics call doubles as the roadmap's connection check
-  // -- it's the cheapest real request that fails with not_connected /
-  // session_expired the same way every other route would. Scoped to the
-  // roadmap tab only (see RoadmapGate above); it no longer gates the
-  // whole app, so a not-yet-connected account can still reach every other
-  // page, including Account, where the fix actually happens.
   const loadTopics = useCallback(async () => {
     setStatus("loading");
     try {
@@ -148,12 +136,6 @@ function AuthenticatedApp() {
 }
 
 function Gate() {
-  // Two independent gates, checked in order: are you logged into this
-  // app at all (session), and only once that's true, is your LeetCode
-  // account actually connected (AuthenticatedApp's own loadTopics check).
-  // Keeping them separate means a logged-out visitor sees a login screen
-  // immediately, never a flash of "connect your LeetCode account" for an
-  // account that isn't even signed in yet.
   const { session, authError } = useAuth();
 
   if (session === undefined) {

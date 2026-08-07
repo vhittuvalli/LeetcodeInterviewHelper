@@ -1,7 +1,5 @@
 import dagre from "dagre";
 
-// Topic names here must exactly match TOPIC_PRIORITY in backend/leetcode_service.py --
-// that's how solvedCount gets matched up to each node later.
 export const TOPIC_LIST = [
   "Arrays & Hashing",
   "Two Pointers",
@@ -23,8 +21,6 @@ export const TOPIC_LIST = [
   "Bit Manipulation",
 ];
 
-// Prerequisite pairs: [fromTopic, toTopic]. This is the manually curated
-// "roadmap shape" -- not derived from data, just your own ordering decision.
 export const TOPIC_EDGES = [
   ["Arrays & Hashing", "Two Pointers"],
   ["Arrays & Hashing", "Stack"],
@@ -50,9 +46,6 @@ export const TOPIC_EDGES = [
 const NODE_WIDTH = 190;
 const NODE_HEIGHT = 60;
 
-// Runs dagre's layout algorithm over the static topic/edge shape and hands
-// back nodes with computed x/y positions -- this replaces hand-placing
-// coordinates like the earlier mockup did.
 export function buildLayoutedNodes(topicDataByName) {
   const g = new dagre.graphlib.Graph();
   g.setDefaultEdgeLabel(() => ({}));

@@ -5,7 +5,7 @@ const RECOMMENDATION_LIMIT = 6;
 
 export default function RecommendedProblems() {
   const [recommendations, setRecommendations] = useState([]);
-  const [status, setStatus] = useState("loading"); // loading | ready | empty | error
+  const [status, setStatus] = useState("loading");
 
   const load = useCallback(async () => {
     setStatus("loading");

@@ -7,9 +7,6 @@ import submission_history
 
 BATCH_SIZE = 5
 
-# Cap on how many picks can come from the same topic -- without this, a
-# single very-weak topic (e.g. Stack) could fill the entire batch, and
-# you'd never see a diagnosis from anywhere else.
 MAX_PER_TOPIC = 2
 
 
@@ -45,7 +42,6 @@ def select_problems_to_diagnose(user_id, limit=BATCH_SIZE, max_per_topic=MAX_PER
         return []
 
     scored = [(p, _pick_score(p, weak_topics, neetcode_map)) for p in backlog]
-    # Highest score first; tiebreak by most recently submitted.
     scored.sort(key=lambda pair: (pair[1], pair[0].get("lastSubmittedAt") or 0), reverse=True)
 
     selected = []
@@ -55,7 +51,7 @@ def select_problems_to_diagnose(user_id, limit=BATCH_SIZE, max_per_topic=MAX_PER
             break
         topic = leetcode_service.primary_topic(p, neetcode_map)
         if topic_counts[topic] >= max_per_topic:
-            continue  # this topic already has its 2 -- move on to the next best pick
+            continue
         selected.append(p)
         topic_counts[topic] += 1
 
